@@ -1,8 +1,8 @@
 ﻿namespace CommonLib;
 
-public class DotaAddonInfo
+public class Dota2AddonInfo
 {
-  private DotaAddonInfo()
+  private Dota2AddonInfo()
   {
   }
 
@@ -10,7 +10,7 @@ public class DotaAddonInfo
   public DirectoryInfo DotaAddonsDirectory { get; set; }
   public DirectoryInfo? DotaAddonDirectory { get; set; }
   
-  public static Result<DotaAddonInfo?> GetDotaAddonInfo(FileInfo passedVsndevtsFile, FileInfo dota2Executable)
+  public static Result<Dota2AddonInfo?> GetDotaAddonInfo(FileInfo passedVsndevtsFile, FileInfo dota2Executable)
   {
     var dota2Directory = dota2Executable.Directory.Parent.Parent.Parent;
     var dotaAddonsDirectoryPath = Path.Combine(dota2Directory.FullName, "content", "dota_addons");
@@ -18,19 +18,19 @@ public class DotaAddonInfo
     
     if (dotaAddonsDirectory.Exists is false)
     {
-      return new Result<DotaAddonInfo?>(false, "There was an issue when attempting to locate 'dota_addons' directory.");
+      return new Result<Dota2AddonInfo?>(false, "There was an issue when attempting to locate 'dota_addons' directory.");
     }
       
     if (passedVsndevtsFile.FullName.IndexOf(dotaAddonsDirectory.FullName, StringComparison.InvariantCultureIgnoreCase) != 0)
     {
-      return new Result<DotaAddonInfo?>(false, "It looks like .vsndevts file you have passed is not located inside dota addon 'content' directory. " +
+      return new Result<Dota2AddonInfo?>(false, "It looks like .vsndevts file you have passed is not located inside dota addon 'content' directory. " +
                                                "Because of it, program does not know where to look for sound files (since path to files in .vsndevts file are relative to dota addon directory).");
     }
       
     var relativePathFromDotaAddon = passedVsndevtsFile.FullName.Substring(dotaAddonsDirectory.FullName.Length);
     if (relativePathFromDotaAddon[0] != '\\')
     {
-      return new Result<DotaAddonInfo?>(false, "There was an issue when attempting to locate 'dota_addons' directory.");
+      return new Result<Dota2AddonInfo?>(false, "There was an issue when attempting to locate 'dota_addons' directory.");
     }
 
     var dotaAddonRelativePath = relativePathFromDotaAddon.Substring(1);
@@ -40,10 +40,10 @@ public class DotaAddonInfo
 
     if (dotaAddonDirectory.Exists is false)
     {
-      return new Result<DotaAddonInfo?>(false, $"There was an issue when attempting to locate '{dotaAddonName}' addon directory.");
+      return new Result<Dota2AddonInfo?>(false, $"There was an issue when attempting to locate '{dotaAddonName}' addon directory.");
     }
 
-    return new Result<DotaAddonInfo?>(true, new DotaAddonInfo()
+    return new Result<Dota2AddonInfo?>(true, new Dota2AddonInfo()
     {
       Dota2Directory = dota2Directory,
       DotaAddonsDirectory = dotaAddonsDirectory,

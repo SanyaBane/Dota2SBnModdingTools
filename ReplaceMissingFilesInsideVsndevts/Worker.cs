@@ -80,7 +80,7 @@ public class Worker
 
   private static Result<ReplaceMissingFilesResult?> TryDoWork(FileInfo passedVsndevtsFile, FileInfo dota2Executable, string replaceValue)
   {
-    var resultGetDotaAddonInfo = DotaAddonInfo.GetDotaAddonInfo(passedVsndevtsFile, dota2Executable);
+    var resultGetDotaAddonInfo = Dota2AddonInfo.GetDotaAddonInfo(passedVsndevtsFile, dota2Executable);
     if (resultGetDotaAddonInfo.Failure)
     {
       return new Result<ReplaceMissingFilesResult?>(false, resultGetDotaAddonInfo.ErrorMessage);
@@ -152,7 +152,7 @@ public class Worker
     return new Result<ReplaceMissingFilesResult?>(true, new ReplaceMissingFilesResult(parsedKvFile, counterFilesReplaced));
   }
 
-  private static Dictionary<string, KVValue> ParseVsndFilesArrayNode(DotaAddonInfo dotaAddonInfo, string replaceValue, KVObject kvObject2, DirectoryInfo dotaAddonDirectory, KeyValuePair<string, KVValue> keyValuePair, Package package)
+  private static Dictionary<string, KVValue> ParseVsndFilesArrayNode(Dota2AddonInfo dota2AddonInfo, string replaceValue, KVObject kvObject2, DirectoryInfo dotaAddonDirectory, KeyValuePair<string, KVValue> keyValuePair, Package package)
   {
     var kvValuesToReplace = new Dictionary<string, KVValue>();
 
@@ -164,7 +164,7 @@ public class Worker
         continue;
 
       var vsndevtsFileRelativePath = singleVsndFileKvValue.Value.ToString();
-      var isVsndFileExists = IsVsndFileExists(dotaAddonInfo, dotaAddonDirectory, vsndevtsFileRelativePath, package);
+      var isVsndFileExists = IsVsndFileExists(dota2AddonInfo, dotaAddonDirectory, vsndevtsFileRelativePath, package);
       if (isVsndFileExists is false)
       {
         Console.WriteLine($"'{keyValuePair.Key}' - file not found: '{vsndevtsFileRelativePath}'.");
@@ -176,7 +176,7 @@ public class Worker
     return kvValuesToReplace;
   }
 
-  private static bool IsVsndFileExists(DotaAddonInfo dotaAddonInfo, DirectoryInfo dotaAddonDirectory, string vsndevtsFileName, Package package)
+  private static bool IsVsndFileExists(Dota2AddonInfo dota2AddonInfo, DirectoryInfo dotaAddonDirectory, string vsndevtsFileName, Package package)
   {
     var vsndevtsFileFullPath = Path.Combine(dotaAddonDirectory.FullName, vsndevtsFileName);
     var vsndevtsFile = new FileInfo(vsndevtsFileFullPath);
@@ -189,7 +189,7 @@ public class Worker
         return true;
     }
 
-    var isVsndFileExistsInDota2Files = IsVsndFileExistsInDota2Files(dotaAddonInfo, vsndevtsFile, package);
+    var isVsndFileExistsInDota2Files = IsVsndFileExistsInDota2Files(dota2AddonInfo, vsndevtsFile, package);
     return isVsndFileExistsInDota2Files;
   }
 
@@ -198,9 +198,9 @@ public class Worker
     return vsndevtsFileDirectory.EnumerateFiles().Any(x => x.Name.IndexOf(Path.GetFileNameWithoutExtension(vsndevtsFile.FullName), StringComparison.InvariantCultureIgnoreCase) == 0);
   }
 
-  private static bool IsVsndFileExistsInDota2Files(DotaAddonInfo dotaAddonInfo, FileInfo vsndevtsFile, Package package)
+  private static bool IsVsndFileExistsInDota2Files(Dota2AddonInfo dota2AddonInfo, FileInfo vsndevtsFile, Package package)
   {
-    var sameVsndevtsInsidePak01DirFile = VsndevtsInsideDota2Reader.FindFileInsideDota2(dotaAddonInfo, vsndevtsFile, package);
+    var sameVsndevtsInsidePak01DirFile = VsndevtsInsideDota2Reader.FindFileInsideDota2(dota2AddonInfo, vsndevtsFile, package);
     return sameVsndevtsInsidePak01DirFile != null;
   }
 }
