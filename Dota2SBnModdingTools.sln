@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ReplaceMissingFilesInsideVsndevts", "ReplaceMissingFilesInsideVsndevts\ReplaceMissingFilesInsideVsndevts.csproj", "{1CEE616F-95CB-432D-AB52-34861AD85566}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommonLib", "CommonLib\CommonLib.csproj", "{F3B301A8-54A7-42A1-816D-E3C1AD8B578D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.WPF", "Common.WPF\Common.WPF.csproj", "{9289ECB8-A626-475F-B11D-D9350CE17D44}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Common", "Common", "{1D8E0B79-5EA3-41B0-B44D-8651DF62C773}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1CEE616F-95CB-432D-AB52-34861AD85566}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1CEE616F-95CB-432D-AB52-34861AD85566}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1CEE616F-95CB-432D-AB52-34861AD85566}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1CEE616F-95CB-432D-AB52-34861AD85566}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F3B301A8-54A7-42A1-816D-E3C1AD8B578D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F3B301A8-54A7-42A1-816D-E3C1AD8B578D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F3B301A8-54A7-42A1-816D-E3C1AD8B578D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F3B301A8-54A7-42A1-816D-E3C1AD8B578D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9289ECB8-A626-475F-B11D-D9350CE17D44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9289ECB8-A626-475F-B11D-D9350CE17D44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9289ECB8-A626-475F-B11D-D9350CE17D44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9289ECB8-A626-475F-B11D-D9350CE17D44}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{9289ECB8-A626-475F-B11D-D9350CE17D44} = {1D8E0B79-5EA3-41B0-B44D-8651DF62C773}
+		{F3B301A8-54A7-42A1-816D-E3C1AD8B578D} = {1D8E0B79-5EA3-41B0-B44D-8651DF62C773}
+	EndGlobalSection
+EndGlobal
