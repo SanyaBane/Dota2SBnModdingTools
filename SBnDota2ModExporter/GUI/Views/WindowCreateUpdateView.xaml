@@ -1,0 +1,48 @@
+﻿<Window
+  x:Class="SBnDota2ModExporter.GUI.Views.WindowCreateUpdateView"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:local="clr-namespace:SBnDota2ModExporter.GUI.Views"
+  xmlns:viewModels="clr-namespace:SBnDota2ModExporter.GUI.ViewModels"
+  x:Name="This"
+  mc:Ignorable="d"
+  Title="{Binding Title}" 
+  Height="450" Width="800"
+  d:DataContext="{d:DesignInstance viewModels:WindowCreateUpdateViewModel, IsDesignTimeCreatable=True}">
+  
+  <Grid
+    Margin="5">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    
+    <ContentControl
+      Grid.Row="0"
+      x:Name="ContentControl"
+      Content="{Binding WindowCreateUpdateContent, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:WindowCreateUpdateView}}}" />
+    
+    <StackPanel
+      Grid.Row="1"
+      Orientation="Horizontal"
+      HorizontalAlignment="Right"
+      Margin="0 5 0 0">
+      <Button
+        x:Name="btnOk"
+        Width="80"
+        Height="26"
+        IsDefault="True"
+        Content="Ok"
+        Command="{Binding OkCommand}" />
+      <Button
+        x:Name="btnCancel"
+        Margin="5 0 0 0"
+        Width="80"
+        Height="26"
+        IsCancel="True"
+        Content="Cancel" />
+    </StackPanel>
+  </Grid>
+</Window>

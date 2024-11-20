@@ -1,0 +1,82 @@
+﻿<UserControl
+  x:Class="SBnDota2ModExporter.GUI.Views.AddonExportCommands.CopyFileCreateUpdateView"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:local="clr-namespace:SBnDota2ModExporter.GUI.Views.AddonExportCommands"
+  xmlns:addonExportCommandsCreateUpdate="clr-namespace:SBnDota2ModExporter.GUI.ViewModels.AddonExportCommandsCreateUpdate"
+  xmlns:converters="clr-namespace:SBnDota2ModExporter.Converters"
+  mc:Ignorable="d"
+  d:DesignHeight="300" d:DesignWidth="300"
+  d:DataContext="{d:DesignInstance addonExportCommandsCreateUpdate:CopyFileCreateUpdateViewModel, IsDesignTimeCreatable=True}">
+  
+  <UserControl.Resources>
+    <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" TreatEmptyStringAsNull="True" />
+  </UserControl.Resources>
+  
+  <Grid>
+    <Grid.ColumnDefinitions>
+      <ColumnDefinition Width="*" />
+    </Grid.ColumnDefinitions>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <StackPanel
+      Grid.Row="0"
+      Orientation="Vertical">
+
+      <TextBlock
+        Text="Path to file:" />
+
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <TextBox
+          Grid.Column="0"
+          Style="{StaticResource tbReadOnlyPathToFile}"
+          Text="{Binding PathToFile, Mode=OneWay}"
+          ToolTip="{Binding Text, Mode=OneWay, RelativeSource={RelativeSource Self}}" />
+
+        <Button
+          Grid.Column="1"
+          Margin="5 0 0 0"
+          Content="Set path"
+          Command="{Binding SetPathToFileCommand}" />
+      </Grid>
+    </StackPanel>
+
+    <StackPanel
+      Grid.Row="1"
+      Orientation="Vertical"
+      Margin="0 3 0 0"
+      Visibility="{Binding PathToFileAddonRelative, Converter={StaticResource NullToVisibilityConverter}}">
+
+      <TextBlock
+        Text="Path to file (relative to addon):" />
+
+      <TextBox
+        Style="{StaticResource tbReadOnlyPathToFile}"
+        Text="{Binding PathToFileAddonRelative, Mode=OneWay}"
+        ToolTip="{Binding Text, Mode=OneWay, RelativeSource={RelativeSource Self}}" />
+    </StackPanel>
+
+    <GroupBox
+      Grid.Row="2"
+      Margin="0 25 0 0"
+      Header="How result will look like:"
+      Visibility="{Binding PreviewResult, Converter={StaticResource NullToVisibilityConverter}}">
+      <TextBox
+        Style="{StaticResource tbReadonlyPreviewResult}"
+        Text="{Binding PreviewResult, Mode=OneWay}"
+        ToolTip="{Binding Text, Mode=OneWay, RelativeSource={RelativeSource Self}}" />
+    </GroupBox>
+
+  </Grid>
+</UserControl>

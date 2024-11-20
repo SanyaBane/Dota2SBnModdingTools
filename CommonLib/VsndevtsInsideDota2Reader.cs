@@ -11,7 +11,7 @@ public static class VsndevtsInsideDota2Reader
     var entriesVsndevtsCompiled = package.Entries.Single(x => x.Key == vsndevtsFileExtensionWithoutDot || x.Key == vsndevtsFileExtensionWithoutDot + "_c");
     
     var vsndevtsFileNameWithoutExtension = Path.GetFileNameWithoutExtension(fileInsideDotaAddon.FullName);
-    var relativePathInAddonDirectoryToFile = fileInsideDotaAddon.Directory.FullName.Substring(dota2AddonInfo.DotaAddonDirectory.FullName.Length);
+    var relativePathInAddonDirectoryToFile = fileInsideDotaAddon.Directory.FullName.Substring(dota2AddonInfo.DotaAddonContentDirectoryInfo.FullName.Length);
 
     if (!string.IsNullOrEmpty(relativePathInAddonDirectoryToFile))
     {

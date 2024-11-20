@@ -9,19 +9,9 @@ public class Worker
 {
   public void DoWork(string fullPathToPassedVsndevtsFile)
   {
-    var entryAssemblyLocation = new FileInfo(System.Reflection.Assembly.GetEntryAssembly().Location);
-
-    var builder = new ConfigurationBuilder();
-    builder.SetBasePath(entryAssemblyLocation.Directory.FullName)
-      .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-
-    IConfigurationRoot configuration = builder.Build();
-
-
-    string fullPathToDota2Executable = configuration["PathToDota2ExeFile"];
-    string replaceValue = configuration["ReplaceValue"];
-
-    var dota2Executable = new FileInfo(fullPathToDota2Executable);
+    var configuration = GetConfiguration();
+    
+    var dota2Executable = new FileInfo(configuration.FullPathToDota2ExecutableFile);
     if (dota2Executable.Exists is false)
     {
       Console.WriteLine($"{Environment.NewLine}" +
@@ -37,7 +27,7 @@ public class Worker
 
     Console.WriteLine($"Program will parse file '{passedVsndevtsFile.Name}' and search for not existing audio files...");
 
-    var resultTryDoWork = TryDoWork(passedVsndevtsFile, dota2Executable, replaceValue);
+    var resultTryDoWork = TryDoWork(passedVsndevtsFile, dota2Executable, configuration.ReplaceValue);
     if (resultTryDoWork.Failure)
     {
       Console.WriteLine($"{Environment.NewLine}" +
@@ -63,14 +53,14 @@ public class Worker
       Console.ForegroundColor = ConsoleColor.Yellow;
       var textReferences = resultTryDoWork.Value.CountFilesReplaced == 1 ? "reference" : "references";
       Console.WriteLine($"{Environment.NewLine}" +
-                        $"There was {resultTryDoWork.Value.CountFilesReplaced} {textReferences} to missing files in this '.vsndevts' file.{Environment.NewLine}" +
-                        $"Created '{newFileName}' file, where all missing references replaced by '{replaceValue}'.");
+                        $"There was {resultTryDoWork.Value.CountFilesReplaced} {textReferences} to missing files in this '.{ConstantsCommon.VSNDEVTS_FORMAT}' file.{Environment.NewLine}" +
+                        $"Created '{newFileName}' file, where all missing references replaced by '{configuration.ReplaceValue}'.");
     }
     else
     {
       Console.ForegroundColor = ConsoleColor.Green;
       Console.WriteLine($"{Environment.NewLine}" +
-                        "There is no references to missing files in this '.vsndevts' file. Everything is fine.");
+                        $"There is no references to missing files in this '.{ConstantsCommon.VSNDEVTS_FORMAT}' file. Everything is fine.");
     }
 
     Console.ForegroundColor = consoleDefaultForegroundColor;
@@ -78,18 +68,24 @@ public class Worker
     Console.ReadLine();
   }
 
-  private static Result<ReplaceMissingFilesResult?> TryDoWork(FileInfo passedVsndevtsFile, FileInfo dota2Executable, string replaceValue)
+  private static Result<ReplaceMissingFilesResult?> TryDoWork(FileInfo passedVsndevtsFile, FileInfo dota2ExecutableFile, string replaceValue)
   {
-    var resultGetDotaAddonInfo = Dota2AddonInfo.GetDotaAddonInfo(passedVsndevtsFile, dota2Executable);
+    var resultCreateDota2GameMainInfo = Dota2GameMainInfo.CreateDota2GameMainInfo(dota2ExecutableFile.FullName);
+    if (resultCreateDota2GameMainInfo.Failure)
+    {
+      throw new NotImplementedException();
+    }
+
+    var dota2GameMainInfo = resultCreateDota2GameMainInfo.Value;
+
+    var resultGetDotaAddonInfo = Dota2AddonInfo.GetDotaAddonInfo(passedVsndevtsFile, dota2GameMainInfo);
     if (resultGetDotaAddonInfo.Failure)
     {
-      return new Result<ReplaceMissingFilesResult?>(false, resultGetDotaAddonInfo.ErrorMessage);
+      return new Result<ReplaceMissingFilesResult?>(resultGetDotaAddonInfo.ErrorMessage);
     }
 
     var dotaAddonInfo = resultGetDotaAddonInfo.Value;
-
-    string pak01DirFullPath = Path.Combine(dotaAddonInfo.Dota2Directory.FullName, "game", "dota", "pak01_dir.vpk");
-    var pak01DirVpkFullPath = new FileInfo(pak01DirFullPath);
+    var pak01DirVpkFullPath = dotaAddonInfo.Dota2GameMainInfo.Pak01DirVpkFileInfo;
 
     var package = new Package();
     package.OptimizeEntriesForBinarySearch(StringComparison.OrdinalIgnoreCase);
@@ -122,7 +118,7 @@ public class Worker
         if (vsndFilesKvValue.Type == KVType.STRING)
         {
           var vsndevtsFileRelativePath = vsndFilesKvValue.Value.ToString();
-          var isVsndFileExists = IsVsndFileExists(dotaAddonInfo, dotaAddonInfo.DotaAddonDirectory, vsndevtsFileRelativePath, package);
+          var isVsndFileExists = IsVsndFileExists(dotaAddonInfo, dotaAddonInfo.DotaAddonContentDirectoryInfo, vsndevtsFileRelativePath, package);
           if (isVsndFileExists is false)
           {
             Console.WriteLine($"'{keyValuePair.Key}' - file not found: '{vsndevtsFileRelativePath}'.");
@@ -132,7 +128,7 @@ public class Worker
         }
         else if (vsndFilesKvValue.Value is KVObject kvObject2)
         {
-          var kvValuesToReplace2 = ParseVsndFilesArrayNode(dotaAddonInfo, replaceValue, kvObject2, dotaAddonInfo.DotaAddonDirectory, keyValuePair, package);
+          var kvValuesToReplace2 = ParseVsndFilesArrayNode(dotaAddonInfo, replaceValue, kvObject2, dotaAddonInfo.DotaAddonContentDirectoryInfo, keyValuePair, package);
 
           foreach (var valuePair in kvValuesToReplace2)
           {
@@ -202,5 +198,22 @@ public class Worker
   {
     var sameVsndevtsInsidePak01DirFile = VsndevtsInsideDota2Reader.FindFileInsideDota2(dota2AddonInfo, vsndevtsFile, package);
     return sameVsndevtsInsidePak01DirFile != null;
+  }
+  
+  private Configuration GetConfiguration()
+  {
+    var entryAssembly = System.Reflection.Assembly.GetEntryAssembly();
+    var entryAssemblyLocation = new FileInfo(entryAssembly.Location);
+
+    var builder = new ConfigurationBuilder();
+    builder.SetBasePath(entryAssemblyLocation.Directory.FullName)
+      .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
+    var configuration = builder.Build();
+
+    string fullPathToDota2ExecutableFile = configuration["PathToDota2ExeFile"];
+    string replaceValue = configuration["ReplaceValue"];
+
+    return new Configuration(fullPathToDota2ExecutableFile, replaceValue);
   }
 }

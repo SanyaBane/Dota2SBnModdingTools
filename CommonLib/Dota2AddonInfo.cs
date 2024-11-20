@@ -2,52 +2,79 @@
 
 public class Dota2AddonInfo
 {
-  private Dota2AddonInfo()
+  public Dota2AddonInfo(Dota2GameMainInfo dota2GameMainInfo)
   {
+    Dota2GameMainInfo = dota2GameMainInfo;
   }
 
-  public DirectoryInfo? Dota2Directory { get; set; }
-  public DirectoryInfo DotaAddonsDirectory { get; set; }
-  public DirectoryInfo? DotaAddonDirectory { get; set; }
-  
-  public static Result<Dota2AddonInfo?> GetDotaAddonInfo(FileInfo passedVsndevtsFile, FileInfo dota2Executable)
+  #region Properties
+
+  public Dota2GameMainInfo Dota2GameMainInfo { get; private set; }
+
+  public DirectoryInfo? DotaAddonContentDirectoryInfo { get; private set; }
+  public DirectoryInfo? DotaAddonGameDirectoryInfo { get; private set; }
+
+  #endregion // Properties
+
+  #region Public Methods
+
+  public static Result<Dota2AddonInfo?> GetDotaAddonInfo(string dotaAddonName, Dota2GameMainInfo dota2GameMainInfo)
   {
-    var dota2Directory = dota2Executable.Directory.Parent.Parent.Parent;
-    var dotaAddonsDirectoryPath = Path.Combine(dota2Directory.FullName, "content", "dota_addons");
-    var dotaAddonsDirectory = new DirectoryInfo(dotaAddonsDirectoryPath);
+    var dotaAddonContentDirectoryFullPath = Path.Combine(dota2GameMainInfo.Dota2AddonsContentDirectoryInfo.FullName, dotaAddonName);
+    var dotaAddonContentDirectoryInfo = new DirectoryInfo(dotaAddonContentDirectoryFullPath);
+    if (dotaAddonContentDirectoryInfo.Exists is false)
+    {
+      return new Result<Dota2AddonInfo?>($"Directory '{dotaAddonContentDirectoryInfo.FullName}' not exists.");
+    }
     
-    if (dotaAddonsDirectory.Exists is false)
+    var dotaAddonGameDirectoryFullPath = Path.Combine(dota2GameMainInfo.Dota2AddonsGameDirectoryInfo.FullName, dotaAddonName);
+    var dotaAddonGameDirectoryInfo = new DirectoryInfo(dotaAddonGameDirectoryFullPath);
+  
+    return new Result<Dota2AddonInfo?>(true, new Dota2AddonInfo(dota2GameMainInfo)
     {
-      return new Result<Dota2AddonInfo?>(false, "There was an issue when attempting to locate 'dota_addons' directory.");
-    }
-      
-    if (passedVsndevtsFile.FullName.IndexOf(dotaAddonsDirectory.FullName, StringComparison.InvariantCultureIgnoreCase) != 0)
+      DotaAddonContentDirectoryInfo = dotaAddonContentDirectoryInfo,
+      DotaAddonGameDirectoryInfo = dotaAddonGameDirectoryInfo,
+    });
+  }
+
+  public static Result<Dota2AddonInfo?> GetDotaAddonInfo(FileInfo passedVsndevtsFile, Dota2GameMainInfo dota2GameMainInfo)
+  {
+    if (dota2GameMainInfo.Dota2AddonsContentDirectoryInfo.Exists is false)
     {
-      return new Result<Dota2AddonInfo?>(false, "It looks like .vsndevts file you have passed is not located inside dota addon 'content' directory. " +
-                                               "Because of it, program does not know where to look for sound files (since path to files in .vsndevts file are relative to dota addon directory).");
+      return new Result<Dota2AddonInfo?>("There was an issue when attempting to locate 'dota_addons' directory.");
     }
-      
-    var relativePathFromDotaAddon = passedVsndevtsFile.FullName.Substring(dotaAddonsDirectory.FullName.Length);
+
+    if (passedVsndevtsFile.FullName.IndexOf(dota2GameMainInfo.Dota2AddonsContentDirectoryInfo.FullName, StringComparison.InvariantCultureIgnoreCase) != 0)
+    {
+      return new Result<Dota2AddonInfo?>($"It looks like .{ConstantsCommon.VSNDEVTS_FORMAT} file you have passed is not located inside dota addon 'content' directory. " +
+                                         $"Because of it, program does not know where to look for sound files (since path to files in .{ConstantsCommon.VSNDEVTS_FORMAT} file are relative to dota addon directory).");
+    }
+
+    var relativePathFromDotaAddon = passedVsndevtsFile.FullName.Substring(dota2GameMainInfo.Dota2AddonsContentDirectoryInfo.FullName.Length);
     if (relativePathFromDotaAddon[0] != '\\')
     {
-      return new Result<Dota2AddonInfo?>(false, "There was an issue when attempting to locate 'dota_addons' directory.");
+      return new Result<Dota2AddonInfo?>("There was an issue when attempting to locate 'dota_addons' directory.");
     }
 
     var dotaAddonRelativePath = relativePathFromDotaAddon.Substring(1);
     var dotaAddonName = dotaAddonRelativePath.Substring(0, dotaAddonRelativePath.IndexOf('\\'));
-    var dotaAddonDirectoryPath = Path.Combine(dotaAddonsDirectory.FullName, dotaAddonName);
-    var dotaAddonDirectory = new DirectoryInfo(dotaAddonDirectoryPath);
+    var dotaAddonContentDirectoryPath = Path.Combine(dota2GameMainInfo.Dota2AddonsContentDirectoryInfo.FullName, dotaAddonName);
+    var dotaAddonContentDirectory = new DirectoryInfo(dotaAddonContentDirectoryPath);
 
-    if (dotaAddonDirectory.Exists is false)
+    if (dotaAddonContentDirectory.Exists is false)
     {
-      return new Result<Dota2AddonInfo?>(false, $"There was an issue when attempting to locate '{dotaAddonName}' addon directory.");
+      return new Result<Dota2AddonInfo?>($"There was an issue when attempting to locate '{dotaAddonName}' addon directory.");
     }
+    
+    var dotaAddonGameDirectoryFullPath = Path.Combine(dota2GameMainInfo.Dota2AddonsGameDirectoryInfo.FullName, dotaAddonName);
+    var dotaAddonGameDirectoryInfo = new DirectoryInfo(dotaAddonGameDirectoryFullPath);
 
-    return new Result<Dota2AddonInfo?>(true, new Dota2AddonInfo()
+    return new Result<Dota2AddonInfo?>(true, new Dota2AddonInfo(dota2GameMainInfo)
     {
-      Dota2Directory = dota2Directory,
-      DotaAddonsDirectory = dotaAddonsDirectory,
-      DotaAddonDirectory = dotaAddonDirectory,
+      DotaAddonContentDirectoryInfo = dotaAddonContentDirectory,
+      DotaAddonGameDirectoryInfo = dotaAddonGameDirectoryInfo,
     });
   }
+
+  #endregion // Public Methods
 }

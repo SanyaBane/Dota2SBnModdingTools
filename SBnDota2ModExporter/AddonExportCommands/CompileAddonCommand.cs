@@ -1,0 +1,67 @@
+﻿using System.Diagnostics;
+using System.IO;
+using SBnDota2ModExporter.GUI;
+
+namespace SBnDota2ModExporter.AddonExportCommands;
+
+public static class CompileAddonCommand
+{
+  public static async Task Execute(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress)
+  {
+    progress.Report(new AddonExportProgress("Attempting to compile addon..."));
+
+    var addonContentDirectoryFullPath = Path.Combine(GlobalManager.Instance.Dota2GameMainInfo.Dota2AddonsContentDirectoryInfo.FullName, dota2AddonName);
+    var addonContentDirectoryInfo = new DirectoryInfo(addonContentDirectoryFullPath);
+
+    if (!addonContentDirectoryInfo.Exists)
+    {
+      progress.Report(new AddonExportProgress($"Error. Addon content directory not exist:{Environment.NewLine}" +
+                                              $"'{addonContentDirectoryInfo.FullName}'{Environment.NewLine}" +
+                                              $"Skip.",
+        Constants.RTB_FOREGROUND_COLOR_WARNING));
+
+      return;
+    }
+
+    var arguments = $"-r \"{Path.Combine(addonContentDirectoryInfo.FullName, "*.*")}\"";
+    var processStartInfo = new ProcessStartInfo(GlobalManager.Instance.Dota2GameMainInfo.ResourceCompilerExecutableFileInfo.FullName)
+    {
+      Arguments = arguments,
+      UseShellExecute = false,
+      RedirectStandardOutput = true,
+      RedirectStandardError = true,
+      CreateNoWindow = true,
+    };
+
+    var process = new Process()
+    {
+      StartInfo = processStartInfo
+    };
+
+    process.OutputDataReceived += (sender, args) =>
+    {
+      if (string.IsNullOrEmpty(args.Data))
+        return;
+
+      progress.Report(new AddonExportProgress(args.Data, Constants.RTB_FOREGROUND_COLOR_ANOTHER_PROGRAM));
+      Console.WriteLine($"Output: {args.Data}");
+    };
+
+    process.ErrorDataReceived += (sender, args) =>
+    {
+      if (string.IsNullOrEmpty(args.Data))
+        return;
+
+      progress.Report(new AddonExportProgress(args.Data, Constants.RTB_FOREGROUND_COLOR_ANOTHER_PROGRAM));
+      Console.WriteLine($"Error: {args.Data}");
+    };
+
+    process.Start();
+    process.BeginOutputReadLine();
+    process.BeginErrorReadLine();
+
+    await process.WaitForExitAsync();
+
+    progress.Report(new AddonExportProgress("Addon compilation finished.", Constants.RTB_FOREGROUND_COLOR_SUCCESS));
+  }
+}

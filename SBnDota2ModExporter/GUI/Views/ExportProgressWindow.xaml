@@ -1,0 +1,60 @@
+﻿<Window
+  x:Class="SBnDota2ModExporter.GUI.Views.ExportProgressWindow"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:behaviors="clr-namespace:SBnDota2ModExporter.GUI.Behaviors"
+  mc:Ignorable="d"
+  x:Name="This"
+  behaviors:WindowBehavior.HideCloseButton="True"
+  Title="Export progress"
+  Height="700" Width="800">
+
+  <Grid
+    Margin="3">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <TextBlock
+      Grid.Row="0"
+      Text="Export log:" />
+
+    <RichTextBox
+      Grid.Row="1"
+      x:Name="rtbProgress"
+      Background="LightGray"
+      Height="Auto"
+      Margin="0 3 0 0"
+      AcceptsReturn="True"
+      IsReadOnly="True"
+      VerticalContentAlignment="Top"
+      VerticalAlignment="Stretch" 
+      VerticalScrollBarVisibility="Auto" />
+
+    <Button
+      Grid.Row="2"
+      x:Name="btnClose"
+      Margin="0 3 0 0"
+      Width="80"
+      Height="26"
+      HorizontalAlignment="Right"
+      Click="BtnClose_OnClick">
+      <Button.Style>
+        <Style TargetType="{x:Type Button}">
+          <Setter Property="Content" Value="Exporting..." />
+          <Setter Property="IsEnabled" Value="False" />
+          <Style.Triggers>
+            <DataTrigger Binding="{Binding IsExporting, ElementName=This}" Value="False">
+              <Setter Property="Content" Value="Close" />
+              <Setter Property="IsEnabled" Value="True" />
+            </DataTrigger>
+          </Style.Triggers>
+        </Style>
+      </Button.Style>
+    </Button>
+  </Grid>
+</Window>
