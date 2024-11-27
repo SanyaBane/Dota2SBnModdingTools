@@ -26,9 +26,9 @@ public static class CopyFileCommand
     var fileInfo = new FileInfo(pathToFile);
     if (fileInfo.Exists is false)
     {
-      progress.Report(new AddonExportProgress("Error. File not exist:" +
+      progress.Report(new AddonExportProgress("File not exist:" +
                                               $"'{pathToFile}'{Environment.NewLine}" +
-                                              "Skip.",
+                                              Constants.SKIP_COMMAND_TEXT,
         Constants.RTB_FOREGROUND_COLOR_WARNING));
 
       return;

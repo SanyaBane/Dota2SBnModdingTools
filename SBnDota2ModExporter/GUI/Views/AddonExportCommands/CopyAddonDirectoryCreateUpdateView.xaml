@@ -7,12 +7,66 @@
   xmlns:local="clr-namespace:SBnDota2ModExporter.GUI.Views.AddonExportCommands"
   xmlns:addonExportCommandsCreateUpdate="clr-namespace:SBnDota2ModExporter.GUI.ViewModels.AddonExportCommandsCreateUpdate"
   xmlns:converters="clr-namespace:SBnDota2ModExporter.Converters"
+  xmlns:enums="clr-namespace:SBnDota2ModExporter.Enums"
+  xmlns:dataTemplateSelectors="clr-namespace:SBnDota2ModExporter.GUI.Views.DataTemplateSelectors"
+  x:Name="This"
   mc:Ignorable="d"
   d:DesignHeight="300" d:DesignWidth="300"
   d:DataContext="{d:DesignInstance addonExportCommandsCreateUpdate:CopyAddonDirectoryCreateUpdateViewModel, IsDesignTimeCreatable=True}">
 
   <UserControl.Resources>
     <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" TreatEmptyStringAsNull="True" />
+    <converters:DestinationOfCopyConverter x:Key="DestinationOfCopyConverter" />
+    <converters:TextBoxNullableValueConverter x:Key="TextBoxNullableValueConverter" />
+    
+    <dataTemplateSelectors:DestinationOfCopyContentTemplateSelector 
+      x:Key="DestinationOfCopyContentTemplateSelector">
+      <dataTemplateSelectors:DestinationOfCopyContentTemplateSelector.CopyToRootDataTemplate>
+        <DataTemplate>
+          <TextBox
+            x:Name="tbPreviewResult"
+            DataContext="{Binding DataContext, ElementName=This}"
+            Style="{StaticResource tbReadonlyPreviewResult}"
+            Text="{Binding DestinationOfCopy.PreviewResult, Mode=OneWay}"
+            ToolTip="{Binding Text, Mode=OneWay, RelativeSource={RelativeSource Self}}" />
+        </DataTemplate>
+      </dataTemplateSelectors:DestinationOfCopyContentTemplateSelector.CopyToRootDataTemplate>
+      <dataTemplateSelectors:DestinationOfCopyContentTemplateSelector.CopyToRootUsingRelativePathsDataTemplate>
+        <DataTemplate>
+          <Grid>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+              <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            
+            <TextBlock
+              Grid.Row="0"
+              Text="Take relative path inside of addon and copy to output directory together with it" />
+            
+            <StackPanel
+              Grid.Row="1"
+              Orientation="Horizontal">
+              <TextBlock
+                Text="test/relative/path/" />
+              <TextBlock
+                Foreground="OrangeRed"
+                Text="test/materials/blah" />
+            </StackPanel>
+            
+            <TextBox
+              Grid.Row="2"
+              x:Name="tbPreviewResult"
+              DataContext="{Binding DataContext, ElementName=This}"
+              Style="{StaticResource tbReadonlyPreviewResult}"
+              Text="{Binding DestinationOfCopy.PreviewResult, Mode=OneWay}"
+              ToolTip="{Binding Text, Mode=OneWay, RelativeSource={RelativeSource Self}}" />
+          </Grid>
+          
+        </DataTemplate>
+      </dataTemplateSelectors:DestinationOfCopyContentTemplateSelector.CopyToRootUsingRelativePathsDataTemplate>
+    </dataTemplateSelectors:DestinationOfCopyContentTemplateSelector>
+    
   </UserControl.Resources>
 
   <Grid>
@@ -23,29 +77,34 @@
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
     <StackPanel
       Grid.Row="0"
       Orientation="Vertical">
 
-      <TextBlock
-        Text="Path to directory:" />
-
       <Grid>
         <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" />
           <ColumnDefinition Width="*" />
           <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
 
-        <TextBox
+        <TextBlock
           Grid.Column="0"
-          Style="{StaticResource tbReadOnlyPathToFile}"
-          Text="{Binding PathToDirectory, Mode=OneWay}"
+          VerticalAlignment="Center"
+          Text="Path to directory:" />
+        
+        <TextBox
+          Grid.Column="1"
+          Margin="10 0 0 0"
+          DataContext="{Binding PathToDirectory}"
+          Text="{Binding FullPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True, ValidatesOnExceptions=True, ValidatesOnDataErrors=True, NotifyOnValidationError=True}"
           ToolTip="{Binding Text, Mode=OneWay, RelativeSource={RelativeSource Self}}" />
 
         <Button
-          Grid.Column="1"
+          Grid.Column="2"
           Margin="5 0 0 0"
           Content="Set path"
           Command="{Binding SetPathToDirectoryCommand}" />
@@ -57,17 +116,61 @@
       Margin="0 5 0 0"
       Content="Copy subfolders"
       IsChecked="{Binding IsCopySubfolders}" />
-    
+
+    <Grid
+      Grid.Row="2"
+      Margin="0 5 0 0">
+      <GroupBox
+        Header="Destination">
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+          </Grid.RowDefinitions>
+
+          <RadioButton
+            Grid.Row="0"
+            GroupName="DestinationOfCopy"
+            Content="Copy to addon output directory by same path as inside addon"
+            IsChecked="{Binding Path=DestinationOfCopy.SelectedDestinationOfCopyMode, Converter={StaticResource DestinationOfCopyConverter}, ConverterParameter={x:Static enums:enDestinationOfCopyMode.CopyToRootUsingRelativePaths}}" />
+
+          <RadioButton
+            Grid.Row="1"
+            GroupName="DestinationOfCopy"
+            Content="Copy to addon output directory root"
+            IsChecked="{Binding Path=DestinationOfCopy.SelectedDestinationOfCopyMode, Converter={StaticResource DestinationOfCopyConverter}, ConverterParameter={x:Static enums:enDestinationOfCopyMode.CopyToRoot}}" />
+
+          <!-- <RadioButton -->
+          <!--   Grid.Row="2" -->
+          <!--   GroupName="DestinationOfCopy" -->
+          <!--   Content="Set path inside addon output directory" -->
+          <!--   IsChecked="{Binding Path=SelectedDestinationOfCopy, Converter={StaticResource DestinationOfCopyConverter}, ConverterParameter={x:Static enums:enDestinationOfCopy.CopyToSpecifiedDirectory}}" /> -->
+        </Grid>
+      </GroupBox>
+    </Grid>
+
     <GroupBox
       Grid.Row="3"
       Margin="0 25 0 0"
       Header="How result will look like:"
-      Visibility="{Binding PreviewResult, Converter={StaticResource NullToVisibilityConverter}}">
-      <TextBox
-        Style="{StaticResource tbReadonlyPreviewResult}"
-        Text="{Binding PreviewResult, Mode=OneWay}"
-        ToolTip="{Binding Text, Mode=OneWay, RelativeSource={RelativeSource Self}}" />
+      Visibility="{Binding DestinationOfCopy.PreviewResult, Converter={StaticResource NullToVisibilityConverter}}">
+      <Grid>
+        <!-- <Grid.Style> -->
+        <!--   <Style TargetType="{x:Type Grid}"> -->
+        <!--     <Style.Triggers> -->
+        <!--       <DataTrigger Binding="{Binding SelectedDestinationOfCopy}" Value="{x:Static enums:enDestinationOfCopy.CopyToRoot}"> -->
+        <!--         <Setter Property="Visibility" Value="Collapsed" TargetName="tbPreviewResult" /> -->
+        <!--       </DataTrigger> -->
+        <!--     </Style.Triggers> -->
+        <!--   </Style> -->
+        <!-- </Grid.Style> -->
+        <ContentControl
+          Content="{Binding Path=DestinationOfCopy.SelectedDestinationOfCopyMode}"
+          ContentTemplateSelector="{StaticResource DestinationOfCopyContentTemplateSelector}">
+        </ContentControl>
+      </Grid>
     </GroupBox>
-    
+
   </Grid>
 </UserControl>

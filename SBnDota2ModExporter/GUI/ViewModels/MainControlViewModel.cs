@@ -161,7 +161,7 @@ public class MainControlViewModel : BaseViewModel
 
   private bool CanExecuteExportSelectedAddons(object obj)
   {
-    return AddonExporterInfoViewModels.Any(x => x.IsChecked && x.CanExecuteExportAddonCommand);
+    return AddonExporterInfoViewModels.Any(x => x.IsChecked && x.IsAddonValidForExport);
   }
 
   private bool CanExecuteMoveUp(object obj)
@@ -239,9 +239,20 @@ public class MainControlViewModel : BaseViewModel
     }
   }
 
+  private Result CanSaveAsFile(AddonExporterInfoViewModel addonExporterInfoViewModel, string fullPathToFile)
+  {
+    var vmsToCheck = AddonExporterInfoViewModels
+      .Where(x => !ReferenceEquals(x, addonExporterInfoViewModel) && x.AddonConfigFileInfo != null);
+
+    if (vmsToCheck.Any(x => string.Equals(x.AddonConfigFileInfo.FullName, fullPathToFile, StringComparison.InvariantCultureIgnoreCase)))
+      return new Result("Selected file is already loaded.");
+
+    return new Result(true);
+  }
+
   private void ExecuteCreateAddonExporterFile(object obj)
   {
-    var createdVm = new AddonExporterInfoViewModel()
+    var createdVm = new AddonExporterInfoViewModel(CanSaveAsFile)
     {
       IsChecked = true
     };
@@ -395,7 +406,7 @@ public class MainControlViewModel : BaseViewModel
     AddonExporterInfoViewModels.Move(index, index - 1);
 
     RefreshCommands();
-    
+
     ItemStateUpdated?.Invoke(SelectedAddonExporterFileViewModel);
   }
 
@@ -408,7 +419,7 @@ public class MainControlViewModel : BaseViewModel
     AddonExporterInfoViewModels.Move(index, index + 1);
 
     RefreshCommands();
-    
+
     ItemStateUpdated?.Invoke(SelectedAddonExporterFileViewModel);
   }
 
@@ -432,7 +443,7 @@ public class MainControlViewModel : BaseViewModel
   private void SubscribeToNewAddonExporterInfoViewModel(AddonExporterInfoViewModel addonExporterInfoViewModel)
   {
     addonExporterInfoViewModel.IsCheckedChange += AddonExporterInfoViewModel_OnIsCheckedChange;
-    addonExporterInfoViewModel.CanExecuteExportAddonCommandChange += AddonExporterInfoViewModel_CanExecuteExportAddonCommandChange;
+    addonExporterInfoViewModel.IsAddonValidForExportChange += AddonExporterInfoViewModel_OnIsAddonValidForExportChange;
     addonExporterInfoViewModel.ExportAddonExecute += AddonExporterInfoViewModel_ExportAddonExecute;
   }
 
@@ -441,7 +452,7 @@ public class MainControlViewModel : BaseViewModel
     RefreshCommands();
   }
 
-  private void AddonExporterInfoViewModel_CanExecuteExportAddonCommandChange()
+  private void AddonExporterInfoViewModel_OnIsAddonValidForExportChange()
   {
     RefreshCommands();
   }
@@ -471,11 +482,12 @@ public class MainControlViewModel : BaseViewModel
     {
       var addonExporterDetailedConfig = XmlSerializerService.DeserilazeFromXml<AddonExporterDetailedConfig>(addonExporterShortConfig.FileFullPath);
 
-      var loadedVm = new AddonExporterInfoViewModel
+      var loadedVm = new AddonExporterInfoViewModel(CanSaveAsFile)
       {
         AddonConfigFileInfo = new FileInfo(addonExporterShortConfig.FileFullPath),
         IsChecked = addonExporterShortConfig.IsChecked,
         Dota2AddonName = addonExporterDetailedConfig.Dota2AddonName,
+        AddonOutputDirectoryName = addonExporterDetailedConfig.AddonOutputDirectoryName,
         IsDirty = false,
       };
 
@@ -497,7 +509,7 @@ public class MainControlViewModel : BaseViewModel
     }
     catch (Exception ex)
     {
-      return new Result<AddonExporterInfoViewModel?>(ex.Message);
+      return new Result<AddonExporterInfoViewModel?>(ex.Message, ex);
     }
   }
 

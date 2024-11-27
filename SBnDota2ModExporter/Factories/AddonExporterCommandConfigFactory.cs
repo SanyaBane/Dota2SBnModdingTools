@@ -1,4 +1,5 @@
-﻿using SBnDota2ModExporter.Configs.AddonsExporter;
+﻿using SBnDota2ModExporter.Configs;
+using SBnDota2ModExporter.Configs.AddonsExporter;
 using SBnDota2ModExporter.GUI.ViewModels.AddonExportCommands;
 
 namespace SBnDota2ModExporter.Factories;
@@ -15,6 +16,7 @@ public static class AddonExporterCommandConfigFactory
           IsChecked = copyDirectoryViewModel.IsChecked,
           PathToDirectory = copyDirectoryViewModel.PathToAddonDirectory,
           IsCopySubfolders = copyDirectoryViewModel.IsCopySubfolders,
+          DestinationOfCopyConfig = copyDirectoryViewModel.DestinationOfCopy.CreateDestinationOfCopyConfig(),
         };
 
       case CopyAddonFileViewModel copyFileViewModel:
@@ -66,6 +68,7 @@ public static class AddonExporterCommandConfigFactory
           IsChecked = copyDirectoryCommandConfig.IsChecked,
           PathToAddonDirectory = copyDirectoryCommandConfig.PathToDirectory,
           IsCopySubfolders = copyDirectoryCommandConfig.IsCopySubfolders,
+          DestinationOfCopy = copyDirectoryCommandConfig.DestinationOfCopyConfig.CreateDestinationOfCopyViewModel(),
         };
 
       case CopyAddonFileCommandConfig copyFileCommandConfig:

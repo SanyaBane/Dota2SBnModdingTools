@@ -234,7 +234,7 @@
                                   <Condition Binding="{Binding IsSaved}" Value="True" />
                                   <Condition Binding="{Binding IsDirty}" Value="True" />
                                 </MultiDataTrigger.Conditions>
-                                <Setter Property="Text" Value="Changed" />
+                                <Setter Property="Text" Value="Modified" />
                                 <Setter Property="Foreground" Value="Black" />
                               </MultiDataTrigger>
                             </Style.Triggers>

@@ -11,6 +11,9 @@ public class AddonExporterDetailedConfig
   [XmlElement]
   public string? Dota2AddonName { get; set; }
 
+  [XmlElement]
+  public string? AddonOutputDirectoryName { get; set; }
+
   [XmlArray("AddonExporterCommandConfigs")]
   [XmlArrayItem("AddonExporterCommandConfig")]
   public List<AddonExporterCommandConfigWrapper> AddonExporterCommandConfigWrappers { get; } = new();

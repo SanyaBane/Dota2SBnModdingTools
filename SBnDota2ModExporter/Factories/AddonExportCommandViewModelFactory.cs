@@ -12,8 +12,9 @@ public static class AddonExportCommandViewModelFactory
       case CopyAddonDirectoryCreateUpdateViewModel copyDirectoryCreateUpdateViewModel:
         return new CopyAddonDirectoryViewModel()
         {
-          PathToAddonDirectory = copyDirectoryCreateUpdateViewModel.PathToDirectory,
+          PathToAddonDirectory = copyDirectoryCreateUpdateViewModel.PathToDirectory.FullPath,
           IsCopySubfolders = copyDirectoryCreateUpdateViewModel.IsCopySubfolders,
+          DestinationOfCopy = copyDirectoryCreateUpdateViewModel.DestinationOfCopy.Clone(),
         };
       
       case CopyAddonFileCreateUpdateViewModel copyFileCreateUpdateViewModel:

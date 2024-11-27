@@ -32,7 +32,7 @@ public class SBnModExporterGlobalConfig
     }
     catch (Exception ex)
     {
-      return new Result(ex.Message);
+      return new Result(ex.Message, ex);
     }
   }
 }

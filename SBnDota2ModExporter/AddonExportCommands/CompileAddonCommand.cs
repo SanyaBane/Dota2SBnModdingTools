@@ -15,9 +15,9 @@ public static class CompileAddonCommand
 
     if (!addonContentDirectoryInfo.Exists)
     {
-      progress.Report(new AddonExportProgress($"Error. Addon content directory not exist:{Environment.NewLine}" +
+      progress.Report(new AddonExportProgress($"Addon content directory not exist:{Environment.NewLine}" +
                                               $"'{addonContentDirectoryInfo.FullName}'{Environment.NewLine}" +
-                                              $"Skip.",
+                                              Constants.SKIP_COMMAND_TEXT,
         Constants.RTB_FOREGROUND_COLOR_WARNING));
 
       return;

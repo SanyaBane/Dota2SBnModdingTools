@@ -22,7 +22,6 @@ public partial class AddonExporterInfoView
       var vm = (AddonExporterInfoViewModel)e.OldValue;
       vm.ClickExecuteExportCommandCreate -= AddonExporterInfoViewModel_OnClickExecuteExportCommandCreate;
       vm.ClickExecuteExportCommandEdit -= AddonExporterInfoViewModel_OnClickExecuteExportCommandEdit;
-      vm.ItemStateUpdated -= AddonExporterInfoViewModel_OnItemStateUpdated;
     }
 
     if (e.NewValue != null)
@@ -30,7 +29,6 @@ public partial class AddonExporterInfoView
       var vm = (AddonExporterInfoViewModel)e.NewValue;
       vm.ClickExecuteExportCommandCreate += AddonExporterInfoViewModel_OnClickExecuteExportCommandCreate;
       vm.ClickExecuteExportCommandEdit += AddonExporterInfoViewModel_OnClickExecuteExportCommandEdit;
-      vm.ItemStateUpdated += AddonExporterInfoViewModel_OnItemStateUpdated;
     }
   }
 
@@ -52,9 +50,10 @@ public partial class AddonExporterInfoView
       DataContext = windowCreateUpdateViewModel,
       WindowCreateUpdateContent = addonCommandCreateUpdateView,
       Owner = owner,
-      Width = 800,
-      Height = 300,
+      MinWidth = 600,
+      MinHeight = 200,
       WindowStartupLocation = WindowStartupLocation.CenterOwner,
+      SizeToContent = SizeToContent.WidthAndHeight,
     };
 
     if (windowCreateUpdateView.ShowDialog() == true)
@@ -81,19 +80,15 @@ public partial class AddonExporterInfoView
       DataContext = windowCreateUpdateViewModel,
       WindowCreateUpdateContent = addonCommandCreateUpdateView,
       Owner = owner,
-      Width = 800,
-      Height = 300,
+      MinWidth = 600,
+      MinHeight = 200,
       WindowStartupLocation = WindowStartupLocation.CenterOwner,
+      SizeToContent = SizeToContent.WidthAndHeight,
     };
 
     if (windowCreateUpdateView.ShowDialog() == true)
     {
       ViewModel.HandleSuccessClickExecuteExportCommandEdit(editVm, addonCommandCreateUpdateViewModel.AddonExportCommandCreateUpdateViewModel);
     }
-  }
-
-  private void AddonExporterInfoViewModel_OnItemStateUpdated(IAddonExportCommandViewModel vm)
-  {
-    dataGridAddonExportCommands.ScrollIntoView(vm);
   }
 }

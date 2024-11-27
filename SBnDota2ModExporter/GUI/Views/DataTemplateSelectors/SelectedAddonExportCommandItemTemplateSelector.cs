@@ -6,7 +6,6 @@ namespace SBnDota2ModExporter.GUI.Views.DataTemplateSelectors;
 
 public class SelectedAddonExportCommandItemTemplateSelector : DataTemplateSelector
 {
-  public DataTemplate WhenNullDataTemplate { get; set; }
   public DataTemplate CopyAddonDirectoryDataTemplate { get; set; }
   public DataTemplate CopyAddonFileDataTemplate { get; set; }
   public DataTemplate CopyDirectoryDataTemplate { get; set; }

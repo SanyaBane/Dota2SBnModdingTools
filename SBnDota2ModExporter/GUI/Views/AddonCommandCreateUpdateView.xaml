@@ -12,37 +12,37 @@
   mc:Ignorable="d"
   d:DesignHeight="300" d:DesignWidth="300"
   d:DataContext="{d:DesignInstance viewModels:AddonCommandCreateUpdateViewModel, IsDesignTimeCreatable=True}">
-  
+
   <UserControl.Resources>
-    
+
     <converters:DebugConverter x:Key="DebugConverter" />
     <converters:AddonCommandTypeToTextConverter x:Key="AddonCommandTypeToTextConverter" />
     <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-    
+
     <DataTemplate x:Key="CopyAddonDirectoryDataTemplate">
       <addonExportCommands:CopyAddonDirectoryCreateUpdateView />
     </DataTemplate>
-    
+
     <DataTemplate x:Key="CopyAddonFileDataTemplate">
       <addonExportCommands:CopyAddonFileCreateUpdateView />
     </DataTemplate>
-    
+
     <DataTemplate x:Key="CopyDirectoryDataTemplate">
       <addonExportCommands:CopyDirectoryCreateUpdateView />
     </DataTemplate>
-    
+
     <DataTemplate x:Key="CopyFileDataTemplate">
       <addonExportCommands:CopyFileCreateUpdateView />
     </DataTemplate>
-    
+
     <DataTemplate x:Key="CompileAddonDataTemplate">
       <addonExportCommands:CompileAddonCreateUpdateView />
     </DataTemplate>
-    
+
     <DataTemplate x:Key="ClearOutputDirectoryDataTemplate">
       <addonExportCommands:ClearOutputDirectoryCreateUpdateView />
     </DataTemplate>
-    
+
     <dataTemplateSelectors:CreateUpdateAddonCommandTypeDataTemplateSelector
       x:Key="CreateUpdateAddonCommandTypeDataTemplateSelector"
       CopyAddonDirectoryDataTemplate="{StaticResource CopyAddonDirectoryDataTemplate}"
@@ -52,13 +52,13 @@
       CompileAddonDataTemplate="{StaticResource CompileAddonDataTemplate}"
       ClearOutputDirectoryDataTemplate="{StaticResource ClearOutputDirectoryDataTemplate}" />
   </UserControl.Resources>
-  
+
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
     </Grid.RowDefinitions>
-    
+
     <Grid
       Grid.Row="0"
       Visibility="{Binding IsCreatingVm, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -70,14 +70,14 @@
         <RowDefinition Height="Auto" />
         <RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
-      
+
       <TextBlock
         Grid.Column="0"
         Grid.Row="0"
         VerticalAlignment="Center"
         Text="Command:" />
-      
-      <ComboBox 
+
+      <ComboBox
         Grid.Column="1"
         Grid.Row="0"
         Margin="3 0 0 0"
@@ -91,19 +91,23 @@
           </DataTemplate>
         </ComboBox.ItemTemplate>
       </ComboBox>
-    
+
       <Separator
         Grid.Column="0" Grid.ColumnSpan="2"
         Grid.Row="1"
         Margin="0 5" />
     </Grid>
-    
-    <ContentControl
+
+    <ScrollViewer
       Grid.Row="1"
       Margin="0 0 0 0"
-      Content="{Binding Path=AddonExportCommandCreateUpdateViewModel}"
-      ContentTemplateSelector="{StaticResource CreateUpdateAddonCommandTypeDataTemplateSelector}">
-    </ContentControl>
-    
+      Padding="3"
+      VerticalScrollBarVisibility="Auto">
+      <ContentControl
+        Content="{Binding Path=AddonExportCommandCreateUpdateViewModel}"
+        ContentTemplateSelector="{StaticResource CreateUpdateAddonCommandTypeDataTemplateSelector}">
+      </ContentControl>
+    </ScrollViewer>
+
   </Grid>
 </UserControl>

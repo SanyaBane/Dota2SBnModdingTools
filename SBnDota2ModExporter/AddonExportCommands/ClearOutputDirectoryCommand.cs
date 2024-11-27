@@ -12,9 +12,9 @@ public static class ClearOutputDirectoryCommand
     var addonOutputDirectory = new DirectoryInfo(addonOutputDirectoryFullPath);
     if (addonOutputDirectory.Exists is false)
     {
-      progress.Report(new AddonExportProgress($"Error. Addon addon output directory not exist:{Environment.NewLine}" +
+      progress.Report(new AddonExportProgress($"Addon addon output directory not exist:{Environment.NewLine}" +
                                               $"'{addonOutputDirectory.FullName}'{Environment.NewLine}" +
-                                              $"Skip.",
+                                              Constants.SKIP_COMMAND_TEXT,
         Constants.RTB_FOREGROUND_COLOR_WARNING));
 
       return;

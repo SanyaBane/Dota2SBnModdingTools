@@ -32,9 +32,9 @@ public static class CopyAddonDirectoryCommand
     var pathToDirectoryInfo = new DirectoryInfo(fullPathToDirectory);
     if (pathToDirectoryInfo.Exists is false)
     {
-      progress.Report(new AddonExportProgress($"Error. Addon directory not exist:{Environment.NewLine}" +
+      progress.Report(new AddonExportProgress($"Addon directory not exist:{Environment.NewLine}" +
                                               $"'{pathToAddonDirectory}'{Environment.NewLine}" +
-                                              "Skip.",
+                                              Constants.SKIP_COMMAND_TEXT,
         Constants.RTB_FOREGROUND_COLOR_WARNING));
 
       return;

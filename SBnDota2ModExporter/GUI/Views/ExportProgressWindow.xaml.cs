@@ -65,6 +65,15 @@ public partial class ExportProgressWindow : Window
       
       await loadedAddonExporterInfoViewModel.ExportAddonAsync(progress);
     }
+    
+    rtbProgress.Document.Blocks.Add(new Paragraph(new Run(
+      "End of export."))
+    {
+      Foreground = Brushes.Blue,
+      FontWeight = FontWeights.Bold
+    });
+    
+    rtbProgress.ScrollToEnd();
   }
 
   private void BtnClose_OnClick(object sender, RoutedEventArgs e)

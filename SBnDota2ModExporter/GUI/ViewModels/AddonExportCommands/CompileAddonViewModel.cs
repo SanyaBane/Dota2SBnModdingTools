@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-using System.IO;
-using SBnDota2ModExporter.AddonExportCommands;
+﻿using SBnDota2ModExporter.AddonExportCommands;
 using SBnDota2ModExporter.Enums;
 using SBnDota2ModExporter.GUI.ViewModels.AddonExportCommandsCreateUpdate;
 

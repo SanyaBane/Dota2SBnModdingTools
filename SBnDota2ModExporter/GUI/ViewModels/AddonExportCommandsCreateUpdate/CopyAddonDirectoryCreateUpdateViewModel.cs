@@ -2,6 +2,7 @@
 using System.Windows;
 using Common.WPF;
 using Microsoft.Win32;
+using SBnDota2ModExporter.Enums;
 using SBnDota2ModExporter.GUI.ViewModels.AddonExportCommands;
 
 namespace SBnDota2ModExporter.GUI.ViewModels.AddonExportCommandsCreateUpdate;
@@ -10,10 +11,10 @@ public class CopyAddonDirectoryCreateUpdateViewModel : BaseViewModel, IAddonExpo
 {
   #region Fields
 
+  private DestinationOfCopyViewModel _destinationOfCopy = new();
   private readonly string _dota2AddonName;
   private readonly Action<bool>? _canExecuteOkCommandCallback;
 
-  private string _pathToDirectory = string.Empty;
   private bool _isCopySubfolders = true;
   private bool _isDirty;
 
@@ -30,32 +31,44 @@ public class CopyAddonDirectoryCreateUpdateViewModel : BaseViewModel, IAddonExpo
 
     if (editVm != null)
     {
-      _pathToDirectory = editVm.PathToAddonDirectory;
-      UpdateVmAfterPathToDirectoryChange();
+      PathToDirectory.FullPath = editVm.PathToAddonDirectory;
 
       _isCopySubfolders = editVm.IsCopySubfolders;
+      DestinationOfCopy = editVm.DestinationOfCopy.Clone();
+      
+      DestinationOfCopy.UpdateVmAfterPathToDirectoryChange(PathToDirectory, _dota2AddonName);
     }
+
+    PathToDirectory.FullPathChange += () =>
+    {
+      DestinationOfCopy.UpdateVmAfterPathToDirectoryChange(PathToDirectory, _dota2AddonName);
+
+      IsDirty = true;
+    };
+
+    _destinationOfCopy.SelectedDestinationOfCopyChange += () =>
+    {
+      DestinationOfCopy.UpdateVmAfterPathToDirectoryChange(PathToDirectory, _dota2AddonName);
+
+      IsDirty = true;
+    };
   }
 
   #endregion // Ctor
 
   #region Properties
 
-  public string PathToDirectory
+  public DestinationOfCopyViewModel DestinationOfCopy
   {
-    get => _pathToDirectory;
+    get => _destinationOfCopy;
     set
     {
-      _pathToDirectory = value;
+      _destinationOfCopy = value;
       OnPropertyChanged();
-
-      UpdateVmAfterPathToDirectoryChange();
-
-      IsDirty = true;
     }
   }
 
-  public string? PreviewResult { get; private set; }
+  public PathToDirectoryViewModel PathToDirectory { get; } = new PathToDirectoryViewModel();
 
   public bool IsCopySubfolders
   {
@@ -97,9 +110,9 @@ public class CopyAddonDirectoryCreateUpdateViewModel : BaseViewModel, IAddonExpo
     var addonDirectoryInfo = new DirectoryInfo(addonDirectoryFullPath);
 
     DirectoryInfo? directoryInfo = null;
-    if (!string.IsNullOrEmpty(PathToDirectory))
+    if (!string.IsNullOrEmpty(PathToDirectory.FullPath))
     {
-      directoryInfo = new DirectoryInfo(PathToDirectory);
+      directoryInfo = new DirectoryInfo(PathToDirectory.FullPath);
     }
 
     string? initialDirectory = null;
@@ -110,23 +123,40 @@ public class CopyAddonDirectoryCreateUpdateViewModel : BaseViewModel, IAddonExpo
 
     var openFolderDialog = new OpenFolderDialog()
     {
-      InitialDirectory = initialDirectory ?? addonDirectoryInfo.FullName,
       AddToRecent = false,
     };
 
+    if (initialDirectory != null)
+    {
+      openFolderDialog.InitialDirectory = initialDirectory;
+    }
+    else
+    {
+      openFolderDialog.InitialDirectory = addonDirectoryInfo.FullName;
+      
+      var initDirInfo = new DirectoryInfo(openFolderDialog.InitialDirectory);
+      if (initDirInfo.Exists is false)
+      {
+        MessageBox.Show($"Can not find addon 'game' directory:{Environment.NewLine}" +
+                        $"'{openFolderDialog.InitialDirectory}'{Environment.NewLine}{Environment.NewLine}" +
+                        $"Maybe it was not compiled yet? It's would be much easier if you first compile addon and only then use this window to point to already compiled directory which must be copied to output directory.", 
+          "Warning", MessageBoxButton.OK, MessageBoxImage.Information);
+      }
+    }
+    
     if (openFolderDialog.ShowDialog() == true)
     {
       // check if pointed folder is exist inside of addon "game" folder
       if (openFolderDialog.FolderName.IndexOf(addonDirectoryInfo.FullName, StringComparison.InvariantCultureIgnoreCase) != 0)
       {
-        MessageBox.Show($"You need to point to folder inside of your addon:{Environment.NewLine}" +
-                        $"'{addonDirectoryInfo.FullName}'", 
+        MessageBox.Show($"You need to point to directory inside of your addon 'game' directory:{Environment.NewLine}" +
+                        $"'{addonDirectoryInfo.FullName}'",
           "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-        
+
         return;
       }
-      
-      PathToDirectory = openFolderDialog.FolderName;
+
+      PathToDirectory.FullPath = openFolderDialog.FolderName;
     }
   }
 
@@ -147,22 +177,7 @@ public class CopyAddonDirectoryCreateUpdateViewModel : BaseViewModel, IAddonExpo
 
   private bool CanExecuteOkCommand()
   {
-    return IsDirty && !string.IsNullOrEmpty(PathToDirectory);
-  }
-
-  private void UpdateVmAfterPathToDirectoryChange()
-  {
-    if (string.IsNullOrEmpty(_pathToDirectory))
-    {
-      PreviewResult = string.Empty;
-    }
-    else
-    {
-      var dir = new DirectoryInfo(_pathToDirectory);
-      PreviewResult = Path.Combine(GlobalManager.Instance.GlobalSettings.OutputDirectoryFullPath, _dota2AddonName, dir.Name);
-    }
-
-    OnPropertyChanged(nameof(PreviewResult));
+    return IsDirty && !string.IsNullOrEmpty(PathToDirectory.FullPath);
   }
 
   #endregion // Private Methods
