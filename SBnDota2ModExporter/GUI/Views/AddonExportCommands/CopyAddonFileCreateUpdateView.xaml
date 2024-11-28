@@ -7,25 +7,46 @@
   xmlns:local="clr-namespace:SBnDota2ModExporter.GUI.Views.AddonExportCommands"
   xmlns:addonExportCommandsCreateUpdate="clr-namespace:SBnDota2ModExporter.GUI.ViewModels.AddonExportCommandsCreateUpdate"
   xmlns:converters="clr-namespace:SBnDota2ModExporter.Converters"
+  xmlns:enums="clr-namespace:SBnDota2ModExporter.Enums"
   mc:Ignorable="d"
   d:DesignHeight="300" d:DesignWidth="300"
   d:DataContext="{d:DesignInstance addonExportCommandsCreateUpdate:CopyAddonFileCreateUpdateViewModel, IsDesignTimeCreatable=True}">
   
   <UserControl.Resources>
+    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <converters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
     <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" TreatEmptyStringAsNull="True" />
   </UserControl.Resources>
   
   <Grid>
-    <Grid.ColumnDefinitions>
-      <ColumnDefinition Width="*" />
-    </Grid.ColumnDefinitions>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
-
+    
     <StackPanel
       Grid.Row="0"
+      x:Name="spSelectedCommand"
+      Orientation="Vertical"
+      Visibility="{Binding IsUpdatingVm, Converter={StaticResource BooleanToVisibilityConverter}}">
+      <StackPanel
+        Orientation="Horizontal">
+        <TextBlock
+          FontWeight="Bold"
+          VerticalAlignment="Center"
+          Text="Command:" />
+        <TextBlock
+          Margin="3 0 0 0"
+          FontWeight="Bold"
+          VerticalAlignment="Center"
+          Text="{Binding Source={x:Static enums:enAddonCommandType.CopyAddonFile}, Converter={StaticResource EnumToDescriptionConverter}}" />
+      </StackPanel>
+      <Separator />
+    </StackPanel>
+
+    <StackPanel
+      Grid.Row="1"
       Orientation="Vertical">
 
       <TextBlock
@@ -52,7 +73,7 @@
     </StackPanel>
 
     <GroupBox
-      Grid.Row="1"
+      Grid.Row="2"
       Margin="0 25 0 0"
       Header="How result will look like:"
       Visibility="{Binding PreviewResult, Converter={StaticResource NullToVisibilityConverter}}">

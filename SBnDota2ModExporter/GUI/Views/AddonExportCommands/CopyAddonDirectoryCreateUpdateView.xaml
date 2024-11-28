@@ -9,6 +9,10 @@
   xmlns:converters="clr-namespace:SBnDota2ModExporter.Converters"
   xmlns:enums="clr-namespace:SBnDota2ModExporter.Enums"
   xmlns:dataTemplateSelectors="clr-namespace:SBnDota2ModExporter.GUI.Views.DataTemplateSelectors"
+  xmlns:data="clr-namespace:SBnDota2ModExporter.GUI.ViewModels.DestinationOfCopy.Data"
+  xmlns:sBnDota2ModExporter="clr-namespace:SBnDota2ModExporter"
+  xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+  xmlns:behaviors="clr-namespace:SBnDota2ModExporter.GUI.Behaviors"
   x:Name="This"
   mc:Ignorable="d"
   d:DesignHeight="300" d:DesignWidth="300"
@@ -17,56 +21,193 @@
   <UserControl.Resources>
     <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" TreatEmptyStringAsNull="True" />
     <converters:DestinationOfCopyConverter x:Key="DestinationOfCopyConverter" />
-    <converters:TextBoxNullableValueConverter x:Key="TextBoxNullableValueConverter" />
-    
-    <dataTemplateSelectors:DestinationOfCopyContentTemplateSelector 
+    <converters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
+    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+    <Style
+      x:Key="TreeViewItemContainerStyle"
+      TargetType="{x:Type TreeViewItem}"
+      d:DataContext="{d:DesignInstance sBnDota2ModExporter:OutputNodeViewModel}">
+      <Setter Property="IsExpanded" Value="{Binding IsExpanded}" />
+    </Style>
+
+    <HierarchicalDataTemplate
+      x:Key="TreeViewItemTemplate"
+      ItemsSource="{Binding Items}">
+      <Grid
+        d:DataContext="{d:DesignInstance sBnDota2ModExporter:OutputNodeViewModel, IsDesignTimeCreatable=True}">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Image
+          Grid.Column="0"
+          Width="16"
+          Height="16">
+          <Image.Style>
+            <Style TargetType="{x:Type Image}">
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding OutputNodeType}" Value="{x:Static sBnDota2ModExporter:OutputNodeViewModel+enOutputNodeType.File}">
+                  <Setter Property="Source" Value="pack://application:,,,/Images/Icons/icons8-file-32.png" />
+                </DataTrigger>
+                <DataTrigger Binding="{Binding OutputNodeType}" Value="{x:Static sBnDota2ModExporter:OutputNodeViewModel+enOutputNodeType.Directory}">
+                  <Setter Property="Source" Value="pack://application:,,,/Images/Icons/icons8-folder-32.png" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </Image.Style>
+        </Image>
+        <TextBlock
+          Grid.Column="1"
+          Margin="2 0 0 0"
+          HorizontalAlignment="Stretch"
+          Text="{Binding Name}"
+          FontWeight="{Binding FontWeight}">
+          <TextBlock.Style>
+            <Style TargetType="{x:Type TextBlock}">
+              <Setter Property="FontStyle" Value="Normal" />
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding IsVirtual}" Value="True">
+                  <Setter Property="FontStyle" Value="Italic" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </TextBlock.Style>
+        </TextBlock>
+        <Image
+          Grid.Column="2"
+          Margin="2 0 0 0"
+          Width="16"
+          Height="16"
+          Source="pack://application:,,,/Images/Icons/icons8-exclamation-32.png">
+          <Image.Style>
+            <Style TargetType="{x:Type Image}">
+              <Setter Property="Visibility" Value="Collapsed" />
+              <Setter Property="ToolTip" Value="{x:Null}" />
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding IsVirtual}" Value="True">
+                  <Setter Property="Visibility" Value="Visible" />
+                  <Setter Property="ToolTip" Value="This directory is not exist yet and will be created when exporting addon" />
+                </DataTrigger>
+              </Style.Triggers>
+            </Style>
+          </Image.Style>
+        </Image>
+      </Grid>
+    </HierarchicalDataTemplate>
+
+    <dataTemplateSelectors:DestinationOfCopyContentTemplateSelector
       x:Key="DestinationOfCopyContentTemplateSelector">
+
       <dataTemplateSelectors:DestinationOfCopyContentTemplateSelector.CopyToRootDataTemplate>
         <DataTemplate>
-          <TextBox
-            x:Name="tbPreviewResult"
-            DataContext="{Binding DataContext, ElementName=This}"
-            Style="{StaticResource tbReadonlyPreviewResult}"
-            Text="{Binding DestinationOfCopy.PreviewResult, Mode=OneWay}"
-            ToolTip="{Binding Text, Mode=OneWay, RelativeSource={RelativeSource Self}}" />
+          <Grid
+            DataContext="{Binding DataContext.DestinationOfCopyCreateUpdateViewModel.DestinationOfCopyDataViewModel, ElementName=This}"
+            d:DataContext="{d:DesignInstance data:DefaultDestinationOfCopyDataViewModel, IsDesignTimeCreatable=True}">
+            <GroupBox
+              Margin="0 25 0 0"
+              Header="How result will look like:">
+              <TreeView
+                Height="100"
+                ItemsSource="{Binding PreviewOutputPathViewModel.OutputTreeViewModel.Items}"
+                ItemTemplate="{StaticResource TreeViewItemTemplate}"
+                ItemContainerStyle="{StaticResource TreeViewItemContainerStyle}">
+              </TreeView>
+            </GroupBox>
+          </Grid>
         </DataTemplate>
       </dataTemplateSelectors:DestinationOfCopyContentTemplateSelector.CopyToRootDataTemplate>
+
       <dataTemplateSelectors:DestinationOfCopyContentTemplateSelector.CopyToRootUsingRelativePathsDataTemplate>
         <DataTemplate>
-          <Grid>
+          <Grid
+            DataContext="{Binding DataContext.DestinationOfCopyCreateUpdateViewModel.DestinationOfCopyDataViewModel, ElementName=This}"
+            d:DataContext="{d:DesignInstance data:RelativeDestinationOfCopyDataViewModel, IsDesignTimeCreatable=True}">
+            <GroupBox
+              Margin="0 25 0 0"
+              Header="How result will look like:">
+              <TreeView
+                Height="100"
+                ItemsSource="{Binding PreviewOutputPathViewModel.OutputTreeViewModel.Items}"
+                ItemTemplate="{StaticResource TreeViewItemTemplate}"
+                ItemContainerStyle="{StaticResource TreeViewItemContainerStyle}">
+              </TreeView>
+            </GroupBox>
+          </Grid>
+
+        </DataTemplate>
+      </dataTemplateSelectors:DestinationOfCopyContentTemplateSelector.CopyToRootUsingRelativePathsDataTemplate>
+
+      <dataTemplateSelectors:DestinationOfCopyContentTemplateSelector.CopyToSpecifiedDirectoryDataTemplate>
+        <DataTemplate>
+          <Grid
+            DataContext="{Binding DataContext.DestinationOfCopyCreateUpdateViewModel.DestinationOfCopyDataViewModel, ElementName=This}"
+            d:DataContext="{d:DesignInstance data:SpecifiedDestinationOfCopyDataViewModel, IsDesignTimeCreatable=True}">
             <Grid.RowDefinitions>
               <RowDefinition Height="Auto" />
               <RowDefinition Height="Auto" />
-              <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            
-            <TextBlock
-              Grid.Row="0"
-              Text="Take relative path inside of addon and copy to output directory together with it" />
-            
             <StackPanel
-              Grid.Row="1"
-              Orientation="Horizontal">
+              Grid.Row="0"
+              Orientation="Vertical">
               <TextBlock
-                Text="test/relative/path/" />
-              <TextBlock
-                Foreground="OrangeRed"
-                Text="test/materials/blah" />
+                Text="Specify destination of copy" />
+              <TreeView
+                Height="100"
+                ItemsSource="{Binding SpecifiedDestinationNodeViewModel.Items}"
+                ItemTemplate="{StaticResource TreeViewItemTemplate}"
+                ItemContainerStyle="{StaticResource TreeViewItemContainerStyle}">
+                <b:Interaction.Behaviors>
+                  <behaviors:BindableSelectedItemBehavior
+                    SelectedItem="{Binding SelectedNode, Mode=TwoWay}" />
+                </b:Interaction.Behaviors>
+              </TreeView>
+              <Grid
+                Margin="0 3 0 0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto" />
+                  <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Button
+                  Grid.Row="0" Grid.Column="0"
+                  Content="Create directory"
+                  Command="{Binding CreateDirectoryCommand}" />
+                <Button
+                  Grid.Row="0" Grid.Column="1"
+                  Margin="3 0 0 0"
+                  Content="Remove directory"
+                  Command="{Binding RemoveDirectoryCommand}"
+                  behaviors:ControlBehaviors.IsShowOnDisabled="False" />
+                <Button
+                  Grid.Row="1" Grid.Column="0"
+                  Margin="0 3 0 0"
+                  Content="Rename directory"
+                  Command="{Binding RenameDirectoryCommand}"
+                  behaviors:ControlBehaviors.IsShowOnDisabled="False" />
+              </Grid>
             </StackPanel>
-            
-            <TextBox
-              Grid.Row="2"
-              x:Name="tbPreviewResult"
-              DataContext="{Binding DataContext, ElementName=This}"
-              Style="{StaticResource tbReadonlyPreviewResult}"
-              Text="{Binding DestinationOfCopy.PreviewResult, Mode=OneWay}"
-              ToolTip="{Binding Text, Mode=OneWay, RelativeSource={RelativeSource Self}}" />
+            <GroupBox
+              Grid.Row="1"
+              Margin="0 25 0 0"
+              Header="How result will look like:">
+              <TreeView
+                Height="100"
+                ItemsSource="{Binding PreviewOutputPathViewModel.OutputTreeViewModel.Items}"
+                ItemTemplate="{StaticResource TreeViewItemTemplate}"
+                ItemContainerStyle="{StaticResource TreeViewItemContainerStyle}">
+              </TreeView>
+            </GroupBox>
           </Grid>
-          
+
         </DataTemplate>
-      </dataTemplateSelectors:DestinationOfCopyContentTemplateSelector.CopyToRootUsingRelativePathsDataTemplate>
+      </dataTemplateSelectors:DestinationOfCopyContentTemplateSelector.CopyToSpecifiedDirectoryDataTemplate>
     </dataTemplateSelectors:DestinationOfCopyContentTemplateSelector>
-    
+
   </UserControl.Resources>
 
   <Grid>
@@ -78,10 +219,31 @@
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
 
     <StackPanel
       Grid.Row="0"
+      x:Name="spSelectedCommand"
+      Orientation="Vertical"
+      Visibility="{Binding IsUpdatingVm, Converter={StaticResource BooleanToVisibilityConverter}}">
+      <StackPanel
+        Orientation="Horizontal">
+        <TextBlock
+          FontWeight="Bold"
+          VerticalAlignment="Center"
+          Text="Command:" />
+        <TextBlock
+          Margin="3 0 0 0"
+          FontWeight="Bold"
+          VerticalAlignment="Center"
+          Text="{Binding Source={x:Static enums:enAddonCommandType.CopyAddonDirectory}, Converter={StaticResource EnumToDescriptionConverter}}" />
+      </StackPanel>
+      <Separator />
+    </StackPanel>
+
+    <StackPanel
+      Grid.Row="1"
       Orientation="Vertical">
 
       <Grid>
@@ -95,11 +257,11 @@
           Grid.Column="0"
           VerticalAlignment="Center"
           Text="Path to directory:" />
-        
+
         <TextBox
           Grid.Column="1"
           Margin="10 0 0 0"
-          DataContext="{Binding PathToDirectory}"
+          DataContext="{Binding DestinationOfCopyCreateUpdateViewModel.FullPathToDirectoryVm}"
           Text="{Binding FullPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, ValidatesOnNotifyDataErrors=True, ValidatesOnExceptions=True, ValidatesOnDataErrors=True, NotifyOnValidationError=True}"
           ToolTip="{Binding Text, Mode=OneWay, RelativeSource={RelativeSource Self}}" />
 
@@ -107,21 +269,21 @@
           Grid.Column="2"
           Margin="5 0 0 0"
           Content="Set path"
-          Command="{Binding SetPathToDirectoryCommand}" />
+          Command="{Binding DestinationOfCopyCreateUpdateViewModel.SetPathToDirectoryCommand}" />
       </Grid>
     </StackPanel>
 
     <CheckBox
-      Grid.Row="1"
+      Grid.Row="2"
       Margin="0 5 0 0"
       Content="Copy subfolders"
       IsChecked="{Binding IsCopySubfolders}" />
 
     <Grid
-      Grid.Row="2"
+      Grid.Row="3"
       Margin="0 5 0 0">
       <GroupBox
-        Header="Destination">
+        Header="Copying method">
         <Grid>
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
@@ -131,46 +293,32 @@
 
           <RadioButton
             Grid.Row="0"
-            GroupName="DestinationOfCopy"
-            Content="Copy to addon output directory by same path as inside addon"
-            IsChecked="{Binding Path=DestinationOfCopy.SelectedDestinationOfCopyMode, Converter={StaticResource DestinationOfCopyConverter}, ConverterParameter={x:Static enums:enDestinationOfCopyMode.CopyToRootUsingRelativePaths}}" />
+            GroupName="SelectedDestinationOfCopyMode"
+            Content="{Binding Source={x:Static enums:enDestinationOfCopyMode.CopyToRootUsingRelativePaths}, Converter={StaticResource EnumToDescriptionConverter}}"
+            IsChecked="{Binding Path=DestinationOfCopyCreateUpdateViewModel.SelectedDestinationOfCopyMode, Converter={StaticResource DestinationOfCopyConverter}, ConverterParameter={x:Static enums:enDestinationOfCopyMode.CopyToRootUsingRelativePaths}}" />
 
           <RadioButton
             Grid.Row="1"
-            GroupName="DestinationOfCopy"
-            Content="Copy to addon output directory root"
-            IsChecked="{Binding Path=DestinationOfCopy.SelectedDestinationOfCopyMode, Converter={StaticResource DestinationOfCopyConverter}, ConverterParameter={x:Static enums:enDestinationOfCopyMode.CopyToRoot}}" />
+            GroupName="SelectedDestinationOfCopyMode"
+            Content="{Binding Source={x:Static enums:enDestinationOfCopyMode.CopyToRoot}, Converter={StaticResource EnumToDescriptionConverter}}"
+            IsChecked="{Binding Path=DestinationOfCopyCreateUpdateViewModel.SelectedDestinationOfCopyMode, Converter={StaticResource DestinationOfCopyConverter}, ConverterParameter={x:Static enums:enDestinationOfCopyMode.CopyToRoot}}" />
 
-          <!-- <RadioButton -->
-          <!--   Grid.Row="2" -->
-          <!--   GroupName="DestinationOfCopy" -->
-          <!--   Content="Set path inside addon output directory" -->
-          <!--   IsChecked="{Binding Path=SelectedDestinationOfCopy, Converter={StaticResource DestinationOfCopyConverter}, ConverterParameter={x:Static enums:enDestinationOfCopy.CopyToSpecifiedDirectory}}" /> -->
+          <RadioButton
+            Grid.Row="2"
+            GroupName="SelectedDestinationOfCopyMode"
+            Content="{Binding Source={x:Static enums:enDestinationOfCopyMode.CopyToSpecifiedDirectory}, Converter={StaticResource EnumToDescriptionConverter}}"
+            IsChecked="{Binding Path=DestinationOfCopyCreateUpdateViewModel.SelectedDestinationOfCopyMode, Converter={StaticResource DestinationOfCopyConverter}, ConverterParameter={x:Static enums:enDestinationOfCopyMode.CopyToSpecifiedDirectory}}" />
         </Grid>
       </GroupBox>
     </Grid>
 
-    <GroupBox
-      Grid.Row="3"
-      Margin="0 25 0 0"
-      Header="How result will look like:"
-      Visibility="{Binding DestinationOfCopy.PreviewResult, Converter={StaticResource NullToVisibilityConverter}}">
-      <Grid>
-        <!-- <Grid.Style> -->
-        <!--   <Style TargetType="{x:Type Grid}"> -->
-        <!--     <Style.Triggers> -->
-        <!--       <DataTrigger Binding="{Binding SelectedDestinationOfCopy}" Value="{x:Static enums:enDestinationOfCopy.CopyToRoot}"> -->
-        <!--         <Setter Property="Visibility" Value="Collapsed" TargetName="tbPreviewResult" /> -->
-        <!--       </DataTrigger> -->
-        <!--     </Style.Triggers> -->
-        <!--   </Style> -->
-        <!-- </Grid.Style> -->
-        <ContentControl
-          Content="{Binding Path=DestinationOfCopy.SelectedDestinationOfCopyMode}"
-          ContentTemplateSelector="{StaticResource DestinationOfCopyContentTemplateSelector}">
-        </ContentControl>
-      </Grid>
-    </GroupBox>
+    <ContentControl
+      Grid.Row="4"
+      Padding="0 25 0 0"
+      Visibility="{Binding DestinationOfCopyCreateUpdateViewModel.DestinationOfCopyDataViewModel.PreviewOutputPathViewModel.OutputFullPath, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}"
+      Content="{Binding Path=DestinationOfCopyCreateUpdateViewModel.SelectedDestinationOfCopyMode}"
+      ContentTemplateSelector="{StaticResource DestinationOfCopyContentTemplateSelector}">
+    </ContentControl>
 
   </Grid>
 </UserControl>

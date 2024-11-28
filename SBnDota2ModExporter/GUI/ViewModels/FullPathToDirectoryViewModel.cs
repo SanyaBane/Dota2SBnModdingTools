@@ -6,7 +6,7 @@ using CommonLib.Helpers;
 
 namespace SBnDota2ModExporter.GUI.ViewModels;
 
-public class PathToDirectoryViewModel : BaseViewModel, INotifyDataErrorInfo
+public class FullPathToDirectoryViewModel : BaseViewModel, INotifyDataErrorInfo
 {
   #region Fields
 
@@ -16,7 +16,7 @@ public class PathToDirectoryViewModel : BaseViewModel, INotifyDataErrorInfo
 
   #region Ctor
 
-  public PathToDirectoryViewModel()
+  public FullPathToDirectoryViewModel()
   {
   }
 
@@ -46,6 +46,12 @@ public class PathToDirectoryViewModel : BaseViewModel, INotifyDataErrorInfo
 
   #endregion // Properties
 
+  #region Public Methods
+
+  public bool IsValidViewModel() => !string.IsNullOrWhiteSpace(FullPath);
+
+  #endregion // Public Methods
+
   #region Private Methods
 
   private string ValidateFullPath()
@@ -74,10 +80,10 @@ public class PathToDirectoryViewModel : BaseViewModel, INotifyDataErrorInfo
   public IEnumerable GetErrors(string? propertyName)
   {
     if (string.IsNullOrEmpty(propertyName))
-      return _validationErrors.Select(x => x.Value).AsEnumerable();
+      return _validationErrors.Select(x => x.Value);
 
     if (_validationErrors.TryGetValue(propertyName, out var error))
-      return error.AsEnumerable();
+      return new[] { error };
 
     return Enumerable.Empty<string>();
   }

@@ -22,6 +22,7 @@ public partial class AddonExporterInfoView
       var vm = (AddonExporterInfoViewModel)e.OldValue;
       vm.ClickExecuteExportCommandCreate -= AddonExporterInfoViewModel_OnClickExecuteExportCommandCreate;
       vm.ClickExecuteExportCommandEdit -= AddonExporterInfoViewModel_OnClickExecuteExportCommandEdit;
+      vm.ClickExecuteSpecifyDota2Addon -= AddonExporterInfoViewModel_OnClickExecuteSpecifyDota2Addon;
     }
 
     if (e.NewValue != null)
@@ -29,6 +30,7 @@ public partial class AddonExporterInfoView
       var vm = (AddonExporterInfoViewModel)e.NewValue;
       vm.ClickExecuteExportCommandCreate += AddonExporterInfoViewModel_OnClickExecuteExportCommandCreate;
       vm.ClickExecuteExportCommandEdit += AddonExporterInfoViewModel_OnClickExecuteExportCommandEdit;
+      vm.ClickExecuteSpecifyDota2Addon += AddonExporterInfoViewModel_OnClickExecuteSpecifyDota2Addon;
     }
   }
 
@@ -38,7 +40,7 @@ public partial class AddonExporterInfoView
 
     var windowCreateUpdateViewModel = new WindowCreateUpdateViewModel();
 
-    var addonCommandCreateUpdateViewModel = new AddonCommandCreateUpdateViewModel(ViewModel.Dota2AddonName, windowCreateUpdateViewModel.CanExecuteOkCommandCallback);
+    var addonCommandCreateUpdateViewModel = new AddonCommandCreateUpdateViewModel(ViewModel.Dota2AddonName, ViewModel.AddonExportOutputInfoViewModel, windowCreateUpdateViewModel.CanExecuteOkCommandCallback);
     addonCommandCreateUpdateViewModel.Init();
     var addonCommandCreateUpdateView = new AddonCommandCreateUpdateView
     {
@@ -68,7 +70,7 @@ public partial class AddonExporterInfoView
 
     var windowCreateUpdateViewModel = new WindowCreateUpdateViewModel();
 
-    var addonCommandCreateUpdateViewModel = new AddonCommandCreateUpdateViewModel(editVm, ViewModel.Dota2AddonName, windowCreateUpdateViewModel.CanExecuteOkCommandCallback);
+    var addonCommandCreateUpdateViewModel = new AddonCommandCreateUpdateViewModel(editVm, ViewModel.Dota2AddonName, ViewModel.AddonExportOutputInfoViewModel, windowCreateUpdateViewModel.CanExecuteOkCommandCallback);
     addonCommandCreateUpdateViewModel.Init();
     var addonCommandCreateUpdateView = new AddonCommandCreateUpdateView
     {
@@ -89,6 +91,37 @@ public partial class AddonExporterInfoView
     if (windowCreateUpdateView.ShowDialog() == true)
     {
       ViewModel.HandleSuccessClickExecuteExportCommandEdit(editVm, addonCommandCreateUpdateViewModel.AddonExportCommandCreateUpdateViewModel);
+    }
+  }
+
+  private void AddonExporterInfoViewModel_OnClickExecuteSpecifyDota2Addon()
+  {
+    var owner = Window.GetWindow(this);
+
+    var windowCreateUpdateViewModel = new WindowCreateUpdateViewModel();
+
+    var specifyDota2AddonViewModel = new SpecifyDota2AddonViewModel(ViewModel.Dota2AddonName, GlobalManager.Instance.Dota2GameMainInfo.Dota2AddonsContentDirectoryInfo, windowCreateUpdateViewModel.CanExecuteOkCommandCallback);
+    var specifyDota2AddonView = new SpecifyDota2AddonView()
+    {
+      DataContext = specifyDota2AddonViewModel
+    };
+    
+    var windowCreateUpdateView = new WindowCreateUpdateView
+    {
+      DataContext = windowCreateUpdateViewModel,
+      WindowCreateUpdateContent = specifyDota2AddonView,
+      Owner = owner,
+      MinWidth = 400,
+      MinHeight = 300,
+      MaxHeight = System.Windows.SystemParameters.PrimaryScreenHeight * 0.8d,
+      Title = "Dota2 Addon Selection",
+      WindowStartupLocation = WindowStartupLocation.CenterOwner,
+      SizeToContent = SizeToContent.WidthAndHeight,
+    };
+    
+    if (windowCreateUpdateView.ShowDialog() == true)
+    {
+      ViewModel.HandleSuccessClickExecuteSpecifyDota2Addon(specifyDota2AddonViewModel.SelectedDota2ContentAddon);
     }
   }
 }

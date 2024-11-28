@@ -21,8 +21,6 @@ public class AddonExporterInfoViewModel : BaseViewModel
 
   private FileInfo? _addonConfigFileInfo;
   private string _dota2AddonName = string.Empty;
-  private string _addonOutputDirectoryName = string.Empty;
-  private string _addonOutputDirectoryFullPath = string.Empty;
   private bool _isChecked;
   private bool _isDirty;
   private ICollectionView _addonExportCommandViewModelsCollectionView;
@@ -54,9 +52,14 @@ public class AddonExporterInfoViewModel : BaseViewModel
     AddonExportCommandViewModels.CollectionChanged += AddonExportCommandViewModelsOnCollectionChanged;
 
     GlobalManager.Instance.GlobalSettings.OutputDirectoryFullPathChange += GlobalSettings_OnOutputDirectoryFullPathChange;
-
-    UpdateAddonOutputDirectory();
-    // _dota2AddonInfo = new Dota2AddonInfo(GlobalManager.Instance.Dota2GameMainInfo);
+    
+    AddonExportOutputInfoViewModel = new AddonExportOutputInfoViewModel(() => Dota2AddonName);
+    AddonExportOutputInfoViewModel.UpdateAddonOutputDirectory();
+    
+    AddonExportOutputInfoViewModel.IsDirtyChange += () =>
+    {
+      IsDirty = true;
+    };
   }
 
   private void AddonExportCommandViewModelsOnCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -88,6 +91,7 @@ public class AddonExporterInfoViewModel : BaseViewModel
   public event Action? IsCheckedChange;
   public event Action? IsAddonValidForExportChange;
   public event Action<AddonExporterInfoViewModel>? ExportAddonExecute;
+  public event Action? ClickExecuteSpecifyDota2Addon;
 
   #endregion // Events
 
@@ -110,6 +114,8 @@ public class AddonExporterInfoViewModel : BaseViewModel
 
   public bool IsSaved => AddonConfigFileInfo != null;
 
+  public AddonExportOutputInfoViewModel AddonExportOutputInfoViewModel { get; }
+  
   public string Dota2AddonName
   {
     get => _dota2AddonName;
@@ -118,35 +124,11 @@ public class AddonExporterInfoViewModel : BaseViewModel
       _dota2AddonName = value;
       OnPropertyChanged();
 
-      UpdateAddonOutputDirectory();
+      AddonExportOutputInfoViewModel.UpdateAddonOutputDirectory();
 
       RefreshCommands();
 
       IsDirty = true;
-    }
-  }
-
-  public string AddonOutputDirectoryName
-  {
-    get => _addonOutputDirectoryName;
-    set
-    {
-      _addonOutputDirectoryName = value;
-      OnPropertyChanged();
-
-      UpdateAddonOutputDirectory();
-
-      IsDirty = true;
-    }
-  }
-
-  public string AddonOutputDirectoryFullPath
-  {
-    get => _addonOutputDirectoryFullPath;
-    private set
-    {
-      _addonOutputDirectoryFullPath = value;
-      OnPropertyChanged();
     }
   }
 
@@ -283,32 +265,7 @@ public class AddonExporterInfoViewModel : BaseViewModel
 
   private void ExecuteSpecifyDota2Addon(object obj)
   {
-    var openFolderDialog = new OpenFolderDialog
-    {
-      InitialDirectory = GlobalManager.Instance.Dota2GameMainInfo.Dota2AddonsContentDirectoryInfo.FullName,
-      AddToRecent = false,
-      Title = "Select Dota2 addon 'content' directory"
-    };
-
-    if (openFolderDialog.ShowDialog() == true)
-    {
-      var selectedDirectory = new DirectoryInfo(openFolderDialog.FolderName);
-      if (selectedDirectory.Exists is false)
-        throw new DirectoryNotFoundException();
-
-      if (selectedDirectory.Parent == null || selectedDirectory.Parent.FullName != GlobalManager.Instance.Dota2GameMainInfo.Dota2AddonsContentDirectoryInfo.FullName)
-      {
-        MessageBox.Show($"You must select addon directory, which is located inside Dota2 addons 'content' directory:{Environment.NewLine}" +
-                        $"'{GlobalManager.Instance.Dota2GameMainInfo.Dota2AddonsContentDirectoryInfo.FullName}'",
-          "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-        return;
-      }
-
-      Dota2AddonName = selectedDirectory.Name;
-
-      IsDirty = true;
-    }
+    ClickExecuteSpecifyDota2Addon?.Invoke();
   }
 
   private void ExecuteSave(object obj)
@@ -431,47 +388,54 @@ public class AddonExporterInfoViewModel : BaseViewModel
       IsChecked = true,
     });
 
-    AddonExportCommandViewModels.Add(new CopyAddonDirectoryViewModel
-    {
-      PathToAddonDirectory = "materials",
-      IsCopySubfolders = true,
-      IsChecked = true,
-    });
-
-    AddonExportCommandViewModels.Add(new CopyAddonDirectoryViewModel
-    {
-      PathToAddonDirectory = "models",
-      IsCopySubfolders = true,
-      IsChecked = true,
-    });
-
-    AddonExportCommandViewModels.Add(new CopyAddonDirectoryViewModel
-    {
-      PathToAddonDirectory = "panorama",
-      IsCopySubfolders = true,
-      IsChecked = true,
-    });
-
-    AddonExportCommandViewModels.Add(new CopyAddonDirectoryViewModel
-    {
-      PathToAddonDirectory = "particles",
-      IsCopySubfolders = true,
-      IsChecked = true,
-    });
-
-    AddonExportCommandViewModels.Add(new CopyAddonDirectoryViewModel
-    {
-      PathToAddonDirectory = "soundevents",
-      IsCopySubfolders = true,
-      IsChecked = true,
-    });
-
-    AddonExportCommandViewModels.Add(new CopyAddonDirectoryViewModel
-    {
-      PathToAddonDirectory = "sounds",
-      IsCopySubfolders = true,
-      IsChecked = true,
-    });
+    // AddonExportCommandViewModels.Add(new CopyAddonDirectoryViewModel
+    // {
+    //   // DestinationOfCopy = new DestinationOfCopyViewModel(_dota2AddonName)
+    //   // {
+    //   //   PathToDirectory = new PathToDirectoryViewModel()
+    //   //   {
+    //   //     FullPath = 
+    //   //   }
+    //   // },
+    //   PathToAddonDirectory = "materials",
+    //   IsCopySubfolders = true,
+    //   IsChecked = true,
+    // });
+    //
+    // AddonExportCommandViewModels.Add(new CopyAddonDirectoryViewModel
+    // {
+    //   PathToAddonDirectory = "models",
+    //   IsCopySubfolders = true,
+    //   IsChecked = true,
+    // });
+    //
+    // AddonExportCommandViewModels.Add(new CopyAddonDirectoryViewModel
+    // {
+    //   PathToAddonDirectory = "panorama",
+    //   IsCopySubfolders = true,
+    //   IsChecked = true,
+    // });
+    //
+    // AddonExportCommandViewModels.Add(new CopyAddonDirectoryViewModel
+    // {
+    //   PathToAddonDirectory = "particles",
+    //   IsCopySubfolders = true,
+    //   IsChecked = true,
+    // });
+    //
+    // AddonExportCommandViewModels.Add(new CopyAddonDirectoryViewModel
+    // {
+    //   PathToAddonDirectory = "soundevents",
+    //   IsCopySubfolders = true,
+    //   IsChecked = true,
+    // });
+    //
+    // AddonExportCommandViewModels.Add(new CopyAddonDirectoryViewModel
+    // {
+    //   PathToAddonDirectory = "sounds",
+    //   IsCopySubfolders = true,
+    //   IsChecked = true,
+    // });
 
     IsDirty = true;
   }
@@ -498,7 +462,7 @@ public class AddonExporterInfoViewModel : BaseViewModel
 
     foreach (var addonExportCommandViewModel in AddonExportCommandViewModels)
     {
-      var clone = (IAddonExportCommandViewModel)addonExportCommandViewModel.Clone();
+      var clone = addonExportCommandViewModel.Clone();
       ret.AddonExportCommandViewModels.Add(clone);
     }
 
@@ -535,12 +499,19 @@ public class AddonExporterInfoViewModel : BaseViewModel
 
     IsDirty = true;
   }
+  
+  public void HandleSuccessClickExecuteSpecifyDota2Addon(DirectoryInfo dota2ContentAddon)
+  {
+    Dota2AddonName = dota2ContentAddon.Name;
+
+    IsDirty = true;
+  }
 
   public async Task ExportAddonAsync(IProgress<AddonExportProgress> progress)
   {
     foreach (var addonExportCommandViewModel in AddonExportCommandViewModels)
     {
-      await addonExportCommandViewModel.ExecuteExportCommandAsync(Dota2AddonName, AddonOutputDirectoryFullPath, progress);
+      await addonExportCommandViewModel.ExecuteExportCommandAsync(Dota2AddonName, AddonExportOutputInfoViewModel.AddonOutputDirectoryFullPath, progress);
     }
   }
 
@@ -550,12 +521,21 @@ public class AddonExporterInfoViewModel : BaseViewModel
 
   private void UpdateIsAddonValidForExport()
   {
-    IsAddonValidForExport = !string.IsNullOrEmpty(Dota2AddonName) && AddonExportCommandViewModels.Any(x => x.IsChecked);
+    IsAddonValidForExport = CalculateIsAddonValidForExport();
+  }
+
+  private bool CalculateIsAddonValidForExport()
+  {
+    if (string.IsNullOrEmpty(Dota2AddonName))
+      return false;
+
+    var addonDirectoryInfo = new DirectoryInfo(Path.Combine(GlobalManager.Instance.Dota2GameMainInfo.Dota2AddonsContentDirectoryInfo.FullName, Dota2AddonName));
+    return addonDirectoryInfo.Exists && AddonExportCommandViewModels.Any(x => x.IsChecked);
   }
 
   private void GlobalSettings_OnOutputDirectoryFullPathChange()
   {
-    UpdateAddonOutputDirectory();
+    AddonExportOutputInfoViewModel.UpdateAddonOutputDirectory();
   }
 
   private AddonExporterDetailedConfig CreateAddonExporterConfig()
@@ -563,7 +543,7 @@ public class AddonExporterInfoViewModel : BaseViewModel
     var addonExporterDetailedConfig = new AddonExporterDetailedConfig()
     {
       Dota2AddonName = Dota2AddonName,
-      AddonOutputDirectoryName = AddonOutputDirectoryName,
+      AddonOutputDirectoryName = AddonExportOutputInfoViewModel.CustomOutputDirectoryName,
     };
 
     foreach (var addonExportCommandViewModel in AddonExportCommandViewModels)
@@ -578,26 +558,6 @@ public class AddonExporterInfoViewModel : BaseViewModel
     }
 
     return addonExporterDetailedConfig;
-  }
-
-  private void UpdateAddonOutputDirectory()
-  {
-    if (string.IsNullOrEmpty(GlobalManager.Instance.GlobalSettings.OutputDirectoryFullPath))
-    {
-      AddonOutputDirectoryFullPath = "*SET GLOBAL OUTPUT DIRECTORY FIRST*";
-      return;
-    }
-
-    if (string.IsNullOrEmpty(Dota2AddonName))
-    {
-      AddonOutputDirectoryFullPath = "*SET ADDON DIRECTORY FIRST*";
-      return;
-    }
-
-    AddonOutputDirectoryFullPath = Path.Combine(GlobalManager.Instance.GlobalSettings.OutputDirectoryFullPath,
-      string.IsNullOrEmpty(AddonOutputDirectoryName)
-        ? Dota2AddonName
-        : AddonOutputDirectoryName);
   }
 
   #endregion // Private Methods

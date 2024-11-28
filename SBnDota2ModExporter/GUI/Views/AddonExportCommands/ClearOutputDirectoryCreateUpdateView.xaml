@@ -7,12 +7,44 @@
   xmlns:local="clr-namespace:SBnDota2ModExporter.GUI.Views.AddonExportCommands"
   xmlns:addonExportCommandsCreateUpdate="clr-namespace:SBnDota2ModExporter.GUI.ViewModels.AddonExportCommandsCreateUpdate"
   xmlns:converters="clr-namespace:SBnDota2ModExporter.Converters"
+  xmlns:enums="clr-namespace:SBnDota2ModExporter.Enums"
   mc:Ignorable="d"
   d:DesignHeight="300" d:DesignWidth="300"
   d:DataContext="{d:DesignInstance addonExportCommandsCreateUpdate:ClearOutputDirectoryCreateUpdateViewModel, IsDesignTimeCreatable=True}">
+  
+  <UserControl.Resources>
+    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <converters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
+  </UserControl.Resources>
 
   <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+    
+    <StackPanel
+      Grid.Row="0"
+      x:Name="spSelectedCommand"
+      Orientation="Vertical"
+      Visibility="{Binding IsUpdatingVm, Converter={StaticResource BooleanToVisibilityConverter}}">
+      <StackPanel
+        Orientation="Horizontal">
+        <TextBlock
+          FontWeight="Bold"
+          VerticalAlignment="Center"
+          Text="Command:" />
+        <TextBlock
+          Margin="3 0 0 0"
+          FontWeight="Bold"
+          VerticalAlignment="Center"
+          Text="{Binding Source={x:Static enums:enAddonCommandType.ClearOutputDirectory}, Converter={StaticResource EnumToDescriptionConverter}}" />
+      </StackPanel>
+      <Separator />
+    </StackPanel>
+    
     <TextBlock
+      Grid.Row="1"
       FontWeight="Bold"
       Text="Delete everything inside of addon output directory" />
   </Grid>

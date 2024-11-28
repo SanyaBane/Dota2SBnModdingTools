@@ -1,5 +1,6 @@
 ﻿using SBnDota2ModExporter.GUI.ViewModels.AddonExportCommands;
 using SBnDota2ModExporter.GUI.ViewModels.AddonExportCommandsCreateUpdate;
+using SBnDota2ModExporter.GUI.ViewModels.DestinationOfCopy;
 
 namespace SBnDota2ModExporter.Factories;
 
@@ -12,9 +13,8 @@ public static class AddonExportCommandViewModelFactory
       case CopyAddonDirectoryCreateUpdateViewModel copyDirectoryCreateUpdateViewModel:
         return new CopyAddonDirectoryViewModel()
         {
-          PathToAddonDirectory = copyDirectoryCreateUpdateViewModel.PathToDirectory.FullPath,
           IsCopySubfolders = copyDirectoryCreateUpdateViewModel.IsCopySubfolders,
-          DestinationOfCopy = copyDirectoryCreateUpdateViewModel.DestinationOfCopy.Clone(),
+          DestinationOfCopyInfoViewModel = new DestinationOfCopyInfoViewModel(copyDirectoryCreateUpdateViewModel.DestinationOfCopyCreateUpdateViewModel.DestinationOfCopyDataViewModel.CreateDestinationOfCopyDataConfig()),
         };
       
       case CopyAddonFileCreateUpdateViewModel copyFileCreateUpdateViewModel:

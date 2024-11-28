@@ -8,6 +8,7 @@ public class DestinationOfCopyContentTemplateSelector : DataTemplateSelector
 {
   public DataTemplate CopyToRootDataTemplate { get; set; }
   public DataTemplate CopyToRootUsingRelativePathsDataTemplate { get; set; }
+  public DataTemplate CopyToSpecifiedDirectoryDataTemplate { get; set; }
 
   public override DataTemplate SelectTemplate(object? item, DependencyObject container)
   {
@@ -22,6 +23,8 @@ public class DestinationOfCopyContentTemplateSelector : DataTemplateSelector
         return CopyToRootDataTemplate;
       case enDestinationOfCopyMode.CopyToRootUsingRelativePaths:
         return CopyToRootUsingRelativePathsDataTemplate;
+      case enDestinationOfCopyMode.CopyToSpecifiedDirectory:
+        return CopyToSpecifiedDirectoryDataTemplate;
       default:
         throw new ArgumentOutOfRangeException();
     }

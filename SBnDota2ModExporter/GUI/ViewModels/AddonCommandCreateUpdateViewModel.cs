@@ -10,6 +10,7 @@ public class AddonCommandCreateUpdateViewModel : BaseViewModel
   #region Fields
 
   private readonly string _dota2AddonName;
+  private readonly AddonExportOutputInfoViewModel _addonExportOutputInfoViewModel;
   private readonly Action<bool>? _canExecuteOkCommandCallback;
 
   private enAddonCommandType _selectedAddonCommandType;
@@ -23,9 +24,10 @@ public class AddonCommandCreateUpdateViewModel : BaseViewModel
 
   #region Ctor
 
-  public AddonCommandCreateUpdateViewModel(string dota2AddonName, Action<bool>? canExecuteOkCommandCallback)
+  public AddonCommandCreateUpdateViewModel(string dota2AddonName, AddonExportOutputInfoViewModel addonExportOutputInfoViewModel, Action<bool>? canExecuteOkCommandCallback)
   {
     _dota2AddonName = dota2AddonName;
+    _addonExportOutputInfoViewModel = addonExportOutputInfoViewModel;
     _canExecuteOkCommandCallback = canExecuteOkCommandCallback;
 
     AddonCommandTypes = Enum.GetValues(typeof(enAddonCommandType))
@@ -37,7 +39,8 @@ public class AddonCommandCreateUpdateViewModel : BaseViewModel
     _selectedAddonCommandType = AddonCommandTypes.First();
   }
 
-  public AddonCommandCreateUpdateViewModel(IAddonExportCommandViewModel editVm, string dota2AddonName, Action<bool>? canExecuteOkCommandCallback) : this(dota2AddonName, canExecuteOkCommandCallback)
+  public AddonCommandCreateUpdateViewModel(IAddonExportCommandViewModel editVm, string dota2AddonName, AddonExportOutputInfoViewModel addonExportOutputInfoViewModel, Action<bool>? canExecuteOkCommandCallback) 
+    : this(dota2AddonName, addonExportOutputInfoViewModel, canExecuteOkCommandCallback)
   {
     _editVm = editVm;
 
@@ -113,17 +116,17 @@ public class AddonCommandCreateUpdateViewModel : BaseViewModel
     switch (addonCommandType)
     {
       case enAddonCommandType.CopyAddonDirectory:
-        return new CopyAddonDirectoryCreateUpdateViewModel(_dota2AddonName, _canExecuteOkCommandCallback, _editVm as CopyAddonDirectoryViewModel);
+        return new CopyAddonDirectoryCreateUpdateViewModel(_dota2AddonName, _addonExportOutputInfoViewModel, _canExecuteOkCommandCallback, _editVm as CopyAddonDirectoryViewModel);
       case enAddonCommandType.CopyAddonFile:
-        return new CopyAddonFileCreateUpdateViewModel(_dota2AddonName, _canExecuteOkCommandCallback, _editVm as CopyAddonFileViewModel);
+        return new CopyAddonFileCreateUpdateViewModel(_dota2AddonName, _addonExportOutputInfoViewModel, _canExecuteOkCommandCallback, _editVm as CopyAddonFileViewModel);
       case enAddonCommandType.CopyDirectory:
-        return new CopyDirectoryCreateUpdateViewModel(_dota2AddonName, _canExecuteOkCommandCallback, _editVm as CopyDirectoryViewModel);
+        return new CopyDirectoryCreateUpdateViewModel(_dota2AddonName, _addonExportOutputInfoViewModel, _canExecuteOkCommandCallback, _editVm as CopyDirectoryViewModel);
       case enAddonCommandType.CopyFile:
-        return new CopyFileCreateUpdateViewModel(_dota2AddonName, _canExecuteOkCommandCallback, _editVm as CopyFileViewModel);
+        return new CopyFileCreateUpdateViewModel(_dota2AddonName, _addonExportOutputInfoViewModel, _canExecuteOkCommandCallback, _editVm as CopyFileViewModel);
       case enAddonCommandType.CompileAddon:
-        return new CompileAddonCreateUpdateViewModel(_dota2AddonName, _canExecuteOkCommandCallback);
+        return new CompileAddonCreateUpdateViewModel(_dota2AddonName, _canExecuteOkCommandCallback, _editVm as CompileAddonViewModel);
       case enAddonCommandType.ClearOutputDirectory:
-        return new ClearOutputDirectoryCreateUpdateViewModel(_dota2AddonName, _canExecuteOkCommandCallback);
+        return new ClearOutputDirectoryCreateUpdateViewModel(_dota2AddonName, _canExecuteOkCommandCallback, _editVm as ClearOutputDirectoryViewModel);
       default:
         throw new ArgumentOutOfRangeException(nameof(addonCommandType), addonCommandType, null);
     }

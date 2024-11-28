@@ -17,11 +17,13 @@
 
     <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" TreatEmptyStringAsNull="True" />
     <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverterInverted" TreatEmptyStringAsNull="True" Inverse="True" />
+    <converters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
 
     <DataTemplate x:Key="CopyAddonDirectoryDataTemplate">
       <Grid
         d:DataContext="{d:DesignInstance addonExportCommands:CopyAddonDirectoryViewModel, IsDesignTimeCreatable=True}">
         <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
           <RowDefinition Height="Auto" />
           <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -32,7 +34,7 @@
           <TextBlock
             Text="Folder: " />
           <TextBlock>
-            <Run Text="'" /><Run Text="{Binding PathToAddonDirectory}" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" /><Run Text="'" />
+            <Run Text="'" /><Run Text="{Binding DestinationOfCopyInfoViewModel.FullPath, Mode=OneWay}" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" /><Run Text="'" />
           </TextBlock>
         </StackPanel>
 
@@ -44,6 +46,16 @@
           <CheckBox
             IsEnabled="False"
             IsChecked="{Binding IsCopySubfolders}" />
+        </StackPanel>
+
+        <StackPanel
+          Grid.Row="2"
+          Orientation="Horizontal">
+          <TextBlock
+            Text="Copying method: " />
+          <TextBlock
+            Text="{Binding DestinationOfCopyInfoViewModel.SelectedDestinationOfCopyMode, Mode=OneWay, Converter={StaticResource EnumToDescriptionConverter}}" 
+            ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
         </StackPanel>
       </Grid>
     </DataTemplate>
@@ -220,7 +232,7 @@
               Margin="5 0 0 0"
               Height="24"
               PreviewTextInput="UIElement_OnPreviewTextInput"
-              Text="{Binding AddonOutputDirectoryName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+              Text="{Binding AddonExportOutputInfoViewModel.CustomOutputDirectoryName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
             <TextBlock
               Grid.Column="0"
@@ -235,7 +247,7 @@
               Style="{StaticResource tbReadOnlyPathToFile}"
               Margin="5 5 0 0"
               Height="24"
-              Text="{Binding AddonOutputDirectoryFullPath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+              Text="{Binding AddonExportOutputInfoViewModel.AddonOutputDirectoryFullPath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
               ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
           </Grid>
         </GroupBox>

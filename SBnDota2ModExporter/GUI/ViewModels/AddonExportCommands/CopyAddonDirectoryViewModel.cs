@@ -1,6 +1,7 @@
 ﻿using SBnDota2ModExporter.AddonExportCommands;
 using SBnDota2ModExporter.Enums;
 using SBnDota2ModExporter.GUI.ViewModels.AddonExportCommandsCreateUpdate;
+using SBnDota2ModExporter.GUI.ViewModels.DestinationOfCopy;
 
 namespace SBnDota2ModExporter.GUI.ViewModels.AddonExportCommands;
 
@@ -10,7 +11,7 @@ public class CopyAddonDirectoryViewModel : BaseAddonExportCommandViewModel
 
   private string _pathToAddonDirectory = string.Empty;
   private bool _isCopySubfolders;
-  private DestinationOfCopyViewModel _destinationOfCopy;
+  private DestinationOfCopyInfoViewModel _destinationOfCopyInfoViewModel;
 
   #endregion // Fields
 
@@ -22,16 +23,6 @@ public class CopyAddonDirectoryViewModel : BaseAddonExportCommandViewModel
 
   public override enAddonCommandType AddonCommandType => enAddonCommandType.CopyAddonDirectory;
 
-  public string PathToAddonDirectory
-  {
-    get => _pathToAddonDirectory;
-    set
-    {
-      _pathToAddonDirectory = value;
-      OnPropertyChanged();
-    }
-  }
-
   public bool IsCopySubfolders
   {
     get => _isCopySubfolders;
@@ -42,12 +33,12 @@ public class CopyAddonDirectoryViewModel : BaseAddonExportCommandViewModel
     }
   }
 
-  public DestinationOfCopyViewModel DestinationOfCopy
+  public DestinationOfCopyInfoViewModel DestinationOfCopyInfoViewModel
   {
-    get => _destinationOfCopy;
+    get => _destinationOfCopyInfoViewModel;
     set
     {
-      _destinationOfCopy = value;
+      _destinationOfCopyInfoViewModel = value;
       OnPropertyChanged();
     }
   }
@@ -59,14 +50,14 @@ public class CopyAddonDirectoryViewModel : BaseAddonExportCommandViewModel
   public override void ApplyDataFromUpdateVm(IAddonExportCommandCreateUpdateViewModel createUpdateViewModel)
   {
     var createUpdateVm = (CopyAddonDirectoryCreateUpdateViewModel)createUpdateViewModel;
-    PathToAddonDirectory = createUpdateVm.PathToDirectory.FullPath;
     IsCopySubfolders = createUpdateVm.IsCopySubfolders;
-    DestinationOfCopy = createUpdateVm.DestinationOfCopy.Clone();
+    // DestinationOfCopyInfoViewModel = createUpdateVm.DestinationOfCopyCreateUpdateViewModel.Clone();
+    DestinationOfCopyInfoViewModel = new DestinationOfCopyInfoViewModel(createUpdateVm.DestinationOfCopyCreateUpdateViewModel.DestinationOfCopyDataViewModel.CreateDestinationOfCopyDataConfig());
   }
 
   public override Task ExecuteExportCommandAsync(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress)
   {
-    CopyAddonDirectoryCommand.Execute(dota2AddonName, addonOutputDirectoryFullPath, progress, PathToAddonDirectory, _isCopySubfolders);
+    CopyAddonDirectoryCommand.Execute(dota2AddonName, addonOutputDirectoryFullPath, progress, _destinationOfCopyInfoViewModel.FullPath, _isCopySubfolders);
     return Task.CompletedTask;
   }
 
@@ -75,8 +66,8 @@ public class CopyAddonDirectoryViewModel : BaseAddonExportCommandViewModel
     return new CopyAddonDirectoryViewModel()
     {
       IsCopySubfolders = IsCopySubfolders,
-      DestinationOfCopy = DestinationOfCopy.Clone(),
-      PathToAddonDirectory = PathToAddonDirectory,
+      DestinationOfCopyInfoViewModel = new DestinationOfCopyInfoViewModel(DestinationOfCopyInfoViewModel.DestinationOfCopyDataConfig),
+      // DestinationOfCopyInfoViewModel = DestinationOfCopyInfoViewModel.Clone(),
       IsChecked = IsChecked,
     };
   }

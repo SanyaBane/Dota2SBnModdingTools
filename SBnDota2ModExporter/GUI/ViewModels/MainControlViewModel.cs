@@ -487,14 +487,17 @@ public class MainControlViewModel : BaseViewModel
         AddonConfigFileInfo = new FileInfo(addonExporterShortConfig.FileFullPath),
         IsChecked = addonExporterShortConfig.IsChecked,
         Dota2AddonName = addonExporterDetailedConfig.Dota2AddonName,
-        AddonOutputDirectoryName = addonExporterDetailedConfig.AddonOutputDirectoryName,
+        AddonExportOutputInfoViewModel =
+        {
+          CustomOutputDirectoryName = addonExporterDetailedConfig.AddonOutputDirectoryName,
+        },
         IsDirty = false,
       };
 
       var tempList = new List<IAddonExportCommandViewModel>();
       foreach (var addonExporterCommandConfigWrapper in addonExporterDetailedConfig.AddonExporterCommandConfigWrappers)
       {
-        var addonExportCommandViewModel = AddonExporterCommandConfigFactory.CreateAddonExportCommandViewModel(addonExporterCommandConfigWrapper.CommandConfig);
+        var addonExportCommandViewModel = AddonExporterCommandConfigFactory.CreateAddonExportCommandViewModel(addonExporterCommandConfigWrapper.CommandConfig, addonExporterDetailedConfig.Dota2AddonName, loadedVm.AddonExportOutputInfoViewModel);
         tempList.Add(addonExportCommandViewModel);
       }
 

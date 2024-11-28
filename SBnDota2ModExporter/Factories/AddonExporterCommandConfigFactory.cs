@@ -1,6 +1,6 @@
-﻿using SBnDota2ModExporter.Configs;
-using SBnDota2ModExporter.Configs.AddonsExporter;
+﻿using SBnDota2ModExporter.Configs.AddonsExporter;
 using SBnDota2ModExporter.GUI.ViewModels.AddonExportCommands;
+using SBnDota2ModExporter.GUI.ViewModels.DestinationOfCopy;
 
 namespace SBnDota2ModExporter.Factories;
 
@@ -14,9 +14,8 @@ public static class AddonExporterCommandConfigFactory
         return new CopyAddonDirectoryCommandConfig()
         {
           IsChecked = copyDirectoryViewModel.IsChecked,
-          PathToDirectory = copyDirectoryViewModel.PathToAddonDirectory,
           IsCopySubfolders = copyDirectoryViewModel.IsCopySubfolders,
-          DestinationOfCopyConfig = copyDirectoryViewModel.DestinationOfCopy.CreateDestinationOfCopyConfig(),
+          DestinationOfCopyConfigWrapper = copyDirectoryViewModel.DestinationOfCopyInfoViewModel.CreateDestinationOfCopyConfig(),
         };
 
       case CopyAddonFileViewModel copyFileViewModel:
@@ -58,7 +57,7 @@ public static class AddonExporterCommandConfigFactory
     }
   }
 
-  public static IAddonExportCommandViewModel CreateAddonExportCommandViewModel(BaseAddonExporterCommandConfig addonExporterCommandConfig)
+  public static IAddonExportCommandViewModel CreateAddonExportCommandViewModel(BaseAddonExporterCommandConfig addonExporterCommandConfig, string? dota2AddonName, AddonExportOutputInfoViewModel loadedVmAddonExportOutputInfoViewModel)
   {
     switch (addonExporterCommandConfig)
     {
@@ -66,9 +65,9 @@ public static class AddonExporterCommandConfigFactory
         return new CopyAddonDirectoryViewModel()
         {
           IsChecked = copyDirectoryCommandConfig.IsChecked,
-          PathToAddonDirectory = copyDirectoryCommandConfig.PathToDirectory,
           IsCopySubfolders = copyDirectoryCommandConfig.IsCopySubfolders,
-          DestinationOfCopy = copyDirectoryCommandConfig.DestinationOfCopyConfig.CreateDestinationOfCopyViewModel(),
+          // DestinationOfCopyInfoViewModel = copyDirectoryCommandConfig.DestinationOfCopyConfigWrapper.CreateDestinationOfCopyCreateUpdateViewModel(dota2AddonName, loadedVmAddonExportOutputInfoViewModel),
+          DestinationOfCopyInfoViewModel = new DestinationOfCopyInfoViewModel(copyDirectoryCommandConfig.DestinationOfCopyConfigWrapper.DestinationOfCopyDataConfig),
         };
 
       case CopyAddonFileCommandConfig copyFileCommandConfig:

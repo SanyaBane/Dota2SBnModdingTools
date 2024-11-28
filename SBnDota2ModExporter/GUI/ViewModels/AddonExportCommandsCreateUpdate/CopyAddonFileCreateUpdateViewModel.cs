@@ -10,7 +10,9 @@ public class CopyAddonFileCreateUpdateViewModel : BaseViewModel, IAddonExportCom
   #region Fields
 
   private readonly string _dota2AddonName;
+  private readonly AddonExportOutputInfoViewModel _addonExportOutputInfoViewModel;
   private readonly Action<bool>? _canExecuteOkCommandCallback;
+  private readonly CopyAddonFileViewModel? _editVm;
 
   private string _pathToFile = string.Empty;
   private bool _isDirty;
@@ -19,10 +21,12 @@ public class CopyAddonFileCreateUpdateViewModel : BaseViewModel, IAddonExportCom
 
   #region Ctor
 
-  public CopyAddonFileCreateUpdateViewModel(string dota2AddonName, Action<bool>? canExecuteOkCommandCallback, CopyAddonFileViewModel? editVm)
+  public CopyAddonFileCreateUpdateViewModel(string dota2AddonName, AddonExportOutputInfoViewModel addonExportOutputInfoViewModel, Action<bool>? canExecuteOkCommandCallback, CopyAddonFileViewModel? editVm)
   {
     _dota2AddonName = dota2AddonName;
+    _addonExportOutputInfoViewModel = addonExportOutputInfoViewModel;
     _canExecuteOkCommandCallback = canExecuteOkCommandCallback;
+    _editVm = editVm;
 
     SetPathToFileCommand = new DelegateCommand(ExecuteSetPathToFile);
 
@@ -36,6 +40,9 @@ public class CopyAddonFileCreateUpdateViewModel : BaseViewModel, IAddonExportCom
   #endregion // Ctor
 
   #region Properties
+
+  public bool IsCreatingVm => _editVm == null;
+  public bool IsUpdatingVm => !IsCreatingVm;
 
   public string PathToFile
   {

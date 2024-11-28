@@ -14,11 +14,6 @@
         <XamlRuntime>Wpf</XamlRuntime>
         <SubType>Designer</SubType>
       </Page>
-      <Page Update="GUI\Views\AddonExportCommands\EditVmdlView.xaml">
-        <Generator>MSBuild:Compile</Generator>
-        <XamlRuntime>Wpf</XamlRuntime>
-        <SubType>Designer</SubType>
-      </Page>
       <Page Update="GUI\Views\AddonExportCommands\CopyDirectoryCreateUpdateView.xaml">
         <Generator>MSBuild:Compile</Generator>
         <XamlRuntime>Wpf</XamlRuntime>
@@ -54,6 +49,29 @@
     <ItemGroup>
       <ProjectReference Include="..\Common.WPF\Common.WPF.csproj" />
       <ProjectReference Include="..\CommonLib\CommonLib.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Images\Icons\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Images\Icons\icons8-file-32.png" />
+      <Resource Include="Images\Icons\icons8-file-32.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\Icons\icons8-folder-32.png" />
+      <Resource Include="Images\Icons\icons8-folder-32.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+      <None Remove="Images\Icons\icons8-exclamation-32.png" />
+      <Resource Include="Images\Icons\icons8-exclamation-32.png">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </Resource>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.135" />
     </ItemGroup>
 
 </Project>

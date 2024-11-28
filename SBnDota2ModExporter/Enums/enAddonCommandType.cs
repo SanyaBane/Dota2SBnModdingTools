@@ -21,6 +21,4 @@ public enum enAddonCommandType
 
   [Description("Copy File")]
   CopyFile,
-
-  // EditVmdl,
 }
