@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Xml.Serialization;
 using CommonLib;
+using CSharpFunctionalExtensions;
 
 namespace SBnDota2ModExporter.Configs.Main;
 
@@ -24,15 +25,15 @@ public class SBnModExporterGlobalConfig
 
       if (File.Exists(fullPathToConfigFile) is false)
       {
-        return new Result($"Was not able to save config file by following path:{Environment.NewLine}" + 
+        return Result.Failure($"Was not able to save config file by following path:{Environment.NewLine}" + 
                           $"{fullPathToConfigFile}");
       }
 
-      return new Result(true);
+      return Result.Success();
     }
     catch (Exception ex)
     {
-      return new Result(ex.Message, ex);
+      return Result.Failure(ex.Message);
     }
   }
 }

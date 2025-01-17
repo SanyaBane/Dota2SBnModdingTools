@@ -65,8 +65,8 @@ public class FullPathToDirectoryViewModel : BaseViewModel, INotifyDataErrorInfo
     var directoryInfo = new DirectoryInfo(FullPath);
 
     var resultValidateDirectoryNameRecursive = PathHelper.ValidateDirectoryNameRecursive(directoryInfo);
-    if (resultValidateDirectoryNameRecursive.Failure)
-      return resultValidateDirectoryNameRecursive.ErrorMessage;
+    if (resultValidateDirectoryNameRecursive.IsFailure)
+      return resultValidateDirectoryNameRecursive.Error;
 
     return string.Empty;
   }

@@ -1,6 +1,7 @@
 ﻿using System.IO;
 using System.Windows;
 using CommonLib;
+using CSharpFunctionalExtensions;
 using Microsoft.Win32;
 using SBnDota2ModExporter.Configs.Main;
 
@@ -36,11 +37,11 @@ public class GlobalManager
   public Result UpdateDota2GameMainInfo()
   {
     var resultCreateDota2GameMainInfo = Dota2GameMainInfo.CreateDota2GameMainInfo(GlobalSettings.Dota2ExeFullPath);
-    if (resultCreateDota2GameMainInfo.Failure)
+    if (resultCreateDota2GameMainInfo.IsFailure)
       return resultCreateDota2GameMainInfo;
 
     Dota2GameMainInfo = resultCreateDota2GameMainInfo.Value;
-    return new Result(true);
+    return Result.Success();
   }
 
   public SBnModExporterGlobalConfig LoadOrCreateConfigFile()
@@ -55,9 +56,9 @@ public class GlobalManager
     ModExporterGlobalConfig = new SBnModExporterGlobalConfig();
 
     var resultSaveConfigFile = TrySaveConfigFile();
-    if (resultSaveConfigFile.Failure)
+    if (resultSaveConfigFile.IsFailure)
     {
-      MessageBox.Show(resultSaveConfigFile.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+      MessageBox.Show(resultSaveConfigFile.Error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
     }
 
     return ModExporterGlobalConfig;
@@ -81,14 +82,14 @@ public class GlobalManager
       var dota2Exe = new FileInfo(openFileDialog.FileName);
       if (dota2Exe.Exists is false)
       {
-        return new Result<string>($"Following file is not found:{Environment.NewLine}" + 
+        return Result.Failure<string>($"Following file is not found:{Environment.NewLine}" + 
                                   $"{dota2Exe.FullName}");
       }
 
-      return new Result<string>(true, openFileDialog.FileName);
+      return Result.Success(openFileDialog.FileName);
     }
 
-    return new Result<string>(false);
+    return Result.Failure<string>(null);
   }
 
   #endregion // Public Methods

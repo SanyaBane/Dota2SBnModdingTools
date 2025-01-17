@@ -5,6 +5,7 @@ using System.IO;
 using System.Windows;
 using Common.WPF;
 using CommonLib;
+using CSharpFunctionalExtensions;
 using Microsoft.Win32;
 using SBnDota2ModExporter.Configs.AddonsExporter;
 using SBnDota2ModExporter.Factories;
@@ -297,10 +298,10 @@ public class AddonExporterInfoViewModel : BaseViewModel
     if (saveFileDialog.ShowDialog() == true)
     {
       var resultCanSaveAsFile = _funcCanSaveAsFile(this, saveFileDialog.FileName);
-      if (resultCanSaveAsFile.Failure)
+      if (resultCanSaveAsFile.IsFailure)
       {
-        if (!string.IsNullOrEmpty(resultCanSaveAsFile.ErrorMessage))
-          MessageBox.Show(resultCanSaveAsFile.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        if (!string.IsNullOrEmpty(resultCanSaveAsFile.Error))
+          MessageBox.Show(resultCanSaveAsFile.Error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
         return;
       }

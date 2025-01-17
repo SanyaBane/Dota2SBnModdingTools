@@ -3,6 +3,7 @@ using System.IO;
 using System.Windows;
 using Common.WPF;
 using CommonLib;
+using CSharpFunctionalExtensions;
 using Microsoft.Win32;
 using SBnDota2ModExporter.Configs.AddonsExporter;
 using SBnDota2ModExporter.Configs.Main;
@@ -49,7 +50,7 @@ public class MainControlViewModel : BaseViewModel
     foreach (var addonExporterFullPath in addonExporterShortConfigs)
     {
       var resultCreateAddonExporterInfoViewModel = LoadAddonExporterInfoViewModelFromConfig(addonExporterFullPath);
-      if (resultCreateAddonExporterInfoViewModel.Failure)
+      if (resultCreateAddonExporterInfoViewModel.IsFailure)
       {
         listNotLoadedFiles.Add(addonExporterFullPath.FileFullPath);
         continue;
@@ -196,11 +197,11 @@ public class MainControlViewModel : BaseViewModel
   {
     var resultCallDialogSetDota2ExePath = GlobalManager.Instance.CallDialogSetDota2ExePath();
 
-    if (resultCallDialogSetDota2ExePath.Failure)
+    if (resultCallDialogSetDota2ExePath.IsFailure)
     {
-      if (!string.IsNullOrEmpty(resultCallDialogSetDota2ExePath.ErrorMessage))
+      if (!string.IsNullOrEmpty(resultCallDialogSetDota2ExePath.Error))
       {
-        MessageBox.Show(resultCallDialogSetDota2ExePath.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        MessageBox.Show(resultCallDialogSetDota2ExePath.Error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
       }
 
       return;
@@ -210,9 +211,9 @@ public class MainControlViewModel : BaseViewModel
     Dota2ExecutableFullPath = GlobalManager.Instance.GlobalSettings.Dota2ExeFullPath;
 
     var resultTrySetFullPathToDota2Exe = GlobalManager.Instance.UpdateDota2GameMainInfo();
-    if (resultTrySetFullPathToDota2Exe.Failure)
+    if (resultTrySetFullPathToDota2Exe.IsFailure)
     {
-      MessageBox.Show(resultTrySetFullPathToDota2Exe.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+      MessageBox.Show(resultTrySetFullPathToDota2Exe.Error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
     }
   }
 
@@ -245,9 +246,9 @@ public class MainControlViewModel : BaseViewModel
       .Where(x => !ReferenceEquals(x, addonExporterInfoViewModel) && x.AddonConfigFileInfo != null);
 
     if (vmsToCheck.Any(x => string.Equals(x.AddonConfigFileInfo.FullName, fullPathToFile, StringComparison.InvariantCultureIgnoreCase)))
-      return new Result("Selected file is already loaded.");
+      return Result.Failure("Selected file is already loaded.");
 
-    return new Result(true);
+    return Result.Success();
   }
 
   private void ExecuteCreateAddonExporterFile(object obj)
@@ -310,9 +311,9 @@ public class MainControlViewModel : BaseViewModel
       };
 
       var resultCreateAddonExporterInfoViewModel = LoadAddonExporterInfoViewModelFromConfig(addonExporterShortConfig);
-      if (resultCreateAddonExporterInfoViewModel.Failure)
+      if (resultCreateAddonExporterInfoViewModel.IsFailure)
       {
-        notLoadedFiles.Add(new Tuple<string, string>(fileName, resultCreateAddonExporterInfoViewModel.ErrorMessage));
+        notLoadedFiles.Add(new Tuple<string, string>(fileName, resultCreateAddonExporterInfoViewModel.Error));
         continue;
       }
 
@@ -508,11 +509,11 @@ public class MainControlViewModel : BaseViewModel
 
       SubscribeToNewAddonExporterInfoViewModel(loadedVm);
 
-      return new Result<AddonExporterInfoViewModel?>(true, loadedVm);
+      return Result.Success<AddonExporterInfoViewModel?>(loadedVm);
     }
     catch (Exception ex)
     {
-      return new Result<AddonExporterInfoViewModel?>(ex.Message, ex);
+      return Result.Failure<AddonExporterInfoViewModel?>(ex.Message);
     }
   }
 

@@ -136,7 +136,7 @@ public class CopyFileCreateUpdateViewModel : BaseViewModel, IAddonExportCommandC
   private void UpdateVmAfterPathToFileChange()
   {
     var resultGetDotaAddonInfo = Dota2AddonInfo.GetDotaAddonInfo(_dota2AddonName, GlobalManager.Instance.Dota2GameMainInfo);
-    if (resultGetDotaAddonInfo.Success && _pathToFile != null && _pathToFile.StartsWith(resultGetDotaAddonInfo.Value.DotaAddonGameDirectoryInfo.FullName, StringComparison.InvariantCultureIgnoreCase))
+    if (resultGetDotaAddonInfo.IsSuccess && _pathToFile != null && _pathToFile.StartsWith(resultGetDotaAddonInfo.Value.DotaAddonGameDirectoryInfo.FullName, StringComparison.InvariantCultureIgnoreCase))
       PathToFileAddonRelative = _pathToFile.Substring(resultGetDotaAddonInfo.Value.DotaAddonGameDirectoryInfo.FullName.Length);
     else
       PathToFileAddonRelative = null;

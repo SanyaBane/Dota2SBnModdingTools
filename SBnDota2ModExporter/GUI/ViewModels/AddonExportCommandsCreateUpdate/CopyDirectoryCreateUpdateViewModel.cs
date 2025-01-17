@@ -152,7 +152,7 @@ public class CopyDirectoryCreateUpdateViewModel : BaseViewModel, IAddonExportCom
   private void UpdateVmAfterPathToDirectoryChange()
   {
     var resultGetDotaAddonInfo = Dota2AddonInfo.GetDotaAddonInfo(_dota2AddonName, GlobalManager.Instance.Dota2GameMainInfo);
-    if (resultGetDotaAddonInfo.Success && _pathToDirectory != null && _pathToDirectory.StartsWith(resultGetDotaAddonInfo.Value.DotaAddonGameDirectoryInfo.FullName, StringComparison.InvariantCultureIgnoreCase))
+    if (resultGetDotaAddonInfo.IsSuccess && _pathToDirectory != null && _pathToDirectory.StartsWith(resultGetDotaAddonInfo.Value.DotaAddonGameDirectoryInfo.FullName, StringComparison.InvariantCultureIgnoreCase))
       PathToDirectoryAddonRelative = _pathToDirectory.Substring(resultGetDotaAddonInfo.Value.DotaAddonGameDirectoryInfo.FullName.Length);
     else
       PathToDirectoryAddonRelative = null;

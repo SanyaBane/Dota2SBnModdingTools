@@ -1,4 +1,5 @@
 ﻿using CommonLib;
+using CSharpFunctionalExtensions;
 using Microsoft.Extensions.Configuration;
 using SteamDatabase.ValvePak;
 using ValveResourceFormat.Serialization.KeyValues;
@@ -28,10 +29,10 @@ public class Worker
     Console.WriteLine($"Program will parse file '{passedVsndevtsFile.Name}' and search for not existing audio files...");
 
     var resultTryDoWork = TryDoWork(passedVsndevtsFile, dota2Executable, configuration.ReplaceValue);
-    if (resultTryDoWork.Failure)
+    if (resultTryDoWork.IsFailure)
     {
       Console.WriteLine($"{Environment.NewLine}" +
-                        $"Error: {resultTryDoWork.ErrorMessage}" +
+                        $"Error: {resultTryDoWork.Error}" +
                         $"{Constants.TEXT_PRESS_ENTER_TO_EXIT}");
       Console.ReadLine();
       return;
@@ -71,7 +72,7 @@ public class Worker
   private static Result<ReplaceMissingFilesResult?> TryDoWork(FileInfo passedVsndevtsFile, FileInfo dota2ExecutableFile, string replaceValue)
   {
     var resultCreateDota2GameMainInfo = Dota2GameMainInfo.CreateDota2GameMainInfo(dota2ExecutableFile.FullName);
-    if (resultCreateDota2GameMainInfo.Failure)
+    if (resultCreateDota2GameMainInfo.IsFailure)
     {
       throw new NotImplementedException();
     }
@@ -79,9 +80,9 @@ public class Worker
     var dota2GameMainInfo = resultCreateDota2GameMainInfo.Value;
 
     var resultGetDotaAddonInfo = Dota2AddonInfo.GetDotaAddonInfo(passedVsndevtsFile, dota2GameMainInfo);
-    if (resultGetDotaAddonInfo.Failure)
+    if (resultGetDotaAddonInfo.IsFailure)
     {
-      return new Result<ReplaceMissingFilesResult?>(resultGetDotaAddonInfo.ErrorMessage);
+      return Result.Failure<ReplaceMissingFilesResult?>(resultGetDotaAddonInfo.Error);
     }
 
     var dotaAddonInfo = resultGetDotaAddonInfo.Value;
@@ -145,7 +146,7 @@ public class Worker
       }
     }
 
-    return new Result<ReplaceMissingFilesResult?>(true, new ReplaceMissingFilesResult(parsedKvFile, counterFilesReplaced));
+    return Result.Success<ReplaceMissingFilesResult?>(new ReplaceMissingFilesResult(parsedKvFile, counterFilesReplaced));
   }
 
   private static Dictionary<string, KVValue> ParseVsndFilesArrayNode(Dota2AddonInfo dota2AddonInfo, string replaceValue, KVObject kvObject2, DirectoryInfo dotaAddonDirectory, KeyValuePair<string, KVValue> keyValuePair, Package package)

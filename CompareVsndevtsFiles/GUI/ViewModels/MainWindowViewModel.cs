@@ -34,7 +34,7 @@ public class MainWindowViewModel : BaseViewModel
     string fullPathToDota2Exe = "F:\\Games\\SteamLibrary\\steamapps\\common\\dota 2 beta\\game\\bin\\win64\\dota2.exe"; // todo get from config or set by user
 
     var resultCreateDota2GameMainInfo = Dota2GameMainInfo.CreateDota2GameMainInfo(fullPathToDota2Exe);
-    if (resultCreateDota2GameMainInfo.Failure)
+    if (resultCreateDota2GameMainInfo.IsFailure)
       throw new NotImplementedException();
 
     Dota2GameMainInfo = resultCreateDota2GameMainInfo.Value;
@@ -89,7 +89,7 @@ public class MainWindowViewModel : BaseViewModel
     SelectedVsndevtsFileFullPath = selectedVsndevtsFile.FullName;
 
     var dotaAddonInfo = Dota2AddonInfo.GetDotaAddonInfo(selectedVsndevtsFile, Dota2GameMainInfo);
-    if (dotaAddonInfo.Failure)
+    if (dotaAddonInfo.IsFailure)
     {
       throw new NotImplementedException();
     }

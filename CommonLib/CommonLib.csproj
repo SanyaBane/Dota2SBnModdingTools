@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="CSharpFunctionalExtensions" Version="3.4.3" />
       <PackageReference Include="ValvePak" Version="2.0.1.107" />
       <PackageReference Include="ValveResourceFormat" Version="10.2.3850" />
     </ItemGroup>

@@ -1,5 +1,6 @@
 ﻿using System.Windows;
 using CommonLib;
+using CSharpFunctionalExtensions;
 using SBnDota2ModExporter.Configs.Main;
 using SBnDota2ModExporter.GUI.ViewModels;
 using SBnDota2ModExporter.GUI.Views;
@@ -19,11 +20,11 @@ public partial class App
     string dota2ExeFullPath = modExporterGlobalConfig.Dota2ExeFullPath;
 
     var resultValidateDota2ExeFullPath = ValidateDota2ExeFullPathOnStartup(dota2ExeFullPath);
-    if (resultValidateDota2ExeFullPath.Failure)
+    if (resultValidateDota2ExeFullPath.IsFailure)
     {
-      if (!string.IsNullOrEmpty(resultValidateDota2ExeFullPath.ErrorMessage))
+      if (!string.IsNullOrEmpty(resultValidateDota2ExeFullPath.Error))
       {
-        MessageBox.Show(resultValidateDota2ExeFullPath.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        MessageBox.Show(resultValidateDota2ExeFullPath.Error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
       }
 
       Application.Current.Shutdown();
@@ -33,9 +34,9 @@ public partial class App
     GlobalManager.Instance.GlobalSettings.OutputDirectoryFullPath = modExporterGlobalConfig.OutputDirectoryFullPath;
 
     var resultTrySetFullPathToDota2Exe = GlobalManager.Instance.UpdateDota2GameMainInfo();
-    if (resultTrySetFullPathToDota2Exe.Failure)
+    if (resultTrySetFullPathToDota2Exe.IsFailure)
     {
-      MessageBox.Show(resultTrySetFullPathToDota2Exe.ErrorMessage, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+      MessageBox.Show(resultTrySetFullPathToDota2Exe.Error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
       Application.Current.Shutdown();
     }
@@ -86,6 +87,6 @@ public partial class App
       return resultCallDialogSetDota2ExePath;
     }
 
-    return new Result<string>(true, dota2ExeFullPath);
+    return dota2ExeFullPath;
   }
 }

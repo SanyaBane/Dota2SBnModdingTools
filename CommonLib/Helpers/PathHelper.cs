@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using CSharpFunctionalExtensions;
 
 namespace CommonLib.Helpers;
 
@@ -9,7 +10,7 @@ public static class PathHelper
     ArgumentNullException.ThrowIfNull(directoryInfo);
 
     if (directoryInfo.Parent == null)
-      return new Result(true);
+      return Result.Success();
 
     var invalidFileNameChars = string.Join("", Path.GetInvalidFileNameChars());
     var regex = new Regex("[" + Regex.Escape(invalidFileNameChars) + "]");
@@ -17,7 +18,7 @@ public static class PathHelper
     if (matches.Count > 0)
     {
       var tmp = string.Join("", matches);
-      return new Result($"Path to directory contains not allowed symbols: {tmp}");
+      return Result.Failure($"Path to directory contains not allowed symbols: {tmp}");
     }
 
     return ValidateDirectoryNameRecursive(directoryInfo.Parent);
