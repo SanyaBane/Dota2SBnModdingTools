@@ -40,11 +40,10 @@ public class CopyFileViewModel : BaseAddonExportCommandViewModel
     PathToFile = createUpdateVm.PathToFile;
   }
 
-  public override Task ExecuteExportCommandAsync(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress)
+  public override async Task ExecuteExportCommandAsync(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress)
   {
     var copyFileCommand = new CopyFileCommand(addonOutputDirectoryFullPath, progress, PathToFile);
-    copyFileCommand.Execute();
-    return Task.CompletedTask;
+    await copyFileCommand.Execute();
   }
 
   public override IAddonExportCommandViewModel Clone()

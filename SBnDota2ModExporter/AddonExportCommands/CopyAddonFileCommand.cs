@@ -6,7 +6,7 @@ namespace SBnDota2ModExporter.AddonExportCommands;
 
 public class CopyAddonFileCommand(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress, string pathToAddonFile)
 {
-  public void Execute()
+  public Task Execute()
   {
     throw new NotImplementedException();
 
@@ -21,7 +21,7 @@ public class CopyAddonFileCommand(string dota2AddonName, string addonOutputDirec
                                               Constants.SKIP_COMMAND_TEXT,
         Constants.RTB_FOREGROUND_COLOR_WARNING));
 
-      return;
+      return Task.CompletedTask;
     }
 
     fileInfo.CopyTo(Path.Combine(addonOutputDirectoryFullPath, fileInfo.Name), true);

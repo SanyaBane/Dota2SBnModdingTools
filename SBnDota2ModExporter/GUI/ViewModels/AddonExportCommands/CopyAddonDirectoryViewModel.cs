@@ -55,11 +55,10 @@ public class CopyAddonDirectoryViewModel : BaseAddonExportCommandViewModel
     DestinationOfCopyInfoViewModel = new DestinationOfCopyInfoViewModel(createUpdateVm.DestinationOfCopyCreateUpdateViewModel.DestinationOfCopyDataViewModel.CreateDestinationOfCopyDataConfig());
   }
 
-  public override Task ExecuteExportCommandAsync(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress)
+  public override async Task ExecuteExportCommandAsync(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress)
   {
     var copyAddonDirectoryCommand = new CopyAddonDirectoryCommand(dota2AddonName, addonOutputDirectoryFullPath, progress, _destinationOfCopyInfoViewModel.FullPath, _destinationOfCopyInfoViewModel.SelectedDestinationOfCopyMode, _isCopySubfolders);
-    copyAddonDirectoryCommand.Execute();
-    return Task.CompletedTask;
+    await copyAddonDirectoryCommand.Execute();
   }
 
   public override IAddonExportCommandViewModel Clone()

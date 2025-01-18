@@ -44,7 +44,8 @@ public partial class ExportProgressWindow : Window
     {
       rtbProgress.Document.Blocks.Add(new Paragraph(new Run(message.Text))
       {
-        Foreground = message.ForegroundColor
+        Foreground = message.ForegroundColor,
+        FontWeight = message.FontWeight
       });
       
       rtbProgress.ScrollToEnd();
@@ -65,13 +66,9 @@ public partial class ExportProgressWindow : Window
       
       await loadedAddonExporterInfoViewModel.ExportAddonAsync(progress);
     }
-    
-    rtbProgress.Document.Blocks.Add(new Paragraph(new Run(
-      "End of export."))
-    {
-      Foreground = Brushes.Blue,
-      FontWeight = FontWeights.Bold
-    });
+
+    IProgress<AddonExportProgress> p = progress;
+    p.Report(new AddonExportProgress("End of export.", Brushes.Blue, FontWeights.Bold));
     
     rtbProgress.ScrollToEnd();
   }

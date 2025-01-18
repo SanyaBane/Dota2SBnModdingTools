@@ -6,7 +6,7 @@ namespace SBnDota2ModExporter.AddonExportCommands;
 
 public class CopyFileCommand(string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress, string pathToFile)
 {
-  public void Execute()
+  public Task Execute()
   {
     progress.Report(new AddonExportProgress(BuildInitialProgressMessage()));
 
@@ -18,12 +18,13 @@ public class CopyFileCommand(string addonOutputDirectoryFullPath, IProgress<Addo
                                               Constants.SKIP_COMMAND_TEXT,
         Constants.RTB_FOREGROUND_COLOR_WARNING));
 
-      return;
+      return Task.CompletedTask;
     }
 
     fileInfo.CopyTo(Path.Combine(addonOutputDirectoryFullPath, fileInfo.Name), true);
 
     progress.Report(new AddonExportProgress("File copying finished.", Constants.RTB_FOREGROUND_COLOR_SUCCESS));
+    return Task.CompletedTask;
   }
 
   private string BuildInitialProgressMessage()

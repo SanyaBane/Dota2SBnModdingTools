@@ -64,11 +64,10 @@ public class CopyDirectoryViewModel : BaseAddonExportCommandViewModel
     IsCopyOnlyContentOfDirectory = createUpdateVm.IsCopyOnlyContentOfDirectory;
   }
 
-  public override Task ExecuteExportCommandAsync(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress)
+  public override async Task ExecuteExportCommandAsync(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress)
   {
     var copyDirectoryCommand = new CopyDirectoryCommand(addonOutputDirectoryFullPath, progress, PathToDirectory, IsCopySubfolders, IsCopyOnlyContentOfDirectory);
-    copyDirectoryCommand.Execute();
-    return Task.CompletedTask;
+    await copyDirectoryCommand.Execute();
   }
 
   public override IAddonExportCommandViewModel Clone()

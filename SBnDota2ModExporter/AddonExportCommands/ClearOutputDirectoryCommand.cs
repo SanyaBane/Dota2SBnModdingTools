@@ -5,7 +5,7 @@ namespace SBnDota2ModExporter.AddonExportCommands;
 
 public class ClearOutputDirectoryCommand(string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress)
 {
-  public void Execute()
+  public async Task Execute()
   {
     progress.Report(new AddonExportProgress("Attempting to clear addon output directory."));
 

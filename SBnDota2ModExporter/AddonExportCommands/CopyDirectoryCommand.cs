@@ -11,7 +11,7 @@ public class CopyDirectoryCommand(
   bool isCopySubfolders,
   bool isCopyOnlyContentOfDirectory)
 {
-  public void Execute()
+  public Task Execute()
   {
     progress.Report(new AddonExportProgress(BuildInitialProgressMessage()));
 
@@ -23,7 +23,7 @@ public class CopyDirectoryCommand(
                                               Constants.SKIP_COMMAND_TEXT,
         Constants.RTB_FOREGROUND_COLOR_WARNING));
 
-      return;
+      return Task.CompletedTask;
     }
 
     var outputDirectoryInfo = new DirectoryInfo(addonOutputDirectoryFullPath);
@@ -34,6 +34,7 @@ public class CopyDirectoryCommand(
       FileManager.CopyDirectory(pathToDirectoryInfo, outputDirectoryInfo, isCopySubfolders);
 
     progress.Report(new AddonExportProgress("Directory copying finished.", Constants.RTB_FOREGROUND_COLOR_SUCCESS));
+    return Task.CompletedTask;
   }
 
   private string BuildInitialProgressMessage()
