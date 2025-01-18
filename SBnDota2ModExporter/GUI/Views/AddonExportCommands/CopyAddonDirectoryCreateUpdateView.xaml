@@ -110,6 +110,7 @@
               Header="How result will look like:">
               <TreeView
                 Height="100"
+                Background="LightGray"
                 ItemsSource="{Binding PreviewOutputPathViewModel.OutputTreeViewModel.Items}"
                 ItemTemplate="{StaticResource TreeViewItemTemplate}"
                 ItemContainerStyle="{StaticResource TreeViewItemContainerStyle}">
@@ -129,6 +130,7 @@
               Header="How result will look like:">
               <TreeView
                 Height="100"
+                Background="LightGray"
                 ItemsSource="{Binding PreviewOutputPathViewModel.OutputTreeViewModel.Items}"
                 ItemTemplate="{StaticResource TreeViewItemTemplate}"
                 ItemContainerStyle="{StaticResource TreeViewItemContainerStyle}">
@@ -197,6 +199,7 @@
               Header="How result will look like:">
               <TreeView
                 Height="100"
+                Background="LightGray"
                 ItemsSource="{Binding PreviewOutputPathViewModel.OutputTreeViewModel.Items}"
                 ItemTemplate="{StaticResource TreeViewItemTemplate}"
                 ItemContainerStyle="{StaticResource TreeViewItemContainerStyle}">
