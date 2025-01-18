@@ -5,10 +5,18 @@ namespace SBnDota2ModExporter;
 
 public class AddonExportOutputInfoViewModel : BaseViewModel
 {
+  public enum enAddonOutputDirectoryStatus
+  {
+    None,
+    GlobalOutputDirectoryNotSet,
+    AddonDirectoryNotSet
+  }
+  
   #region Fields
 
   private readonly Func<string> _getDota2AddonName;
 
+  private enAddonOutputDirectoryStatus _addonOutputDirectoryStatus = enAddonOutputDirectoryStatus.None;
   private string _customOutputDirectoryName = string.Empty;
   private string _addonOutputDirectoryFullPath = string.Empty;
   private bool _isDirty;
@@ -56,6 +64,16 @@ public class AddonExportOutputInfoViewModel : BaseViewModel
     }
   }
 
+  public enAddonOutputDirectoryStatus AddonOutputDirectoryStatus
+  {
+    get => _addonOutputDirectoryStatus;
+    private set
+    {
+      _addonOutputDirectoryStatus = value;
+      OnPropertyChanged();
+    }
+  }
+
   public bool IsDirty
   {
     get => _isDirty;
@@ -83,19 +101,22 @@ public class AddonExportOutputInfoViewModel : BaseViewModel
 
   public void UpdateAddonOutputDirectory()
   {
-    var dota2AddonName = _getDota2AddonName.Invoke();
+    AddonOutputDirectoryFullPath = string.Empty;
+    
     if (string.IsNullOrEmpty(GlobalManager.Instance.GlobalSettings.OutputDirectoryFullPath))
     {
-      AddonOutputDirectoryFullPath = "*SET GLOBAL OUTPUT DIRECTORY FIRST*";
+      AddonOutputDirectoryStatus = enAddonOutputDirectoryStatus.GlobalOutputDirectoryNotSet;
       return;
     }
 
+    var dota2AddonName = _getDota2AddonName.Invoke();
     if (string.IsNullOrEmpty(dota2AddonName))
     {
-      AddonOutputDirectoryFullPath = "*SET ADDON DIRECTORY FIRST*";
+      AddonOutputDirectoryStatus = enAddonOutputDirectoryStatus.AddonDirectoryNotSet;
       return;
     }
 
+    AddonOutputDirectoryStatus = enAddonOutputDirectoryStatus.None;
     AddonOutputDirectoryFullPath = Path.Combine(GlobalManager.Instance.GlobalSettings.OutputDirectoryFullPath,
       string.IsNullOrEmpty(CustomOutputDirectoryName)
         ? dota2AddonName

@@ -257,7 +257,7 @@ public class AddonExporterInfoViewModel : BaseViewModel
   private bool CanExecuteExportAddon(object obj)
   {
     UpdateIsAddonValidForExport();
-    return IsAddonValidForExport;
+    return IsAddonValidForExport && !string.IsNullOrEmpty(GlobalManager.Instance.GlobalSettings.OutputDirectoryFullPath);
   }
 
   #endregion // Command Can Execute Handlers

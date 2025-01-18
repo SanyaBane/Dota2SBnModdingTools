@@ -9,6 +9,7 @@
   xmlns:dataTemplateSelectors="clr-namespace:SBnDota2ModExporter.GUI.Views.DataTemplateSelectors"
   xmlns:addonExportCommands="clr-namespace:SBnDota2ModExporter.GUI.ViewModels.AddonExportCommands"
   xmlns:converters="clr-namespace:SBnDota2ModExporter.Converters"
+  xmlns:sBnDota2ModExporter="clr-namespace:SBnDota2ModExporter"
   mc:Ignorable="d"
   d:DesignHeight="300" d:DesignWidth="300"
   d:DataContext="{d:DesignInstance viewModels:AddonExporterInfoViewModel, IsDesignTimeCreatable=True}">
@@ -244,11 +245,40 @@
             <TextBox
               Grid.Column="1"
               Grid.Row="1"
-              Style="{StaticResource tbReadOnlyPathToFile}"
               Margin="5 5 0 0"
               Height="24"
-              Text="{Binding AddonExportOutputInfoViewModel.AddonOutputDirectoryFullPath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
-              ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+
+              ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}">
+              <TextBox.Style>
+                <Style TargetType="{x:Type TextBox}" BasedOn="{StaticResource tbReadOnlyPathToFile}">
+                  <Style.Triggers>
+                    <DataTrigger
+                      Binding="{Binding AddonExportOutputInfoViewModel.AddonOutputDirectoryStatus}"
+                      Value="{x:Static sBnDota2ModExporter:AddonExportOutputInfoViewModel+enAddonOutputDirectoryStatus.None}">
+                      <Setter
+                        Property="Text"
+                        Value="{Binding AddonExportOutputInfoViewModel.AddonOutputDirectoryFullPath, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DataTrigger>
+                    <DataTrigger
+                      Binding="{Binding AddonExportOutputInfoViewModel.AddonOutputDirectoryStatus}"
+                      Value="{x:Static sBnDota2ModExporter:AddonExportOutputInfoViewModel+enAddonOutputDirectoryStatus.GlobalOutputDirectoryNotSet}">
+                      <Setter
+                        Property="Text"
+                        Value="*SET GLOBAL OUTPUT DIRECTORY FIRST*" />
+                      <Setter Property="Foreground" Value="Red" />
+                    </DataTrigger>
+                    <DataTrigger
+                      Binding="{Binding AddonExportOutputInfoViewModel.AddonOutputDirectoryStatus}"
+                      Value="{x:Static sBnDota2ModExporter:AddonExportOutputInfoViewModel+enAddonOutputDirectoryStatus.AddonDirectoryNotSet}">
+                      <Setter
+                        Property="Text"
+                        Value="*SET ADDON DIRECTORY FIRST*" />
+                      <Setter Property="Foreground" Value="Red" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </TextBox.Style>
+            </TextBox>
           </Grid>
         </GroupBox>
 
