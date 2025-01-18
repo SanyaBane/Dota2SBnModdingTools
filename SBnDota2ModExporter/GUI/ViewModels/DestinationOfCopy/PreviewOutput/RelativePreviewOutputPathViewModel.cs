@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using SBnDota2ModExporter.Helpers;
 
 namespace SBnDota2ModExporter.GUI.ViewModels.DestinationOfCopy.PreviewOutput;
 
@@ -59,45 +60,30 @@ public class RelativePreviewOutputPathViewModel : DefaultPreviewOutputPathViewMo
     var fullPathToDirectoryInfo = new DirectoryInfo(fullPathToDirectory);
 
     var addonGameDirectoryFullPath = Path.Combine(GlobalManager.Instance.Dota2GameMainInfo.Dota2AddonsGameDirectoryInfo.FullName, dota2AddonName);
-    if (fullPathToDirectoryInfo.FullName.StartsWith(addonGameDirectoryFullPath, StringComparison.InvariantCultureIgnoreCase))
+    if (!fullPathToDirectoryInfo.FullName.StartsWith(addonGameDirectoryFullPath, StringComparison.InvariantCultureIgnoreCase))
+      throw new Exception($"{nameof(RelativePreviewOutputPathViewModel)} - {nameof(UpdateFullPath)} - fullPathToDirectoryInfo.FullName.StartsWith");
+
+    var newPath = fullPathToDirectoryInfo.FullName.Substring(addonGameDirectoryFullPath.Length);
+
+    CommonPartOfPath = addonGameDirectoryFullPath;
+    RelativePath = newPath;
+
+    if (newPath[0] == '\\')
+      newPath = newPath.Substring(1);
+
+    OutputFullPath = Path.Combine(addonExportOutputInfoViewModel.AddonOutputDirectoryFullPath, newPath);
+
+    var pathInReverseOrder = PathHelper.GetRelativePathDirectories(addonExportOutputInfoViewModel.AddonOutputDirectoryFullPath, OutputFullPath);
+    var nodesInReverseOrder = pathInReverseOrder.Select(x => new OutputNodeViewModel(x, null)).ToArray();
+    
+    nodesInReverseOrder = nodesInReverseOrder.Reverse().ToArray();
+    var nextNode = OutputTreeViewModel.Items.Single();
+    foreach (var outputNodeViewModel in nodesInReverseOrder)
     {
-      var newPath = fullPathToDirectoryInfo.FullName.Substring(addonGameDirectoryFullPath.Length);
+      outputNodeViewModel.Parent = nextNode; // todo initialization of PArent to constructor
 
-      CommonPartOfPath = addonGameDirectoryFullPath;
-      RelativePath = newPath;
-
-      if (newPath[0] == '\\')
-        newPath = newPath.Substring(1);
-
-      OutputFullPath = Path.Combine(addonExportOutputInfoViewModel.AddonOutputDirectoryFullPath, newPath);
-
-      var parentNode = OutputTreeViewModel.Items.Single();
-
-      var nodesInReverseOrder = new List<OutputNodeViewModel>();
-      var outputDirInfo = new DirectoryInfo(OutputFullPath);
-      while (true)
-      {
-        if (outputDirInfo == null || outputDirInfo.FullName == addonExportOutputInfoViewModel.AddonOutputDirectoryFullPath)
-          break;
-
-        nodesInReverseOrder.Add(new OutputNodeViewModel(outputDirInfo, null));
-
-        outputDirInfo = outputDirInfo.Parent;
-      }
-
-      nodesInReverseOrder.Reverse();
-      var nextNode = parentNode;
-      foreach (var outputNodeViewModel in nodesInReverseOrder)
-      {
-        outputNodeViewModel.Parent = nextNode; // todo initialization of PArent to constructor
-
-        nextNode.Items.Add(outputNodeViewModel);
-        nextNode = outputNodeViewModel;
-      }
-    }
-    else
-    {
-      throw new Exception();
+      nextNode.Items.Add(outputNodeViewModel);
+      nextNode = outputNodeViewModel;
     }
   }
 

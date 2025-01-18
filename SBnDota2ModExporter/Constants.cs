@@ -13,4 +13,5 @@ public static class Constants
   public static readonly Brush RTB_FOREGROUND_COLOR_SUCCESS = Brushes.Green;
   public static readonly Brush RTB_FOREGROUND_COLOR_WARNING = Brushes.Yellow;
   public static readonly Brush RTB_FOREGROUND_COLOR_ANOTHER_PROGRAM = Brushes.DimGray;
+  public static readonly Brush RTB_FOREGROUND_COLOR_ERROR = Brushes.Red;
 }

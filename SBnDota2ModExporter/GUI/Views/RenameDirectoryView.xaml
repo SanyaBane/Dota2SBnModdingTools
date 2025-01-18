@@ -19,6 +19,7 @@
       Text="Directory name:" />
     <TextBox 
       Grid.Row="1"
+      x:Name="textBoxName"
       Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
       MaxLength="128" />
   </Grid>
