@@ -13,25 +13,7 @@ public class CopyDirectoryCommand(
 {
   public void Execute()
   {
-    var sb = new StringBuilder();
-    sb.Append("Attempting to copy directory");
-
-    if (isCopySubfolders)
-      sb.Append(" (with subdirectories)");
-
-    sb.Append(':');
-    sb.AppendLine();
-
-    sb.Append($"'{pathToDirectory}'");
-    sb.AppendLine();
-
-    sb.Append("into:");
-    sb.AppendLine();
-
-    sb.Append($"'{addonOutputDirectoryFullPath}'");
-    sb.Append('.');
-
-    progress.Report(new AddonExportProgress(sb.ToString()));
+    progress.Report(new AddonExportProgress(BuildInitialProgressMessage()));
 
     var pathToDirectoryInfo = new DirectoryInfo(pathToDirectory);
     if (pathToDirectoryInfo.Exists is false)
@@ -52,5 +34,28 @@ public class CopyDirectoryCommand(
       FileManager.CopyDirectory(pathToDirectoryInfo, outputDirectoryInfo, isCopySubfolders);
 
     progress.Report(new AddonExportProgress("Directory copying finished.", Constants.RTB_FOREGROUND_COLOR_SUCCESS));
+  }
+
+  private string BuildInitialProgressMessage()
+  {
+    var sb = new StringBuilder();
+    sb.Append("Attempting to copy directory");
+
+    if (isCopySubfolders)
+      sb.Append(" (with subdirectories)");
+
+    sb.Append(':');
+    sb.AppendLine();
+
+    sb.Append($"'{pathToDirectory}'");
+    sb.AppendLine();
+
+    sb.Append("into:");
+    sb.AppendLine();
+
+    sb.Append($"'{addonOutputDirectoryFullPath}'");
+    sb.Append('.');
+
+    return sb.ToString();
   }
 }

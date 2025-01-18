@@ -8,6 +8,29 @@ public class CopyAddonDirectoryCommand(string dota2AddonName, string addonOutput
 {
   public void Execute()
   {
+    progress.Report(new AddonExportProgress(BuildInitialProgressMessage()));
+
+    var fullPathToDirectory = Path.Combine(GlobalManager.Instance.Dota2GameMainInfo.Dota2AddonsGameDirectoryInfo.FullName, dota2AddonName, pathToAddonDirectory);
+    var pathToDirectoryInfo = new DirectoryInfo(fullPathToDirectory);
+    if (pathToDirectoryInfo.Exists is false)
+    {
+      progress.Report(new AddonExportProgress($"Addon directory not exist:{Environment.NewLine}" +
+                                              $"'{pathToAddonDirectory}'{Environment.NewLine}" +
+                                              Constants.SKIP_COMMAND_TEXT,
+        Constants.RTB_FOREGROUND_COLOR_WARNING));
+
+      return;
+    }
+
+    var outputDirectoryInfo = new DirectoryInfo(addonOutputDirectoryFullPath);
+
+    FileManager.CopyDirectory(pathToDirectoryInfo, outputDirectoryInfo, isCopySubfolders);
+
+    progress.Report(new AddonExportProgress("Addon directory copying finished.", Constants.RTB_FOREGROUND_COLOR_SUCCESS));
+  }
+
+  private string BuildInitialProgressMessage()
+  {
     var sb = new StringBuilder();
     sb.Append("Attempting to copy addon directory");
 
@@ -26,24 +49,6 @@ public class CopyAddonDirectoryCommand(string dota2AddonName, string addonOutput
     sb.Append($"'{addonOutputDirectoryFullPath}'");
     sb.Append('.');
 
-    progress.Report(new AddonExportProgress(sb.ToString()));
-
-    var fullPathToDirectory = Path.Combine(GlobalManager.Instance.Dota2GameMainInfo.Dota2AddonsGameDirectoryInfo.FullName, dota2AddonName, pathToAddonDirectory);
-    var pathToDirectoryInfo = new DirectoryInfo(fullPathToDirectory);
-    if (pathToDirectoryInfo.Exists is false)
-    {
-      progress.Report(new AddonExportProgress($"Addon directory not exist:{Environment.NewLine}" +
-                                               $"'{pathToAddonDirectory}'{Environment.NewLine}" +
-                                               Constants.SKIP_COMMAND_TEXT,
-        Constants.RTB_FOREGROUND_COLOR_WARNING));
-
-      return;
-    }
-
-    var outputDirectoryInfo = new DirectoryInfo(addonOutputDirectoryFullPath);
-
-    FileManager.CopyDirectory(pathToDirectoryInfo, outputDirectoryInfo, isCopySubfolders);
-
-    progress.Report(new AddonExportProgress("Addon directory copying finished.", Constants.RTB_FOREGROUND_COLOR_SUCCESS));
+    return sb.ToString();
   }
 }

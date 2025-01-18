@@ -8,6 +8,26 @@ public class CopyFileCommand(string addonOutputDirectoryFullPath, IProgress<Addo
 {
   public void Execute()
   {
+    progress.Report(new AddonExportProgress(BuildInitialProgressMessage()));
+
+    var fileInfo = new FileInfo(pathToFile);
+    if (fileInfo.Exists is false)
+    {
+      progress.Report(new AddonExportProgress("File not exist:" +
+                                              $"'{pathToFile}'{Environment.NewLine}" +
+                                              Constants.SKIP_COMMAND_TEXT,
+        Constants.RTB_FOREGROUND_COLOR_WARNING));
+
+      return;
+    }
+
+    fileInfo.CopyTo(Path.Combine(addonOutputDirectoryFullPath, fileInfo.Name), true);
+
+    progress.Report(new AddonExportProgress("File copying finished.", Constants.RTB_FOREGROUND_COLOR_SUCCESS));
+  }
+
+  private string BuildInitialProgressMessage()
+  {
     var sb = new StringBuilder();
     sb.Append("Attempting to copy file:");
     sb.AppendLine();
@@ -21,21 +41,6 @@ public class CopyFileCommand(string addonOutputDirectoryFullPath, IProgress<Addo
     sb.Append($"'{addonOutputDirectoryFullPath}'");
     sb.Append('.');
 
-    progress.Report(new AddonExportProgress(sb.ToString()));
-
-    var fileInfo = new FileInfo(pathToFile);
-    if (fileInfo.Exists is false)
-    {
-      progress.Report(new AddonExportProgress("File not exist:" +
-                                               $"'{pathToFile}'{Environment.NewLine}" +
-                                               Constants.SKIP_COMMAND_TEXT,
-        Constants.RTB_FOREGROUND_COLOR_WARNING));
-
-      return;
-    }
-
-    fileInfo.CopyTo(Path.Combine(addonOutputDirectoryFullPath, fileInfo.Name), true);
-
-    progress.Report(new AddonExportProgress("File copying finished.", Constants.RTB_FOREGROUND_COLOR_SUCCESS));
+    return sb.ToString();
   }
 }

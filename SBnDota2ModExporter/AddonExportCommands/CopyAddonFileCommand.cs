@@ -10,6 +10,27 @@ public class CopyAddonFileCommand(string dota2AddonName, string addonOutputDirec
   {
     throw new NotImplementedException();
 
+    progress.Report(new AddonExportProgress(BuildInitialProgressMessage()));
+
+    var fullPathToFile = Path.Combine(GlobalManager.Instance.Dota2GameMainInfo.Dota2AddonsGameDirectoryInfo.FullName, dota2AddonName, pathToAddonFile);
+    var fileInfo = new FileInfo(fullPathToFile);
+    if (fileInfo.Exists is false)
+    {
+      progress.Report(new AddonExportProgress("Addon file not exist:" +
+                                              $"'{pathToAddonFile}'{Environment.NewLine}" +
+                                              Constants.SKIP_COMMAND_TEXT,
+        Constants.RTB_FOREGROUND_COLOR_WARNING));
+
+      return;
+    }
+
+    fileInfo.CopyTo(Path.Combine(addonOutputDirectoryFullPath, fileInfo.Name), true);
+
+    progress.Report(new AddonExportProgress("Addon file copying finished.", Constants.RTB_FOREGROUND_COLOR_SUCCESS));
+  }
+
+  private string BuildInitialProgressMessage()
+  {
     var sb = new StringBuilder();
     sb.Append("Attempting to copy addon file:");
     sb.AppendLine();
@@ -23,22 +44,6 @@ public class CopyAddonFileCommand(string dota2AddonName, string addonOutputDirec
     sb.Append($"'{addonOutputDirectoryFullPath}'");
     sb.Append('.');
 
-    progress.Report(new AddonExportProgress(sb.ToString()));
-
-    var fullPathToFile = Path.Combine(GlobalManager.Instance.Dota2GameMainInfo.Dota2AddonsGameDirectoryInfo.FullName, dota2AddonName, pathToAddonFile);
-    var fileInfo = new FileInfo(fullPathToFile);
-    if (fileInfo.Exists is false)
-    {
-      progress.Report(new AddonExportProgress("Addon file not exist:" +
-                                               $"'{pathToAddonFile}'{Environment.NewLine}" +
-                                               Constants.SKIP_COMMAND_TEXT,
-        Constants.RTB_FOREGROUND_COLOR_WARNING));
-
-      return;
-    }
-
-    fileInfo.CopyTo(Path.Combine(addonOutputDirectoryFullPath, fileInfo.Name), true);
-
-    progress.Report(new AddonExportProgress("Addon file copying finished.", Constants.RTB_FOREGROUND_COLOR_SUCCESS));
+    return sb.ToString();
   }
 }
