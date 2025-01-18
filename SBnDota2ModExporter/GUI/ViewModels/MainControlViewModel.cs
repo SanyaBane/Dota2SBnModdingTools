@@ -43,8 +43,8 @@ public class MainControlViewModel : BaseViewModel
 
     AddonExporterInfoViewModels = new ObservableCollection<AddonExporterInfoViewModel>();
 
-    OutputDirectoryFullPath = GlobalManager.Instance.GlobalSettings.OutputDirectoryFullPath;
     Dota2ExecutableFullPath = GlobalManager.Instance.GlobalSettings.Dota2ExeFullPath;
+    OutputDirectoryFullPath = GlobalManager.Instance.GlobalSettings.OutputDirectoryFullPath;
 
     var listNotLoadedFiles = new List<string>();
     foreach (var addonExporterFullPath in addonExporterShortConfigs)

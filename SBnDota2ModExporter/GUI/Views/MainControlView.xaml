@@ -16,6 +16,8 @@
   <UserControl.Resources>
 
     <converters:BooleanInvertConverter x:Key="BooleanInvertConverter" />
+    <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" TreatEmptyStringAsNull="True" />
+    <converters:NullToVisibilityConverter x:Key="NullToVisibilityInvertedConverter" TreatEmptyStringAsNull="True" Inverse="True" />
 
     <DataTemplate x:Key="WhenItemSelected">
       <views:AddonExporterInfoView />
@@ -136,234 +138,245 @@
     <Grid
       Grid.Row="3"
       x:Name="gridLoadedAddonExporterFiles"
-      Margin="0 5 0 0"
-      MinWidth="300">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" />
-        <RowDefinition Height="*" />
-        <RowDefinition Height="Auto" />
-      </Grid.RowDefinitions>
-
-      <TextBlock
-        Grid.Row="0"
-        VerticalAlignment="Center"
-        Text="Loaded addon export files:" />
-
+      Margin="0 5 0 0">
       <Grid
-        Grid.Row="1"
-        HorizontalAlignment="Stretch">
-        <Grid.ColumnDefinitions>
-          <ColumnDefinition Width="400" MinWidth="200" MaxWidth="700" />
-          <ColumnDefinition Width="4" MinWidth="4" />
-          <ColumnDefinition Width="*" />
-        </Grid.ColumnDefinitions>
+        Visibility="{Binding OutputDirectoryFullPath, Mode=OneWay, Converter={StaticResource NullToVisibilityInvertedConverter}}">
+        <TextBlock
+          Text="*OUTPUT DIRECTORY NOT SET*"
+          HorizontalAlignment="Center"
+          VerticalAlignment="Center"
+          Foreground="Red" />
+      </Grid>
+      <Grid
+        Visibility="{Binding OutputDirectoryFullPath, Mode=OneWay, Converter={StaticResource NullToVisibilityConverter}}">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="*" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock
+          Grid.Row="0"
+          VerticalAlignment="Center"
+          Text="Loaded addon export files:" />
 
         <Grid
-          Grid.Column="0"
-          Margin="0 0 10 0">
+          Grid.Row="1"
+          HorizontalAlignment="Stretch">
           <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="400" MinWidth="200" MaxWidth="700" />
+            <ColumnDefinition Width="4" MinWidth="4" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
           </Grid.ColumnDefinitions>
 
-          <DataGrid
+          <Grid
             Grid.Column="0"
-            x:Name="dgLoadedAddonExportFiles"
-            Style="{StaticResource DefaultDataGridStyle}"
-            SelectionMode="Single"
-            SelectionUnit="FullRow"
-            RowHeight="32"
-            ItemsSource="{Binding AddonExporterInfoViewModels}"
-            SelectedItem="{Binding SelectedAddonExporterFileViewModel}">
+            Margin="0 0 10 0">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
-            <DataGrid.Columns>
-              <DataGridTemplateColumn
-                MinWidth="45"
-                Width="45"
-                CanUserSort="False">
-                <DataGridTemplateColumn.HeaderTemplate>
-                  <DataTemplate>
-                    <TextBlock
-                      Text="State"
-                      ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
-                  </DataTemplate>
-                </DataGridTemplateColumn.HeaderTemplate>
-                <DataGridTemplateColumn.CellTemplate>
-                  <DataTemplate>
-                    <Grid>
-                      <Grid.Style>
-                        <Style TargetType="{x:Type Grid}">
-                          <Setter Property="Background" Value="Red" />
-                          <Style.Triggers>
-                            <MultiDataTrigger>
-                              <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding IsSaved}" Value="True" />
-                                <Condition Binding="{Binding IsDirty}" Value="False" />
-                              </MultiDataTrigger.Conditions>
-                              <Setter Property="Background" Value="Green" />
-                            </MultiDataTrigger>
-                            <MultiDataTrigger>
-                              <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding IsSaved}" Value="True" />
-                                <Condition Binding="{Binding IsDirty}" Value="True" />
-                              </MultiDataTrigger.Conditions>
-                              <Setter Property="Background" Value="Yellow" />
-                            </MultiDataTrigger>
-                          </Style.Triggers>
-                        </Style>
-                      </Grid.Style>
+            <DataGrid
+              Grid.Column="0"
+              x:Name="dgLoadedAddonExportFiles"
+              Style="{StaticResource DefaultDataGridStyle}"
+              SelectionMode="Single"
+              SelectionUnit="FullRow"
+              RowHeight="32"
+              ItemsSource="{Binding AddonExporterInfoViewModels}"
+              SelectedItem="{Binding SelectedAddonExporterFileViewModel}">
+
+              <DataGrid.Columns>
+                <DataGridTemplateColumn
+                  MinWidth="45"
+                  Width="45"
+                  CanUserSort="False">
+                  <DataGridTemplateColumn.HeaderTemplate>
+                    <DataTemplate>
                       <TextBlock
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}">
-                        <TextBlock.Style>
-                          <Style TargetType="{x:Type TextBlock}">
-                            <Setter Property="Text" Value="Not saved" />
-                            <Setter Property="Foreground" Value="Black" />
+                        Text="State"
+                        ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.HeaderTemplate>
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <Grid>
+                        <Grid.Style>
+                          <Style TargetType="{x:Type Grid}">
+                            <Setter Property="Background" Value="Red" />
                             <Style.Triggers>
                               <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
                                   <Condition Binding="{Binding IsSaved}" Value="True" />
                                   <Condition Binding="{Binding IsDirty}" Value="False" />
                                 </MultiDataTrigger.Conditions>
-                                <Setter Property="Text" Value="Saved" />
-                                <Setter Property="Foreground" Value="White" />
+                                <Setter Property="Background" Value="Green" />
                               </MultiDataTrigger>
                               <MultiDataTrigger>
                                 <MultiDataTrigger.Conditions>
                                   <Condition Binding="{Binding IsSaved}" Value="True" />
                                   <Condition Binding="{Binding IsDirty}" Value="True" />
                                 </MultiDataTrigger.Conditions>
-                                <Setter Property="Text" Value="Modified" />
-                                <Setter Property="Foreground" Value="Black" />
+                                <Setter Property="Background" Value="Yellow" />
                               </MultiDataTrigger>
                             </Style.Triggers>
                           </Style>
-                        </TextBlock.Style>
-                      </TextBlock>
-                    </Grid>
-                  </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-              </DataGridTemplateColumn>
-              <DataGridTemplateColumn
-                Width="*"
-                MinWidth="150"
-                CanUserSort="False">
-                <DataGridTemplateColumn.HeaderTemplate>
-                  <DataTemplate>
-                    <TextBlock
-                      Text="Name"
-                      ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
-                  </DataTemplate>
-                </DataGridTemplateColumn.HeaderTemplate>
-                <DataGridTemplateColumn.CellTemplate>
-                  <DataTemplate>
-                    <TextBlock
-                      VerticalAlignment="Center"
-                      Text="{Binding Path=AddonConfigFileName, Mode=OneWay}"
-                      ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
-                  </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-              </DataGridTemplateColumn>
-              <DataGridTemplateColumn
-                MinWidth="45"
-                Width="45"
-                CanUserSort="False">
-                <DataGridTemplateColumn.HeaderTemplate>
-                  <DataTemplate>
-                    <TextBlock
-                      Text="Export"
-                      ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
-                  </DataTemplate>
-                </DataGridTemplateColumn.HeaderTemplate>
-                <DataGridTemplateColumn.CellTemplate>
-                  <DataTemplate>
-                    <CheckBox
-                      HorizontalAlignment="Center"
-                      VerticalAlignment="Center"
-                      IsChecked="{Binding Path=IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                  </DataTemplate>
-                </DataGridTemplateColumn.CellTemplate>
-              </DataGridTemplateColumn>
-            </DataGrid.Columns>
-          </DataGrid>
+                        </Grid.Style>
+                        <TextBlock
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}">
+                          <TextBlock.Style>
+                            <Style TargetType="{x:Type TextBlock}">
+                              <Setter Property="Text" Value="Not saved" />
+                              <Setter Property="Foreground" Value="Black" />
+                              <Style.Triggers>
+                                <MultiDataTrigger>
+                                  <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsSaved}" Value="True" />
+                                    <Condition Binding="{Binding IsDirty}" Value="False" />
+                                  </MultiDataTrigger.Conditions>
+                                  <Setter Property="Text" Value="Saved" />
+                                  <Setter Property="Foreground" Value="White" />
+                                </MultiDataTrigger>
+                                <MultiDataTrigger>
+                                  <MultiDataTrigger.Conditions>
+                                    <Condition Binding="{Binding IsSaved}" Value="True" />
+                                    <Condition Binding="{Binding IsDirty}" Value="True" />
+                                  </MultiDataTrigger.Conditions>
+                                  <Setter Property="Text" Value="Modified" />
+                                  <Setter Property="Foreground" Value="Black" />
+                                </MultiDataTrigger>
+                              </Style.Triggers>
+                            </Style>
+                          </TextBlock.Style>
+                        </TextBlock>
+                      </Grid>
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn
+                  Width="*"
+                  MinWidth="150"
+                  CanUserSort="False">
+                  <DataGridTemplateColumn.HeaderTemplate>
+                    <DataTemplate>
+                      <TextBlock
+                        Text="Name"
+                        ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.HeaderTemplate>
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <TextBlock
+                        VerticalAlignment="Center"
+                        Text="{Binding Path=AddonConfigFileName, Mode=OneWay}"
+                        ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn
+                  MinWidth="45"
+                  Width="45"
+                  CanUserSort="False">
+                  <DataGridTemplateColumn.HeaderTemplate>
+                    <DataTemplate>
+                      <TextBlock
+                        Text="Export"
+                        ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.HeaderTemplate>
+                  <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                      <CheckBox
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IsChecked="{Binding Path=IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DataTemplate>
+                  </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+              </DataGrid.Columns>
+            </DataGrid>
 
-          <StackPanel
+            <StackPanel
+              Grid.Column="1"
+              Orientation="Vertical"
+              Margin="5 0 0 0"
+              VerticalAlignment="Center">
+              <Button
+                x:Name="btnMoveUp"
+                Margin="0 0 0 0"
+                FontFamily="Marlett"
+                FontSize="20"
+                Content="5"
+                Command="{Binding MoveUpCommand}" />
+              <Button
+                x:Name="btnMoveDown"
+                Margin="0 5 0 0"
+                FontFamily="Marlett"
+                FontSize="20"
+                Content="6"
+                Command="{Binding MoveDownCommand}" />
+            </StackPanel>
+          </Grid>
+
+          <GridSplitter
             Grid.Column="1"
-            Orientation="Vertical"
-            Margin="5 0 0 0"
-            VerticalAlignment="Center">
-            <Button
-              x:Name="btnMoveUp"
-              Margin="0 0 0 0"
-              FontFamily="Marlett"
-              FontSize="20"
-              Content="5"
-              Command="{Binding MoveUpCommand}" />
-            <Button
-              x:Name="btnMoveDown"
-              Margin="0 5 0 0"
-              FontFamily="Marlett"
-              FontSize="20"
-              Content="6"
-              Command="{Binding MoveDownCommand}" />
-          </StackPanel>
+            ResizeDirection="Columns"
+            ResizeBehavior="PreviousAndNext"
+            HorizontalAlignment="Stretch"
+            Background="SlateGray" />
+
+          <ContentControl
+            Grid.Column="2"
+            x:Name="SelectedAddonExporterFile"
+            Margin="0 0 0 0"
+            Content="{Binding SelectedAddonExporterFileViewModel}"
+            ContentTemplateSelector="{StaticResource SelectedModExportContentTemplateSelector}" />
         </Grid>
 
-        <GridSplitter
-          Grid.Column="1"
-          ResizeDirection="Columns"
-          ResizeBehavior="PreviousAndNext"
-          HorizontalAlignment="Stretch"
-          Background="SlateGray" />
+        <Grid
+          Grid.Row="2"
+          Margin="0 3 0 0">
+          <StackPanel
+            Orientation="Horizontal">
+            <Button
+              Content="Create"
+              Margin="0 0 0 0"
+              Height="30"
+              HorizontalAlignment="Left"
+              Command="{Binding CreateAddonExporterFileCommand}" />
+            <Button
+              Content="Duplicate"
+              Margin="5 0 0 0"
+              Height="30"
+              HorizontalAlignment="Left"
+              Command="{Binding DuplicateAddonExporterFileCommand}" />
+            <Button
+              Content="Load"
+              Margin="3 0 0 0"
+              Height="30"
+              HorizontalAlignment="Left"
+              Command="{Binding LoadAddonExporterFileCommand}" />
+            <Button
+              Content="Remove selected"
+              Margin="3 0 0 0"
+              Height="30"
+              HorizontalAlignment="Left"
+              Command="{Binding RemoveAddonExporterFileCommand}" />
 
-        <ContentControl
-          Grid.Column="2"
-          Margin="0 0 0 0"
-          Content="{Binding SelectedAddonExporterFileViewModel}"
-          ContentTemplateSelector="{StaticResource SelectedModExportContentTemplateSelector}" />
-      </Grid>
-
-      <Grid
-        Grid.Row="2"
-        Margin="0 3 0 0">
-        <StackPanel
-          Orientation="Horizontal">
-          <Button
-            Content="Create"
-            Margin="0 0 0 0"
-            Height="30"
-            HorizontalAlignment="Left"
-            Command="{Binding CreateAddonExporterFileCommand}" />
-          <Button
-            Content="Duplicate"
-            Margin="5 0 0 0"
-            Height="30"
-            HorizontalAlignment="Left"
-            Command="{Binding DuplicateAddonExporterFileCommand}" />
-          <Button
-            Content="Load"
-            Margin="3 0 0 0"
-            Height="30"
-            HorizontalAlignment="Left"
-            Command="{Binding LoadAddonExporterFileCommand}" />
-          <Button
-            Content="Remove selected"
-            Margin="3 0 0 0"
-            Height="30"
-            HorizontalAlignment="Left"
-            Command="{Binding RemoveAddonExporterFileCommand}" />
-
-          <Button
-            Margin="10 0 0 0"
-            Height="30"
-            HorizontalAlignment="Left"
-            Padding="3"
-            FontWeight="Bold"
-            Content="Export all selected addons"
-            ToolTip="Execute specified export commands."
-            Command="{Binding ExportSelectedAddonsCommand}" />
-        </StackPanel>
+            <Button
+              Margin="10 0 0 0"
+              Height="30"
+              HorizontalAlignment="Left"
+              Padding="3"
+              FontWeight="Bold"
+              Content="Export all selected addons"
+              ToolTip="Execute specified export commands."
+              Command="{Binding ExportSelectedAddonsCommand}" />
+          </StackPanel>
+        </Grid>
       </Grid>
     </Grid>
   </Grid>
