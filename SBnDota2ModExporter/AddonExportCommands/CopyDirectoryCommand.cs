@@ -6,7 +6,8 @@ namespace SBnDota2ModExporter.AddonExportCommands;
 
 public static class CopyDirectoryCommand
 {
-  public static void Execute(string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress, string pathToDirectory, bool isCopySubfolders)
+  public static void Execute(string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress, string pathToDirectory, 
+    bool isCopySubfolders, bool isCopyOnlyContentOfDirectory)
   {
     var sb = new StringBuilder();
     sb.Append("Attempting to copy directory");
@@ -41,7 +42,10 @@ public static class CopyDirectoryCommand
 
     var outputDirectoryInfo = new DirectoryInfo(addonOutputDirectoryFullPath);
 
-    FileManager.CopyDirectory(pathToDirectoryInfo, outputDirectoryInfo, isCopySubfolders);
+    if (isCopyOnlyContentOfDirectory)
+      FileManager.CopyDirectoryContent(pathToDirectoryInfo, outputDirectoryInfo, isCopySubfolders);
+    else
+      FileManager.CopyDirectory(pathToDirectoryInfo, outputDirectoryInfo, isCopySubfolders);
 
     progress.Report(new AddonExportProgress("Directory copying finished.", Constants.RTB_FOREGROUND_COLOR_SUCCESS));
   }

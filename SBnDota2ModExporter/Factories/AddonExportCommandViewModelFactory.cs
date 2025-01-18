@@ -28,6 +28,7 @@ public static class AddonExportCommandViewModelFactory
         {
           PathToDirectory = copyDirectoryCreateUpdateViewModel.PathToDirectory,
           IsCopySubfolders = copyDirectoryCreateUpdateViewModel.IsCopySubfolders,
+          IsCopyOnlyContentOfDirectory = copyDirectoryCreateUpdateViewModel.IsCopyOnlyContentOfDirectory,
         };
       
       case CopyFileCreateUpdateViewModel copyFileCreateUpdateViewModel:

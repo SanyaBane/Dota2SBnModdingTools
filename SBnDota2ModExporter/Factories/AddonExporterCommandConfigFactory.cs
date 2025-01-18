@@ -31,6 +31,7 @@ public static class AddonExporterCommandConfigFactory
           IsChecked = copyDirectoryViewModel.IsChecked,
           PathToDirectory = copyDirectoryViewModel.PathToDirectory,
           IsCopySubfolders = copyDirectoryViewModel.IsCopySubfolders,
+          IsCopyOnlyContentOfDirectory = copyDirectoryViewModel.IsCopyOnlyContentOfDirectory
         };
 
       case CopyFileViewModel copyFileViewModel:
@@ -83,6 +84,7 @@ public static class AddonExporterCommandConfigFactory
           IsChecked = copyDirectoryCommandConfig.IsChecked,
           PathToDirectory = copyDirectoryCommandConfig.PathToDirectory,
           IsCopySubfolders = copyDirectoryCommandConfig.IsCopySubfolders,
+          IsCopyOnlyContentOfDirectory = copyDirectoryCommandConfig.IsCopyOnlyContentOfDirectory,
         };
 
       case CopyFileCommandConfig copyFileCommandConfig:

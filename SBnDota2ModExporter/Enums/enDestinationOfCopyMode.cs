@@ -6,8 +6,8 @@ public enum enDestinationOfCopyMode
 {
   [Description("Copy to addon output directory")]
   CopyToRoot,
-  [Description("Copy to addon output directory by same path as inside source addon directory")]
+  [Description("Copy to addon output directory, by same path as inside source addon (relative path)")]
   CopyToRootUsingRelativePaths,
-  [Description("Copy to addon output directory, but manually set destination directory")]
+  [Description("Copy to addon output directory, but manually specify sub-directory")]
   CopyToSpecifiedDirectory,
 }

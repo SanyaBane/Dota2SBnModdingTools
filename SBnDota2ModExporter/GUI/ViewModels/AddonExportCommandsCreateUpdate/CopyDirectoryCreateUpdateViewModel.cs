@@ -17,6 +17,7 @@ public class CopyDirectoryCreateUpdateViewModel : BaseViewModel, IAddonExportCom
 
   private string _pathToDirectory = string.Empty;
   private bool _isCopySubfolders = true;
+  private bool _isCopyOnlyContentOfDirectory = false;
   private bool _isDirty;
 
   #endregion // Fields
@@ -38,6 +39,7 @@ public class CopyDirectoryCreateUpdateViewModel : BaseViewModel, IAddonExportCom
       UpdateVmAfterPathToDirectoryChange();
 
       _isCopySubfolders = editVm.IsCopySubfolders;
+      _isCopyOnlyContentOfDirectory = editVm.IsCopyOnlyContentOfDirectory;
     }
   }
 
@@ -72,6 +74,18 @@ public class CopyDirectoryCreateUpdateViewModel : BaseViewModel, IAddonExportCom
     set
     {
       _isCopySubfolders = value;
+      OnPropertyChanged();
+
+      IsDirty = true;
+    }
+  }
+
+  public bool IsCopyOnlyContentOfDirectory
+  {
+    get => _isCopyOnlyContentOfDirectory;
+    set
+    {
+      _isCopyOnlyContentOfDirectory = value;
       OnPropertyChanged();
 
       IsDirty = true;

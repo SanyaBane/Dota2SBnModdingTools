@@ -10,6 +10,7 @@ public class CopyDirectoryViewModel : BaseAddonExportCommandViewModel
 
   private string _pathToDirectory = string.Empty;
   private bool _isCopySubfolders;
+  private bool _isCopyOnlyContentOfDirectory;
 
   #endregion // Fields
 
@@ -41,6 +42,16 @@ public class CopyDirectoryViewModel : BaseAddonExportCommandViewModel
     }
   }
 
+  public bool IsCopyOnlyContentOfDirectory
+  {
+    get => _isCopyOnlyContentOfDirectory;
+    set
+    {
+      _isCopyOnlyContentOfDirectory = value;
+      OnPropertyChanged();
+    }
+  }
+
   #endregion // Properties
 
   #region Public Methods
@@ -50,11 +61,12 @@ public class CopyDirectoryViewModel : BaseAddonExportCommandViewModel
     var createUpdateVm = (CopyDirectoryCreateUpdateViewModel)createUpdateViewModel;
     PathToDirectory = createUpdateVm.PathToDirectory;
     IsCopySubfolders = createUpdateVm.IsCopySubfolders;
+    IsCopyOnlyContentOfDirectory = createUpdateVm.IsCopyOnlyContentOfDirectory;
   }
 
   public override Task ExecuteExportCommandAsync(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress)
   {
-    CopyDirectoryCommand.Execute(addonOutputDirectoryFullPath, progress, PathToDirectory, IsCopySubfolders);
+    CopyDirectoryCommand.Execute(addonOutputDirectoryFullPath, progress, PathToDirectory, IsCopySubfolders, IsCopyOnlyContentOfDirectory);
     return Task.CompletedTask;
   }
 
@@ -62,9 +74,10 @@ public class CopyDirectoryViewModel : BaseAddonExportCommandViewModel
   {
     return new CopyDirectoryViewModel()
     {
-      IsCopySubfolders = IsCopySubfolders,
-      PathToDirectory = PathToDirectory,
       IsChecked = IsChecked,
+      PathToDirectory = PathToDirectory,
+      IsCopySubfolders = IsCopySubfolders,
+      IsCopyOnlyContentOfDirectory = IsCopyOnlyContentOfDirectory,
     };
   }
 
