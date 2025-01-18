@@ -512,6 +512,9 @@ public class AddonExporterInfoViewModel : BaseViewModel
   {
     foreach (var addonExportCommandViewModel in AddonExportCommandViewModels)
     {
+      if (!addonExportCommandViewModel.IsChecked)
+        continue;
+
       await addonExportCommandViewModel.ExecuteExportCommandAsync(Dota2AddonName, AddonExportOutputInfoViewModel.AddonOutputDirectoryFullPath, progress);
     }
   }
