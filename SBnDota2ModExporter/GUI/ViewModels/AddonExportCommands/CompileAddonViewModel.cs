@@ -25,7 +25,8 @@ public class CompileAddonViewModel : BaseAddonExportCommandViewModel
 
   public override async Task ExecuteExportCommandAsync(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress)
   {
-    await CompileAddonCommand.Execute(dota2AddonName, addonOutputDirectoryFullPath, progress);
+    var compileAddonCommand = new CompileAddonCommand(dota2AddonName, progress);
+    await compileAddonCommand.Execute();
   }
 
   public override IAddonExportCommandViewModel Clone()

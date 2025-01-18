@@ -4,10 +4,14 @@ using SBnDota2ModExporter.GUI;
 
 namespace SBnDota2ModExporter.AddonExportCommands;
 
-public static class CopyDirectoryCommand
+public class CopyDirectoryCommand(
+  string addonOutputDirectoryFullPath,
+  IProgress<AddonExportProgress> progress,
+  string pathToDirectory,
+  bool isCopySubfolders,
+  bool isCopyOnlyContentOfDirectory)
 {
-  public static void Execute(string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress, string pathToDirectory, 
-    bool isCopySubfolders, bool isCopyOnlyContentOfDirectory)
+  public void Execute()
   {
     var sb = new StringBuilder();
     sb.Append("Attempting to copy directory");

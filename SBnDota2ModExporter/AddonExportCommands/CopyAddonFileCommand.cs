@@ -4,9 +4,9 @@ using SBnDota2ModExporter.GUI;
 
 namespace SBnDota2ModExporter.AddonExportCommands;
 
-public static class CopyAddonFileCommand
+public class CopyAddonFileCommand(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress, string pathToAddonFile)
 {
-  public static void Execute(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress, string pathToAddonFile)
+  public void Execute()
   {
     throw new NotImplementedException();
 
@@ -30,8 +30,8 @@ public static class CopyAddonFileCommand
     if (fileInfo.Exists is false)
     {
       progress.Report(new AddonExportProgress("Addon file not exist:" +
-                                              $"'{pathToAddonFile}'{Environment.NewLine}" +
-                                              Constants.SKIP_COMMAND_TEXT,
+                                               $"'{pathToAddonFile}'{Environment.NewLine}" +
+                                               Constants.SKIP_COMMAND_TEXT,
         Constants.RTB_FOREGROUND_COLOR_WARNING));
 
       return;

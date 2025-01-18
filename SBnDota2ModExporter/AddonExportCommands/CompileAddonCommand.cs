@@ -4,9 +4,9 @@ using SBnDota2ModExporter.GUI;
 
 namespace SBnDota2ModExporter.AddonExportCommands;
 
-public static class CompileAddonCommand
+public class CompileAddonCommand(string dota2AddonName, IProgress<AddonExportProgress> progress)
 {
-  public static async Task Execute(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress)
+  public async Task Execute()
   {
     progress.Report(new AddonExportProgress("Attempting to compile addon..."));
 
@@ -16,8 +16,8 @@ public static class CompileAddonCommand
     if (!addonContentDirectoryInfo.Exists)
     {
       progress.Report(new AddonExportProgress($"Addon content directory not exist:{Environment.NewLine}" +
-                                              $"'{addonContentDirectoryInfo.FullName}'{Environment.NewLine}" +
-                                              Constants.SKIP_COMMAND_TEXT,
+                                               $"'{addonContentDirectoryInfo.FullName}'{Environment.NewLine}" +
+                                               Constants.SKIP_COMMAND_TEXT,
         Constants.RTB_FOREGROUND_COLOR_WARNING));
 
       return;

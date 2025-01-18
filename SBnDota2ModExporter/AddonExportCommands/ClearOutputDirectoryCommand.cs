@@ -3,9 +3,9 @@ using SBnDota2ModExporter.GUI;
 
 namespace SBnDota2ModExporter.AddonExportCommands;
 
-public static class ClearOutputDirectoryCommand
+public class ClearOutputDirectoryCommand(string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress)
 {
-  public static void Execute(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress)
+  public void Execute()
   {
     progress.Report(new AddonExportProgress("Attempting to clear addon output directory."));
 
@@ -13,8 +13,8 @@ public static class ClearOutputDirectoryCommand
     if (addonOutputDirectory.Exists is false)
     {
       progress.Report(new AddonExportProgress($"Addon addon output directory not exist:{Environment.NewLine}" +
-                                              $"'{addonOutputDirectory.FullName}'{Environment.NewLine}" +
-                                              Constants.SKIP_COMMAND_TEXT,
+                                               $"'{addonOutputDirectory.FullName}'{Environment.NewLine}" +
+                                               Constants.SKIP_COMMAND_TEXT,
         Constants.RTB_FOREGROUND_COLOR_WARNING));
 
       return;

@@ -25,7 +25,8 @@ public class ClearOutputDirectoryViewModel : BaseAddonExportCommandViewModel
 
   public override Task ExecuteExportCommandAsync(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress)
   {
-    ClearOutputDirectoryCommand.Execute(dota2AddonName, addonOutputDirectoryFullPath, progress);
+    var clearOutputDirectoryCommand = new ClearOutputDirectoryCommand(addonOutputDirectoryFullPath, progress);
+    clearOutputDirectoryCommand.Execute();
     return Task.CompletedTask;
   }
 

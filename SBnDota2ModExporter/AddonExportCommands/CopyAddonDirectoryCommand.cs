@@ -4,9 +4,9 @@ using SBnDota2ModExporter.GUI;
 
 namespace SBnDota2ModExporter.AddonExportCommands;
 
-public static class CopyAddonDirectoryCommand
+public class CopyAddonDirectoryCommand(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress, string pathToAddonDirectory, bool isCopySubfolders)
 {
-  public static void Execute(string dota2AddonName, string addonOutputDirectoryFullPath, IProgress<AddonExportProgress> progress, string pathToAddonDirectory, bool isCopySubfolders)
+  public void Execute()
   {
     var sb = new StringBuilder();
     sb.Append("Attempting to copy addon directory");
@@ -33,8 +33,8 @@ public static class CopyAddonDirectoryCommand
     if (pathToDirectoryInfo.Exists is false)
     {
       progress.Report(new AddonExportProgress($"Addon directory not exist:{Environment.NewLine}" +
-                                              $"'{pathToAddonDirectory}'{Environment.NewLine}" +
-                                              Constants.SKIP_COMMAND_TEXT,
+                                               $"'{pathToAddonDirectory}'{Environment.NewLine}" +
+                                               Constants.SKIP_COMMAND_TEXT,
         Constants.RTB_FOREGROUND_COLOR_WARNING));
 
       return;
