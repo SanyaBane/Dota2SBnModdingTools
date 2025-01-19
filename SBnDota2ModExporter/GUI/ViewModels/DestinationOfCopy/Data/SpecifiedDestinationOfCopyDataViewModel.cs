@@ -158,21 +158,18 @@ public class SpecifiedDestinationOfCopyDataViewModel : BaseDestinationOfCopyData
 
   public override BaseDestinationOfCopyDataConfig CreateDestinationOfCopyDataConfig()
   {
-    var node = SelectedNode;
-    var list = new List<OutputNodeViewModel>();
-    while (node != null)
-    {
-      list.Add(node);
-      node = node.Parent;
-    }
+    if (SelectedNode.FullPath.IndexOf(_addonOutputDirectoryInfo.FullName) != 0)
+      throw new Exception();
     
-    // var fullPathToSpecifiedDirectory = SelectedNode
+    var relativePath = SelectedNode.FullPath.Substring(_addonOutputDirectoryInfo.FullName.Length);
+    if (relativePath[0] == '\\')
+      relativePath = relativePath.Substring(1);
     
     return new SpecifiedDirectoryDestinationOfCopyDataConfig()
     {
       FullPathToDirectory = _getFullPathToDirectory.Invoke(),
       SelectedDestinationOfCopyMode = enDestinationOfCopyMode.CopyToSpecifiedDirectory,
-      RelativePathToSpecifiedDirectory = "qwe",
+      RelativePathToSpecifiedDirectory = relativePath,
     };
   }
 
