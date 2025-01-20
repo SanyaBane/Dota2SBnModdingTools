@@ -14,10 +14,9 @@ public class MainControlViewModel : BaseViewModel
 {
   #region Fields
 
-  private string _dota2ExecutableFullPath = string.Empty;
   private string _vsndevtsFileFullPath = string.Empty;
 
-  private VsndevtsActionViewModel? _previousSelectedActionViewModel;
+  // private VsndevtsActionViewModel? _previousSelectedActionViewModel;
   private VsndevtsActionViewModel? _selectedActionViewModel;
 
   #endregion // Fields
@@ -26,25 +25,12 @@ public class MainControlViewModel : BaseViewModel
 
   public MainControlViewModel()
   {
-    SetPathToDota2ExeCommand = new DelegateCommand(ExecuteSetPathToDota2Exe);
     SelectVsndevtsFileCommand = new DelegateCommand(ExecuteSelectVsndevtsFile);
-
-    Dota2ExecutableFullPath = GlobalManager.Instance.GlobalSettings.Dota2ExeFullPath;
   }
 
   #endregion // Ctor
 
   #region Properties
-
-  public string Dota2ExecutableFullPath
-  {
-    get => _dota2ExecutableFullPath;
-    private set
-    {
-      _dota2ExecutableFullPath = value;
-      OnPropertyChanged();
-    }
-  }
 
   public string VsndevtsFileFullPath
   {
@@ -66,7 +52,7 @@ public class MainControlViewModel : BaseViewModel
       if (_selectedActionViewModel == value)
         return;
 
-      _previousSelectedActionViewModel = _selectedActionViewModel;
+      // _previousSelectedActionViewModel = _selectedActionViewModel;
 
       _selectedActionViewModel = value;
       OnPropertyChanged();
@@ -77,38 +63,11 @@ public class MainControlViewModel : BaseViewModel
 
   #region Commands
 
-  public DelegateCommand SetPathToDota2ExeCommand { get; }
   public DelegateCommand SelectVsndevtsFileCommand { get; }
 
   #endregion // Commands
 
   #region Command Execute Handlers
-
-  private void ExecuteSetPathToDota2Exe(object obj)
-  {
-    var resultCallDialogSetDota2ExePath = GlobalManager.Instance.CallDialogSetDota2ExePath();
-    if (resultCallDialogSetDota2ExePath.IsFailure)
-    {
-      if (!string.IsNullOrEmpty(resultCallDialogSetDota2ExePath.Error))
-      {
-        MessageBox.Show(resultCallDialogSetDota2ExePath.Error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-      }
-
-      return;
-    }
-
-    if (string.IsNullOrEmpty(resultCallDialogSetDota2ExePath.Value))
-      return;
-
-    GlobalManager.Instance.GlobalSettings.Dota2ExeFullPath = resultCallDialogSetDota2ExePath.Value;
-    Dota2ExecutableFullPath = GlobalManager.Instance.GlobalSettings.Dota2ExeFullPath;
-
-    var resultTrySetFullPathToDota2Exe = GlobalManager.Instance.UpdateDota2GameMainInfo();
-    if (resultTrySetFullPathToDota2Exe.IsFailure)
-    {
-      MessageBox.Show(resultTrySetFullPathToDota2Exe.Error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-    }
-  }
 
   private void ExecuteSelectVsndevtsFile(object obj)
   {

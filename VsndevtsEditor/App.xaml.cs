@@ -23,12 +23,33 @@ public partial class App
   {
     base.OnStartup(e);
     
+    if (!EnsureTemplateDirectoriesExists())
+      Application.Current.Shutdown();
+
+    Application.Current.Exit += Application_OnExit;
+
+    _mainControlViewModel = new MainControlViewModel();
+
+    var mainWindow = new MainWindowView
+    {
+      DataContext = _mainControlViewModel
+    };
+
+    mainWindow.ShowDialog();
+  }
+  
+  private void Application_OnExit(object sender, ExitEventArgs e)
+  {
+  }
+
+  private bool EnsureTemplateDirectoriesExists()
+  {
     var foldersSettingsFileInfo = new FileInfo(_pathToFoldersSettingsFile);
     if (!foldersSettingsFileInfo.Exists)
     {
       MessageBox.Show($"File '{_pathToFoldersSettingsFile}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
       
-      Application.Current.Shutdown();
+      return false;
     }
 
     try
@@ -39,8 +60,8 @@ public partial class App
     catch (Exception ex)
     {
       MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-      
-      Application.Current.Shutdown();
+
+      return false;
     }
     
     var templateDirectoriesDirInfo = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "Template_Directories"));
@@ -66,64 +87,7 @@ public partial class App
                       $"{str}", 
         "Error", MessageBoxButton.OK, MessageBoxImage.Information);
     }
-    
 
-    var modExporterGlobalConfig = GlobalManager.Instance.LoadOrCreateConfigFile();
-
-    string dota2ExeFullPath = modExporterGlobalConfig.Dota2ExeFullPath;
-
-    var resultValidateDota2ExeFullPath = ValidateDota2ExeFullPathOnStartup(dota2ExeFullPath);
-    if (resultValidateDota2ExeFullPath.IsFailure)
-    {
-      if (!string.IsNullOrEmpty(resultValidateDota2ExeFullPath.Error))
-      {
-        MessageBox.Show(resultValidateDota2ExeFullPath.Error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-      }
-
-      Application.Current.Shutdown();
-    }
-
-    GlobalManager.Instance.GlobalSettings.Dota2ExeFullPath = resultValidateDota2ExeFullPath.Value;
-
-    var resultTrySetFullPathToDota2Exe = GlobalManager.Instance.UpdateDota2GameMainInfo();
-    if (resultTrySetFullPathToDota2Exe.IsFailure)
-    {
-      MessageBox.Show(resultTrySetFullPathToDota2Exe.Error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-      Application.Current.Shutdown();
-    }
-
-    Application.Current.Exit += Application_OnExit;
-
-    _mainControlViewModel = new MainControlViewModel();
-
-    var mainWindow = new MainWindowView
-    {
-      DataContext = _mainControlViewModel
-    };
-
-    mainWindow.ShowDialog();
-  }
-  
-  private void Application_OnExit(object sender, ExitEventArgs e)
-  {
-    GlobalManager.Instance.VsndevtsEditorGlobalConfig.Dota2ExeFullPath = GlobalManager.Instance.GlobalSettings.Dota2ExeFullPath;
-
-    GlobalManager.Instance.TrySaveConfigFile();
-  }
-
-  private Result<string> ValidateDota2ExeFullPathOnStartup(string dota2ExeFullPath)
-  {
-    if (string.IsNullOrEmpty(dota2ExeFullPath))
-    {
-      MessageBox.Show($"Select 'dota2.exe' file{Environment.NewLine}" +
-                      $"Example: C:\\Program Files\\Steam\\steamapps\\common\\dota 2 beta\\game\\bin\\win64\\dota2.exe", 
-        "SBnDota2ModExporter startup", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-
-      var resultCallDialogSetDota2ExePath = GlobalManager.Instance.CallDialogSetDota2ExePath();
-      return resultCallDialogSetDota2ExePath;
-    }
-
-    return dota2ExeFullPath;
+    return true;
   }
 }
