@@ -3,9 +3,9 @@ using System.Windows;
 using CommonLib;
 using CSharpFunctionalExtensions;
 using Microsoft.Win32;
-using SBnDota2ModExporter.Configs.Main;
+using VsndevtsEditor.Configs;
 
-namespace SBnDota2ModExporter;
+namespace VsndevtsEditor;
 
 public class GlobalManager
 {
@@ -17,17 +17,15 @@ public class GlobalManager
 
   #endregion // Singleton
 
-  #region Fields
-
-  #endregion // Fields
-
   #region Properties
 
   public GlobalSettings GlobalSettings { get; } = new();
 
-  public SBnModExporterGlobalConfig ModExporterGlobalConfig { get; private set; }
+  public VsndevtsEditorGlobalConfig VsndevtsEditorGlobalConfig { get; private set; }
 
   public Dota2GameMainInfo Dota2GameMainInfo { get; private set; }
+
+  public FolderSettings FolderSettings { get; set; }
 
   #endregion // Properties
 
@@ -43,16 +41,16 @@ public class GlobalManager
     return Result.Success();
   }
 
-  public SBnModExporterGlobalConfig LoadOrCreateConfigFile()
+  public VsndevtsEditorGlobalConfig LoadOrCreateConfigFile()
   {
-    var modExporterGlobalConfig = LoadConfigFile();
-    if (modExporterGlobalConfig != null)
+    var globalConfig = LoadConfigFile();
+    if (globalConfig != null)
     {
-      ModExporterGlobalConfig = modExporterGlobalConfig;
-      return ModExporterGlobalConfig;
+      VsndevtsEditorGlobalConfig = globalConfig;
+      return VsndevtsEditorGlobalConfig;
     }
 
-    ModExporterGlobalConfig = new SBnModExporterGlobalConfig();
+    VsndevtsEditorGlobalConfig = new VsndevtsEditorGlobalConfig();
 
     var resultSaveConfigFile = TrySaveConfigFile();
     if (resultSaveConfigFile.IsFailure)
@@ -60,12 +58,12 @@ public class GlobalManager
       MessageBox.Show(resultSaveConfigFile.Error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
     }
 
-    return ModExporterGlobalConfig;
+    return VsndevtsEditorGlobalConfig;
   }
 
   public Result TrySaveConfigFile()
   {
-    return ModExporterGlobalConfig.TrySaveConfigFile();
+    return VsndevtsEditorGlobalConfig.TrySaveConfigFile();
   }
 
   public Result<string?> CallDialogSetDota2ExePath()
@@ -111,7 +109,7 @@ public class GlobalManager
     return configFileFullPath;
   }
 
-  private SBnModExporterGlobalConfig? LoadConfigFile()
+  private VsndevtsEditorGlobalConfig? LoadConfigFile()
   {
     var configFileFullPath = GetFullPathToConfigFile();
     if (File.Exists(configFileFullPath) is false)
@@ -119,7 +117,7 @@ public class GlobalManager
 
     try
     {
-      var modExporterGlobalConfig = XmlSerializerService.DeserilazeFromXml<SBnModExporterGlobalConfig>(configFileFullPath);
+      var modExporterGlobalConfig = XmlSerializerService.DeserilazeFromXml<VsndevtsEditorGlobalConfig>(configFileFullPath);
       return modExporterGlobalConfig;
     }
     catch (Exception ex)

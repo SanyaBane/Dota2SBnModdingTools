@@ -1,7 +1,6 @@
-﻿using System.IO;
-using System.Xml.Serialization;
+﻿using System.Xml.Serialization;
 
-namespace SBnDota2ModExporter;
+namespace CommonLib;
 
 // https://medium.com/@mpcodes/how-to-serialization-and-deserialization-xml-using-c-987e3b137aec#:~:text=XML%20serialization%20is%20the%20process,structured%20data%20in%20C%23%20applications.
 public static class XmlSerializerService

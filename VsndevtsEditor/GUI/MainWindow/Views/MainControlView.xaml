@@ -1,0 +1,236 @@
+﻿<UserControl
+  x:Class="VsndevtsEditor.GUI.MainWindow.Views.MainControlView"
+  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+  xmlns:local="clr-namespace:VsndevtsEditor.GUI.MainWindow.Views"
+  xmlns:viewModels="clr-namespace:VsndevtsEditor.GUI.MainWindow.ViewModels"
+  mc:Ignorable="d"
+  d:DataContext="{d:DesignInstance viewModels:MainControlViewModel, IsDesignTimeCreatable=True}">
+
+  <UserControl.Resources>
+    <Style x:Key="styleDataGridCell" TargetType="{x:Type DataGridCell}">
+      <Setter Property="BorderThickness" Value="0" />
+      <!-- <Setter Property="Foreground" Value="Black" /> -->
+      <!-- <Style.Triggers> -->
+      <!--   <Trigger Property="IsSelected" Value="True"> -->
+      <!--     <Setter Property="Background" Value="{x:Null}" /> -->
+      <!--     <Setter Property="BorderBrush" Value="{x:Null}" /> -->
+      <!--   </Trigger> -->
+      <!-- </Style.Triggers> -->
+    </Style>
+  </UserControl.Resources>
+
+  <Grid
+    Margin="3"
+    IsEnabled="True">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
+    </Grid.RowDefinitions>
+
+    <Grid
+      Grid.Row="0"
+      x:Name="gridPathsInformation"
+      Margin="0 3 0 0">
+
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto" />
+        <ColumnDefinition Width="*" />
+        <ColumnDefinition Width="Auto" />
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+
+      <TextBlock
+        Grid.Column="0"
+        Grid.Row="0"
+        VerticalAlignment="Center"
+        Text="Path to 'dota2.exe': " />
+
+      <TextBox
+        Grid.Column="1"
+        Grid.Row="0"
+        Style="{StaticResource tbReadOnlyPathToFile}"
+        Margin="5 0 0 0"
+        Height="24"
+        Text="{Binding Dota2ExecutableFullPath, Mode=OneWay}" />
+
+      <Button
+        Grid.Column="2"
+        Grid.Row="0"
+        Margin="5 0 0 0"
+        Content="Set path to 'dota2.exe'"
+        Command="{Binding SetPathToDota2ExeCommand}" />
+
+      <TextBlock
+        Grid.Column="0"
+        Grid.Row="1"
+        Margin="0 5 0 0  "
+        VerticalAlignment="Center"
+        Text="Loaded vsndevts file: " />
+
+      <TextBox
+        Grid.Column="1"
+        Grid.Row="1"
+        Style="{StaticResource tbReadOnlyPathToFile}"
+        Margin="5 5 0 0"
+        Height="24"
+        Text="{Binding VsndevtsFileFullPath, Mode=OneWay}" />
+
+      <Button
+        Grid.Column="2"
+        Grid.Row="1"
+        Margin="5 5 0 0"
+        Content="Select .vsndevts file"
+        Command="{Binding SelectVsndevtsFileCommand}" />
+
+      <Separator
+        Grid.Column="0" Grid.ColumnSpan="3"
+        Grid.Row="2"
+        Margin="0 10 0 0" />
+
+    </Grid>
+
+    <Grid
+      Grid.Row="1">
+
+      <DataGrid
+        Style="{StaticResource DefaultDataGridStyle}"
+        ItemsSource="{Binding ActionViewModels}"
+        SelectedItem="{Binding SelectedActionViewModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+        SelectionMode="Extended"
+        SelectionUnit="FullRow">
+        <DataGrid.Columns>
+          <DataGridTemplateColumn
+            Width="0.5*"
+            CanUserSort="False">
+            <DataGridTemplateColumn.HeaderTemplate>
+              <DataTemplate>
+                <TextBlock
+                  Text="ActionName"
+                  ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+              </DataTemplate>
+            </DataGridTemplateColumn.HeaderTemplate>
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <TextBlock
+                  VerticalAlignment="Center"
+                  Text="{Binding Path=ActionName, Mode=OneWay}"
+                  ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+
+          <DataGridTemplateColumn
+            Width="*"
+            MinWidth="150"
+            CanUserSort="False"
+            CellStyle="{StaticResource styleDataGridCell}">
+            <DataGridTemplateColumn.HeaderTemplate>
+              <DataTemplate>
+                <TextBlock
+                  Text="Name"
+                  ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+              </DataTemplate>
+            </DataGridTemplateColumn.HeaderTemplate>
+            <DataGridTemplateColumn.CellTemplate>
+              <DataTemplate>
+                <Grid>
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                  </Grid.RowDefinitions>
+                  <TextBlock
+                    Grid.Row="0"
+                    Text="vsnd_files:" />
+                  <DataGrid
+                    Grid.Row="1"
+                    Style="{StaticResource DefaultDataGridStyle}"
+                    HeadersVisibility="None"
+                    BorderThickness="0"
+                    SelectionMode="Single"
+                    SelectionUnit="FullRow"
+                    ItemsSource="{Binding ActionFileVms}"
+                    SelectedItem="{Binding SelectedActionFileVm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <DataGrid.Resources>
+                      <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent" />
+                      <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black"/>
+                    </DataGrid.Resources>
+                    <DataGrid.Columns>
+                      <DataGridTemplateColumn
+                        Width="*"
+                        CanUserSort="False">
+                        <DataGridTemplateColumn.CellTemplate>
+                          <DataTemplate>
+                            <Grid>
+                              <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                              </Grid.ColumnDefinitions>
+                              <TextBlock
+                                Grid.Column="0"
+                                Text="- " />
+                              <TextBlock
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Text="{Binding Path=PathToFile, Mode=OneWay}"
+                                ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+                            </Grid>
+                          </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                        <DataGridTemplateColumn.CellEditingTemplate>
+                          <DataTemplate>
+                            <Grid>
+                              <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                              </Grid.ColumnDefinitions>
+                              <TextBlock
+                                Grid.Column="0"
+                                Text="- " />
+                              <TextBox
+                                Grid.Column="1"
+                                VerticalAlignment="Center"
+                                Text="{Binding Path=PathToFile, Mode=TwoWay}"
+                                ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+                            </Grid>
+
+                          </DataTemplate>
+                        </DataGridTemplateColumn.CellEditingTemplate>
+                      </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                  </DataGrid>
+                </Grid>
+              </DataTemplate>
+            </DataGridTemplateColumn.CellTemplate>
+          </DataGridTemplateColumn>
+        </DataGrid.Columns>
+      </DataGrid>
+
+    </Grid>
+    
+    <Grid
+      Grid.Row="2"
+      Margin="0 5 0 0">
+      <Button
+        HorizontalAlignment="Center"
+        Content="Auto-populate selected cells by files from template folders" />
+    </Grid>
+
+    <Grid
+      Grid.Row="3"
+      Margin="0 5 0 0">
+      <Button
+        HorizontalAlignment="Right"
+        Foreground="Red"
+        Content="Save File as ..." />
+    </Grid>
+  </Grid>
+</UserControl>

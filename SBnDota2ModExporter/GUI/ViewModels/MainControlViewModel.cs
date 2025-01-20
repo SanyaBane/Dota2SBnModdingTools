@@ -196,7 +196,6 @@ public class MainControlViewModel : BaseViewModel
   private void ExecuteSetPathToDota2Exe(object obj)
   {
     var resultCallDialogSetDota2ExePath = GlobalManager.Instance.CallDialogSetDota2ExePath();
-
     if (resultCallDialogSetDota2ExePath.IsFailure)
     {
       if (!string.IsNullOrEmpty(resultCallDialogSetDota2ExePath.Error))
@@ -206,6 +205,9 @@ public class MainControlViewModel : BaseViewModel
 
       return;
     }
+
+    if (string.IsNullOrEmpty(resultCallDialogSetDota2ExePath.Value))
+      return;
 
     GlobalManager.Instance.GlobalSettings.Dota2ExeFullPath = resultCallDialogSetDota2ExePath.Value;
     Dota2ExecutableFullPath = GlobalManager.Instance.GlobalSettings.Dota2ExeFullPath;

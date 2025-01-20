@@ -8,7 +8,7 @@
   mc:Ignorable="d"
   Title="CompareVsndevtsFiles"
   WindowStartupLocation="CenterScreen"
-  Width="800" Height="700"
+  Width="700" Height="1200"
   d:DesignHeight="150" d:DesignWidth="300"
   d:DataContext="{d:DesignInstance viewModels:MainWindowViewModel, IsDesignTimeCreatable=True}">
   
@@ -95,11 +95,13 @@
 
       <DataGrid
         Grid.Column="0"
-        ItemsSource="{Binding OriginalGameSoundEvents}">
+        ItemsSource="{Binding OriginalGameSoundEvents}"
+        Height="34">
       </DataGrid>
 
       <DataGrid
-        Grid.Column="2">
+        Grid.Column="2"
+        Height="34">
       </DataGrid>
 
     </Grid>
