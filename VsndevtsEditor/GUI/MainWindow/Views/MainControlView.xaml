@@ -14,44 +14,58 @@
 
   <UserControl.Resources>
 
-    <!-- <converters:TemplateDirectoryDataToListOfFilesConverter x:Key="TemplateDirectoryDataToListOfFilesConverter" /> -->
-    <converters:VsndevtsActionToTextConverter x:Key="VsndevtsActionToTextConverter" />
+    <converters:VsndevtsActionToTextWhenTemplateDirNotExistsConverter x:Key="VsndevtsActionToTextWhenTemplateDirNotExistsConverter" />
+    <converters:VsndevtsActionToTextWhenFilesExistsConverter x:Key="VsndevtsActionToTextWhenFilesExistsConverter" />
+    <converters:VsndevtsActionToTextWhenFilesNotExistsConverter x:Key="VsndevtsActionToTextWhenFilesNotExistsConverter" />
 
     <Style x:Key="styleDataGridCell" TargetType="{x:Type DataGridCell}">
       <Setter Property="BorderThickness" Value="0" />
-      <!-- <Setter Property="Foreground" Value="Black" /> -->
-      <!-- <Style.Triggers> -->
-      <!--   <Trigger Property="IsSelected" Value="True"> -->
-      <!--     <Setter Property="Background" Value="{x:Null}" /> -->
-      <!--     <Setter Property="BorderBrush" Value="{x:Null}" /> -->
-      <!--   </Trigger> -->
-      <!-- </Style.Triggers> -->
     </Style>
 
-    <DataTemplate x:Key="Default">
-      <StackPanel
-        Orientation="Vertical"
-        HorizontalAlignment="Stretch"
-        d:DataContext="{d:DesignInstance viewModels:VsndevtsActionViewModel, IsDesignTimeCreatable=True}">
-        <!-- <TextBlock> -->
-        <!--   <Run Text="Candidates from " /><Run Text="'" /><Run Text="{Binding TemplateDirectoryData.DirectoryName}" /><Run Text="'" /><Run Text=" directory" /> -->
-        <!-- </TextBlock> -->
-        <!-- <TextBlock -->
-        <!--   HorizontalAlignment="Stretch" -->
-        <!--   Text="{Binding TemplateDirectoryData, Converter={StaticResource TemplateDirectoryDataToListOfFilesConverter}}" /> -->
+    <Style x:Key="TemplateDirectoryColumnTextBlockStyle" TargetType="{x:Type TextBlock}">
+      <Setter Property="Margin" Value="3" />
+      <Setter Property="HorizontalAlignment" Value="Stretch" />
+      <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+
+    <DataTemplate x:Key="WhenTemplateDirectoryNotExists">
+      <Grid
+        d:DataContext="{d:DesignInstance viewModels:VsndevtsActionViewModel, IsDesignTimeCreatable=True}"
+        Background="Crimson">
         <TextBlock
-          HorizontalAlignment="Stretch"
-          Text="{Binding TemplateDirectoryData, Converter={StaticResource VsndevtsActionToTextConverter}}" />
-      </StackPanel>
+          Style="{StaticResource TemplateDirectoryColumnTextBlockStyle}"
+          Text="{Binding Path=., Converter={StaticResource VsndevtsActionToTextWhenTemplateDirNotExistsConverter}}"
+          ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+      </Grid>
     </DataTemplate>
 
-    <DataTemplate x:Key="WhenZeroActionFiles">
+    <DataTemplate x:Key="WhenActionFilesExists">
+      <Grid
+        d:DataContext="{d:DesignInstance viewModels:VsndevtsActionViewModel, IsDesignTimeCreatable=True}"
+        Background="ForestGreen">
+        <TextBlock
+          Style="{StaticResource TemplateDirectoryColumnTextBlockStyle}"
+          Text="{Binding TemplateDirectoryData, Converter={StaticResource VsndevtsActionToTextWhenFilesExistsConverter}}"
+          ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+      </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="WhenActionFilesNotExists">
+      <Grid
+        d:DataContext="{d:DesignInstance viewModels:VsndevtsActionViewModel, IsDesignTimeCreatable=True}"
+        Background="CornflowerBlue">
+        <TextBlock
+          Style="{StaticResource TemplateDirectoryColumnTextBlockStyle}"
+          Text="{Binding TemplateDirectoryData, Converter={StaticResource VsndevtsActionToTextWhenFilesNotExistsConverter}}"
+          ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+      </Grid>
     </DataTemplate>
 
     <selectors:TemplateDirectoryColumnCellTemplateSelector
       x:Key="TemplateDirectoryColumnCellTemplateSelector"
-      Default="{StaticResource Default}"
-      WhenZeroActionFiles="{StaticResource WhenZeroActionFiles}">
+      WhenTemplateDirectoryNotExists="{StaticResource WhenTemplateDirectoryNotExists}"
+      WhenActionFilesExists="{StaticResource WhenActionFilesExists}"
+      WhenActionFilesNotExists="{StaticResource WhenActionFilesNotExists}">
     </selectors:TemplateDirectoryColumnCellTemplateSelector>
 
   </UserControl.Resources>
@@ -135,6 +149,7 @@
             <DataGridTemplateColumn.CellTemplate>
               <DataTemplate>
                 <TextBlock
+                  Margin="3 0 0 0"
                   VerticalAlignment="Center"
                   Text="{Binding Path=ActionName, Mode=OneWay}"
                   ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
@@ -164,6 +179,7 @@
                   <TextBlock
                     Grid.Row="0"
                     x:Name="tbVsndFiles"
+                    Margin="3 0 0 0"
                     Text="vsnd_files:" />
                   <DataGrid
                     Grid.Row="1"
@@ -195,9 +211,19 @@
                               <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
-                                Background="DarkGoldenrod"
                                 Text="{Binding Path=PathToFile, Mode=OneWay}"
-                                ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+                                ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}">
+                                <TextBlock.Style>
+                                  <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="Background" Value="Transparent" />
+                                    <Style.Triggers>
+                                      <DataTrigger Binding="{Binding IsDirty, Mode=OneWay}" Value="True">
+                                        <Setter Property="Background" Value="YellowGreen" />
+                                      </DataTrigger>
+                                    </Style.Triggers>
+                                  </Style>
+                                </TextBlock.Style>
+                              </TextBlock>
                             </Grid>
                           </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
@@ -267,20 +293,49 @@
         Text="{Binding RelativePathToAddonSoundsDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
       <Grid
         Grid.Row="2">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
           <ColumnDefinition Width="*" />
           <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
         <Button
+          Grid.Row="0"
           Grid.Column="0"
           Margin="0 10 0 0"
           Content="Set selected actions to 'null'"
           Command="{Binding SetSelectedActionsToNullCommand}" />
         <Button
+          Grid.Row="0"
           Grid.Column="1"
           Margin="30 10 0 0"
           Content="Auto-populate selected actions by files from template directories"
           Command="{Binding AutoPopulateSelectedActionsCommand}" />
+
+        <GroupBox
+          Grid.Row="1"
+          Grid.Column="0" Grid.ColumnSpan="2"
+          Margin="0 15 0 0"
+          Header="Apply to ALL actions">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Button
+              Grid.Column="0"
+              Content="Set ALL actions to 'null'"
+              Command="{Binding SetAllActionsToNullCommand}" />
+            <Button
+              Grid.Column="1"
+              Margin="30 0 0 0"
+              Content="Auto-populate ALL actions by files from template directories"
+              Command="{Binding AutoPopulateAllActionsCommand}" />
+          </Grid>
+        </GroupBox>
+
       </Grid>
     </Grid>
 

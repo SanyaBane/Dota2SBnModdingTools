@@ -6,15 +6,17 @@ public class VsndevtsActionFileViewModel : BaseViewModel
 {
   #region Fields
 
-  private string _pathToFile = string.Empty;
+  private string _pathToFile;
+  private bool _isDirty;
 
   #endregion // Fields
 
   #region Ctor
 
-  public VsndevtsActionFileViewModel(string pathToFile)
+  public VsndevtsActionFileViewModel(string pathToFile, bool isDirty)
   {
-    PathToFile = pathToFile;
+    _pathToFile = pathToFile;
+    _isDirty = isDirty;
   }
 
   #endregion // Ctor
@@ -34,8 +36,19 @@ public class VsndevtsActionFileViewModel : BaseViewModel
     {
       _pathToFile = value;
       OnPropertyChanged();
-      
+
+      IsDirty = true;
       PathToFileChange?.Invoke();
+    }
+  }
+
+  public bool IsDirty
+  {
+    get => _isDirty;
+    set
+    {
+      _isDirty = value;
+      OnPropertyChanged();
     }
   }
 

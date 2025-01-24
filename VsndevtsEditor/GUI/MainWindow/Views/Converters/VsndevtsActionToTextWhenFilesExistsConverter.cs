@@ -4,7 +4,7 @@ using VsndevtsEditor.Configs;
 
 namespace VsndevtsEditor.GUI.MainWindow.Views.Converters;
 
-public class VsndevtsActionToTextConverter : IValueConverter
+public class VsndevtsActionToTextWhenFilesExistsConverter : IValueConverter
 {
   public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
   {

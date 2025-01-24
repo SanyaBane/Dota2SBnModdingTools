@@ -21,7 +21,7 @@ public class VsndevtsActionViewModel : BaseViewModel
 
     foreach (var vsndevtsActionFile in VsndevtsAction.Files)
     {
-      var vsndevtsActionFileViewModel = new VsndevtsActionFileViewModel(vsndevtsActionFile.PathToFile);
+      var vsndevtsActionFileViewModel = new VsndevtsActionFileViewModel(vsndevtsActionFile.PathToFile, false);
       AddActionFileVm(vsndevtsActionFileViewModel);
     }
   }

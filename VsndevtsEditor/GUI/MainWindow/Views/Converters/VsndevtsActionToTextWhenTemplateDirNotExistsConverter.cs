@@ -1,19 +1,19 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
 using VsndevtsEditor.Configs;
+using VsndevtsEditor.GUI.MainWindow.ViewModels;
 
 namespace VsndevtsEditor.GUI.MainWindow.Views.Converters;
 
-public class TemplateDirectoryDataToListOfFilesConverter : IValueConverter
+public class VsndevtsActionToTextWhenTemplateDirNotExistsConverter : IValueConverter
 {
   public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
   {
-    var templateDirectoryData = value as TemplateDirectoryData;
-    if (templateDirectoryData == null)
-      return string.Empty;
+    var vsndevtsActionViewModel = value as VsndevtsActionViewModel;
+    if (vsndevtsActionViewModel == null)
+      return null;
 
-    var allFileNames = templateDirectoryData.FoundFiles.Select(x => $"\"{x.Name}\"");
-    return string.Join(", ", allFileNames);
+    return $"No template directory found for action '{vsndevtsActionViewModel.ActionName}'";
   }
 
   public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotSupportedException();

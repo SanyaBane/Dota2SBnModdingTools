@@ -5,9 +5,11 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using Common.WPF;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Win32;
 using ValveResourceFormat.Serialization.KeyValues;
 using VsndevtsEditor.Configs;
+using VsndevtsEditor.GUI.MainWindow.Messages;
 using VsndevtsEditor.Models;
 
 namespace VsndevtsEditor.GUI.MainWindow.ViewModels;
@@ -33,7 +35,9 @@ public class MainControlViewModel : BaseViewModel
     _selectedActionViewModels.CollectionChanged += SelectedActionViewModelsOnCollectionChanged;
 
     AutoPopulateSelectedActionsCommand = new DelegateCommand(ExecuteAutoPopulateSelectedActions, CanExecuteAutoPopulateSelectedActions);
+    AutoPopulateAllActionsCommand = new DelegateCommand(ExecuteAutoPopulateAllActions, CanExecuteAutoPopulateAllActions);
     SetSelectedActionsToNullCommand = new DelegateCommand(ExecuteSetSelectedActionsToNull, CanExecuteSetSelectedActionsToNull);
+    SetAllActionsToNullCommand = new DelegateCommand(ExecuteSetAllActionsToNull, CanExecuteSetAllActionsToNull);
     SaveFileAsCommand = new DelegateCommand(ExecuteSaveFileAs, CanExecuteSaveFileAs);
   }
 
@@ -48,7 +52,7 @@ public class MainControlViewModel : BaseViewModel
     {
       _loadedVsndevtsFileViewModel = value;
       OnPropertyChanged();
-      
+
       RefreshCommands();
     }
   }
@@ -91,6 +95,8 @@ public class MainControlViewModel : BaseViewModel
   public DelegateCommand SelectVsndevtsFileCommand { get; }
   public DelegateCommand AutoPopulateSelectedActionsCommand { get; }
   public DelegateCommand SetSelectedActionsToNullCommand { get; }
+  public DelegateCommand AutoPopulateAllActionsCommand { get; }
+  public DelegateCommand SetAllActionsToNullCommand { get; }
   public DelegateCommand SaveFileAsCommand { get; }
 
   #endregion // Commands
@@ -170,52 +176,25 @@ public class MainControlViewModel : BaseViewModel
       MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
     }
   }
-  
+
   private void ExecuteAutoPopulateSelectedActions(object obj)
   {
-    var selectedActionViewModels = SelectedActionViewModels.Where(x => x.TemplateDirectoryData != null && x.TemplateDirectoryData.FoundFiles.Length > 0);
+    AutoPopulateSelectedActions(SelectedActionViewModels.ToArray());
+  }
 
-    var lookup = selectedActionViewModels.ToLookup(x => x.TemplateDirectoryData.DirectoryName);
-    foreach (var grouping in lookup)
-    {
-      int i = 0;
-      foreach (var vsndevtsActionViewModel in grouping)
-      {
-        var pathToUserSoundFile = vsndevtsActionViewModel.TemplateDirectoryData.FoundFiles[i].Name;
-        
-        vsndevtsActionViewModel.ClearActionFileVms();
-
-        var relativePathWithSoundFile = Path.Combine(RelativePathToAddonSoundsDirectory, pathToUserSoundFile);
-        relativePathWithSoundFile = relativePathWithSoundFile.Replace('\\', '/');
-
-        var newVsndevtsActionFileViewModel = new VsndevtsActionFileViewModel(relativePathWithSoundFile);
-        vsndevtsActionViewModel.AddActionFileVm(newVsndevtsActionFileViewModel);
-
-        vsndevtsActionViewModel.IsDirty = true;
-        
-        i++;
-        
-        if (i >= vsndevtsActionViewModel.TemplateDirectoryData.FoundFiles.Length)
-          i = 0;
-      }
-    }
+  private void ExecuteAutoPopulateAllActions(object obj)
+  {
+    AutoPopulateSelectedActions(ActionViewModels);
   }
 
   private void ExecuteSetSelectedActionsToNull(object obj)
   {
-    var selectedActionViewModels = SelectedActionViewModels;;
-    foreach (var vsndevtsActionViewModel in selectedActionViewModels)
-    {
-      vsndevtsActionViewModel.ClearActionFileVms();
+    SetActionsToNull(SelectedActionViewModels.ToArray());
+  }
 
-      var relativePathWithSoundFile = Path.Combine(RelativePathToAddonSoundsDirectory, "null.mp3");
-      relativePathWithSoundFile = relativePathWithSoundFile.Replace('\\', '/');
-
-      var newVsndevtsActionFileViewModel = new VsndevtsActionFileViewModel(relativePathWithSoundFile);
-      vsndevtsActionViewModel.AddActionFileVm(newVsndevtsActionFileViewModel);
-
-      vsndevtsActionViewModel.IsDirty = true;
-    }
+  private void ExecuteSetAllActionsToNull(object obj)
+  {
+    WeakReferenceMessenger.Default.Send(new CallAreYouSureWindowMessage());
   }
 
   private void ExecuteSaveFileAs(object obj)
@@ -234,49 +213,14 @@ public class MainControlViewModel : BaseViewModel
       {
         ApplyChangesToKVValues(vsndevtsActionViewModel);
       }
-    
+
       using var indentedTextWriter = new ValveResourceFormat.IndentedTextWriter();
       LoadedVsndevtsFileViewModel.ParsedKv3File.WriteText(indentedTextWriter);
-      
+
       File.WriteAllText(saveFileDialog.FileName, indentedTextWriter.ToString());
     }
   }
 
-  private void ApplyChangesToKVValues(VsndevtsActionViewModel vsndevtsActionViewModel)
-  {
-    var actionKVValue = vsndevtsActionViewModel.VsndevtsAction.KVValue;
-    var container = actionKVValue.Value as KVObject;
-    if (container == null)
-    {
-      throw new Exception(nameof(ApplyChangesToKVValues));
-    }
-    
-    var vsnd_filesKValue = container.Properties["vsnd_files"];
-    container.Properties.Remove("vsnd_files");
-
-    KVValue newVsndFilesKValue;
-    switch (vsnd_filesKValue.Type)
-    {
-      case KVType.STRING:
-        newVsndFilesKValue = new KVValue(KVType.STRING, vsndevtsActionViewModel.ActionFileVms.First().PathToFile);
-        break;
-      case KVType.ARRAY:
-        var kvObjectArray = new KVObject("vsnd_files", true, vsndevtsActionViewModel.ActionFileVms.Count);
-        for (var index = 0; index < vsndevtsActionViewModel.ActionFileVms.Count; index++)
-        {
-          var vsndevtsActionFileViewModel = vsndevtsActionViewModel.ActionFileVms[index];
-          kvObjectArray.AddProperty(index.ToString(), new KVValue(KVType.STRING, vsndevtsActionFileViewModel.PathToFile));
-        }
-
-        newVsndFilesKValue = new KVValue(KVType.ARRAY, kvObjectArray);
-        break;
-      default:
-        throw new NotSupportedException();
-    }
-    
-    container.AddProperty("vsnd_files", newVsndFilesKValue);
-  }
-  
   #endregion // Command Execute Handlers
 
   #region Can Execute Handlers
@@ -292,9 +236,25 @@ public class MainControlViewModel : BaseViewModel
     return true;
   }
 
+  private bool CanExecuteAutoPopulateAllActions(object obj)
+  {
+    if (LoadedVsndevtsFileViewModel == null)
+      return false;
+
+    return true;
+  }
+
   private bool CanExecuteSetSelectedActionsToNull(object obj)
   {
     if (LoadedVsndevtsFileViewModel == null || SelectedActionViewModels.Count == 0)
+      return false;
+
+    return true;
+  }
+
+  private bool CanExecuteSetAllActionsToNull(object obj)
+  {
+    if (LoadedVsndevtsFileViewModel == null)
       return false;
 
     return true;
@@ -314,13 +274,92 @@ public class MainControlViewModel : BaseViewModel
     base.RefreshCommands();
 
     AutoPopulateSelectedActionsCommand.RaiseCanExecuteChanged();
+    AutoPopulateAllActionsCommand.RaiseCanExecuteChanged();
     SetSelectedActionsToNullCommand.RaiseCanExecuteChanged();
+    SetAllActionsToNullCommand.RaiseCanExecuteChanged();
     SaveFileAsCommand.RaiseCanExecuteChanged();
+  }
+
+  public void SetActionsToNull(IEnumerable<VsndevtsActionViewModel> actionViewModels)
+  {
+    foreach (var vsndevtsActionViewModel in actionViewModels)
+    {
+      vsndevtsActionViewModel.ClearActionFileVms();
+
+      var relativePathWithSoundFile = Path.Combine(RelativePathToAddonSoundsDirectory, "null.mp3");
+      relativePathWithSoundFile = relativePathWithSoundFile.Replace('\\', '/');
+
+      var newVsndevtsActionFileViewModel = new VsndevtsActionFileViewModel(relativePathWithSoundFile, true);
+      vsndevtsActionViewModel.AddActionFileVm(newVsndevtsActionFileViewModel);
+      vsndevtsActionViewModel.IsDirty = true;
+    }
   }
 
   #endregion // Public Methods
 
   #region Private Methods
+
+  private void AutoPopulateSelectedActions(IEnumerable<VsndevtsActionViewModel> actionViewModels)
+  {
+    var filteredActionViewModels = actionViewModels.Where(x => x.TemplateDirectoryData != null && x.TemplateDirectoryData.FoundFiles.Length > 0);
+    var lookup = filteredActionViewModels.ToLookup(x => x.TemplateDirectoryData.DirectoryName);
+    foreach (var grouping in lookup)
+    {
+      int i = 0;
+      foreach (var vsndevtsActionViewModel in grouping)
+      {
+        var pathToUserSoundFile = vsndevtsActionViewModel.TemplateDirectoryData.FoundFiles[i].Name;
+
+        vsndevtsActionViewModel.ClearActionFileVms();
+
+        var relativePathWithSoundFile = Path.Combine(RelativePathToAddonSoundsDirectory, pathToUserSoundFile);
+        relativePathWithSoundFile = relativePathWithSoundFile.Replace('\\', '/');
+
+        var newVsndevtsActionFileViewModel = new VsndevtsActionFileViewModel(relativePathWithSoundFile, true);
+        vsndevtsActionViewModel.AddActionFileVm(newVsndevtsActionFileViewModel);
+        vsndevtsActionViewModel.IsDirty = true;
+
+        i++;
+
+        if (i >= vsndevtsActionViewModel.TemplateDirectoryData.FoundFiles.Length)
+          i = 0;
+      }
+    }
+  }
+
+  private void ApplyChangesToKVValues(VsndevtsActionViewModel vsndevtsActionViewModel)
+  {
+    var actionKVValue = vsndevtsActionViewModel.VsndevtsAction.KVValue;
+    var container = actionKVValue.Value as KVObject;
+    if (container == null)
+    {
+      throw new Exception(nameof(ApplyChangesToKVValues));
+    }
+
+    container.Properties.Remove("vsnd_files");
+
+    if (vsndevtsActionViewModel.ActionFileVms.Count == 0)
+      return;
+
+    KVValue newVsndFilesKValue;
+    if (vsndevtsActionViewModel.ActionFileVms.Count == 1)
+    {
+      newVsndFilesKValue = new KVValue(KVType.STRING, vsndevtsActionViewModel.ActionFileVms.Single().PathToFile);
+    }
+    else
+    {
+      var kvObjectArray = new KVObject("vsnd_files", true, vsndevtsActionViewModel.ActionFileVms.Count);
+      for (var index = 0; index < vsndevtsActionViewModel.ActionFileVms.Count; index++)
+      {
+        var vsndevtsActionFileViewModel = vsndevtsActionViewModel.ActionFileVms[index];
+        kvObjectArray.AddProperty(index.ToString(), new KVValue(KVType.STRING, vsndevtsActionFileViewModel.PathToFile));
+      }
+
+      newVsndFilesKValue = new KVValue(KVType.ARRAY, kvObjectArray);
+    }
+
+    container.AddProperty("vsnd_files", newVsndFilesKValue);
+  }
 
   private static void ParseVsndFilesArrayNode(KVObject kvObject2, VsndevtsAction vsndevtsAction)
   {

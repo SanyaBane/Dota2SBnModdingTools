@@ -6,15 +6,20 @@ namespace VsndevtsEditor.GUI.MainWindow.Views.Selectors;
 
 public class TemplateDirectoryColumnCellTemplateSelector : DataTemplateSelector
 {
-  public required DataTemplate Default { get; init; }
-  public required DataTemplate WhenZeroActionFiles { get; init; }
+  public required DataTemplate WhenTemplateDirectoryNotExists { get; init; }
+  public required DataTemplate WhenActionFilesExists { get; init; }
+  public required DataTemplate WhenActionFilesNotExists { get; init; }
 
   public override DataTemplate? SelectTemplate(object? item, DependencyObject container)
   {
     var vsndevtsActionViewModel = item as VsndevtsActionViewModel;
-    if (vsndevtsActionViewModel?.TemplateDirectoryData == null || vsndevtsActionViewModel.TemplateDirectoryData.FoundFiles.Length == 0)
-      return WhenZeroActionFiles;
+    
+    if (vsndevtsActionViewModel?.TemplateDirectoryData == null)
+      return WhenTemplateDirectoryNotExists;
+    
+    if (vsndevtsActionViewModel.TemplateDirectoryData.FoundFiles.Length == 0)
+      return WhenActionFilesNotExists;
 
-    return Default;
+    return WhenActionFilesExists;
   }
 }
