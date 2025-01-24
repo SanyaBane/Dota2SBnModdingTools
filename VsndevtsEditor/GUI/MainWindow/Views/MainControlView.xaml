@@ -6,10 +6,17 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:local="clr-namespace:VsndevtsEditor.GUI.MainWindow.Views"
   xmlns:viewModels="clr-namespace:VsndevtsEditor.GUI.MainWindow.ViewModels"
+  xmlns:behaviors="clr-namespace:VsndevtsEditor.Behaviors"
+  xmlns:converters="clr-namespace:VsndevtsEditor.GUI.MainWindow.Views.Converters"
+  xmlns:selectors="clr-namespace:VsndevtsEditor.GUI.MainWindow.Views.Selectors"
   mc:Ignorable="d"
   d:DataContext="{d:DesignInstance viewModels:MainControlViewModel, IsDesignTimeCreatable=True}">
 
   <UserControl.Resources>
+
+    <!-- <converters:TemplateDirectoryDataToListOfFilesConverter x:Key="TemplateDirectoryDataToListOfFilesConverter" /> -->
+    <converters:VsndevtsActionToTextConverter x:Key="VsndevtsActionToTextConverter" />
+
     <Style x:Key="styleDataGridCell" TargetType="{x:Type DataGridCell}">
       <Setter Property="BorderThickness" Value="0" />
       <!-- <Setter Property="Foreground" Value="Black" /> -->
@@ -20,6 +27,33 @@
       <!--   </Trigger> -->
       <!-- </Style.Triggers> -->
     </Style>
+
+    <DataTemplate x:Key="Default">
+      <StackPanel
+        Orientation="Vertical"
+        HorizontalAlignment="Stretch"
+        d:DataContext="{d:DesignInstance viewModels:VsndevtsActionViewModel, IsDesignTimeCreatable=True}">
+        <!-- <TextBlock> -->
+        <!--   <Run Text="Candidates from " /><Run Text="'" /><Run Text="{Binding TemplateDirectoryData.DirectoryName}" /><Run Text="'" /><Run Text=" directory" /> -->
+        <!-- </TextBlock> -->
+        <!-- <TextBlock -->
+        <!--   HorizontalAlignment="Stretch" -->
+        <!--   Text="{Binding TemplateDirectoryData, Converter={StaticResource TemplateDirectoryDataToListOfFilesConverter}}" /> -->
+        <TextBlock
+          HorizontalAlignment="Stretch"
+          Text="{Binding TemplateDirectoryData, Converter={StaticResource VsndevtsActionToTextConverter}}" />
+      </StackPanel>
+    </DataTemplate>
+
+    <DataTemplate x:Key="WhenZeroActionFiles">
+    </DataTemplate>
+
+    <selectors:TemplateDirectoryColumnCellTemplateSelector
+      x:Key="TemplateDirectoryColumnCellTemplateSelector"
+      Default="{StaticResource Default}"
+      WhenZeroActionFiles="{StaticResource WhenZeroActionFiles}">
+    </selectors:TemplateDirectoryColumnCellTemplateSelector>
+
   </UserControl.Resources>
 
   <Grid
@@ -28,6 +62,7 @@
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto" />
       <RowDefinition Height="*" />
+      <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
@@ -60,7 +95,7 @@
         Style="{StaticResource tbReadOnlyPathToFile}"
         Margin="5 5 0 0"
         Height="24"
-        Text="{Binding VsndevtsFileFullPath, Mode=OneWay}" />
+        Text="{Binding LoadedVsndevtsFileViewModel.FileFullPath, Mode=OneWay, FallbackValue=''}" />
 
       <Button
         Grid.Column="2"
@@ -82,12 +117,13 @@
       <DataGrid
         Style="{StaticResource DefaultDataGridStyle}"
         ItemsSource="{Binding ActionViewModels}"
-        SelectedItem="{Binding SelectedActionViewModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+        behaviors:DataGridSelectedItemsBehavior.BindableSelectedItems="{Binding SelectedActionViewModels, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
         SelectionMode="Extended"
         SelectionUnit="FullRow">
         <DataGrid.Columns>
           <DataGridTemplateColumn
-            Width="0.5*"
+            Width="250"
+            MinWidth="100"
             CanUserSort="False">
             <DataGridTemplateColumn.HeaderTemplate>
               <DataTemplate>
@@ -127,19 +163,20 @@
                   </Grid.RowDefinitions>
                   <TextBlock
                     Grid.Row="0"
+                    x:Name="tbVsndFiles"
                     Text="vsnd_files:" />
                   <DataGrid
                     Grid.Row="1"
+                    x:Name="dataGridActionFileVms"
                     Style="{StaticResource DefaultDataGridStyle}"
                     HeadersVisibility="None"
                     BorderThickness="0"
                     SelectionMode="Single"
                     SelectionUnit="FullRow"
-                    ItemsSource="{Binding ActionFileVms}"
-                    SelectedItem="{Binding SelectedActionFileVm, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    ItemsSource="{Binding ActionFileVms, Mode=OneWay}">
                     <DataGrid.Resources>
                       <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent" />
-                      <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black"/>
+                      <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black" />
                     </DataGrid.Resources>
                     <DataGrid.Columns>
                       <DataGridTemplateColumn
@@ -158,6 +195,7 @@
                               <TextBlock
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
+                                Background="DarkGoldenrod"
                                 Text="{Binding Path=PathToFile, Mode=OneWay}"
                                 ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
                             </Grid>
@@ -177,6 +215,7 @@
                                 Grid.Column="1"
                                 VerticalAlignment="Center"
                                 Text="{Binding Path=PathToFile, Mode=TwoWay}"
+                                MaxLength="255"
                                 ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
                             </Grid>
 
@@ -189,26 +228,69 @@
               </DataTemplate>
             </DataGridTemplateColumn.CellTemplate>
           </DataGridTemplateColumn>
+
+          <DataGridTemplateColumn
+            Width="*"
+            MinWidth="50"
+            CanUserSort="False"
+            CellTemplate="{Binding Path=.}"
+            CellTemplateSelector="{StaticResource TemplateDirectoryColumnCellTemplateSelector}">
+            <DataGridTemplateColumn.HeaderTemplate>
+              <DataTemplate>
+                <TextBlock
+                  Text="TemplateDirectory"
+                  ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}" />
+              </DataTemplate>
+            </DataGridTemplateColumn.HeaderTemplate>
+          </DataGridTemplateColumn>
         </DataGrid.Columns>
       </DataGrid>
 
     </Grid>
-    
-    <Grid
-      Grid.Row="2"
-      Margin="0 5 0 0">
-      <Button
-        HorizontalAlignment="Center"
-        Content="Auto-populate selected cells by files from template folders" />
-    </Grid>
 
     <Grid
       Grid.Row="3"
+      Margin="0 5 0 0"
+      HorizontalAlignment="Center">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <TextBlock
+        Grid.Row="0">
+        <Run Text="Specify relative path to folder with sound in your mod" /><Run FontStyle="Italic" Text=" (e.g. 'sounds/sanyabane/bathory_magnus')" />
+      </TextBlock>
+      <TextBox
+        Grid.Row="1"
+        MaxLength="255"
+        Text="{Binding RelativePathToAddonSoundsDirectory, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+      <Grid
+        Grid.Row="2">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Button
+          Grid.Column="0"
+          Margin="0 10 0 0"
+          Content="Set selected actions to 'null'"
+          Command="{Binding SetSelectedActionsToNullCommand}" />
+        <Button
+          Grid.Column="1"
+          Margin="30 10 0 0"
+          Content="Auto-populate selected actions by files from template directories"
+          Command="{Binding AutoPopulateSelectedActionsCommand}" />
+      </Grid>
+    </Grid>
+
+    <Grid
+      Grid.Row="4"
       Margin="0 5 0 0">
       <Button
         HorizontalAlignment="Right"
-        Foreground="Red"
-        Content="Save File as ..." />
+        Content="Save File as ..."
+        Command="{Binding SaveFileAsCommand}" />
     </Grid>
   </Grid>
 </UserControl>

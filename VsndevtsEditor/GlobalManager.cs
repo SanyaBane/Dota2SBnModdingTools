@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using VsndevtsEditor.Configs;
+using VsndevtsEditor.Models;
 
 namespace VsndevtsEditor;
 
@@ -17,7 +18,7 @@ public class GlobalManager
 
   public GlobalSettings GlobalSettings { get; } = new();
 
-  public FolderSettings FolderSettings { get; set; }
+  public TemplateDirectoriesSettings TemplateDirectoriesSettings { get; set; }
 
   #endregion // Properties
 

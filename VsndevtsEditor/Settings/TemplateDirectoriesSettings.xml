@@ -1,0 +1,28 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+	<templateDirectory directoryName="Aegis" scriptAction="immort" />
+	<templateDirectory directoryName="Attack" scriptAction="attack" />
+	<templateDirectory directoryName="Battle_Begins" scriptAction="begin" />
+	<templateDirectory directoryName="Bottling_Rune" scriptAction="bottle" />
+	<templateDirectory directoryName="Cooldown" scriptAction="notyet" />
+	<templateDirectory directoryName="Death" scriptAction="death" />
+	<templateDirectory directoryName="Fastres" scriptAction="fastres" />
+	<templateDirectory directoryName="First_Blood" scriptAction="firstblood" />
+	<templateDirectory directoryName="In_The_Bag" scriptAction="inthebag" />
+	<templateDirectory directoryName="Kill" scriptAction="kill" />
+	<templateDirectory directoryName="Kill" scriptAction="rival" />
+	<templateDirectory directoryName="Last_Hit_Deny" scriptAction="lasthit" />
+	<templateDirectory directoryName="Last_Hit_Deny" scriptAction="deny" />
+	<templateDirectory directoryName="Laugh" scriptAction="laugh" />
+	<templateDirectory directoryName="Level_Up" scriptAction="level" />
+	<templateDirectory directoryName="Level_Up" scriptAction="levelup" />
+	<templateDirectory directoryName="Lose" scriptAction="lose" />
+	<templateDirectory directoryName="Move" scriptAction="move" />
+	<templateDirectory directoryName="No_Mana" scriptAction="nomana" />
+	<templateDirectory directoryName="Pain" scriptAction="pain" />
+	<templateDirectory directoryName="Respawn" scriptAction="respawn" />
+	<templateDirectory directoryName="Spawn" scriptAction="spawn" />
+	<templateDirectory directoryName="Thanks" scriptAction="thanks" />
+	<templateDirectory directoryName="Under_Attack" scriptAction="underattack" />
+	<templateDirectory directoryName="Win" scriptAction="win" />
+</root>

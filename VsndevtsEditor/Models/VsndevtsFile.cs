@@ -9,8 +9,8 @@ public class VsndevtsFile
   public IReadOnlyCollection<VsndevtsAction> Actions => _actions;
   public required KV3File Kv3File { get; set; }
 
-  public void AddVsndevtsAction(VsndevtsAction vsndActionFile)
+  public void AddVsndevtsAction(VsndevtsAction vsndevtsAction)
   {
-    _actions.Add(vsndActionFile);
+    _actions.Add(vsndevtsAction);
   }
 }

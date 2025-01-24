@@ -1,4 +1,6 @@
-﻿using Common.WPF;
+﻿using System.Collections.ObjectModel;
+using Common.WPF;
+using VsndevtsEditor.Configs;
 using VsndevtsEditor.Models;
 
 namespace VsndevtsEditor.GUI.MainWindow.ViewModels;
@@ -7,20 +9,20 @@ public class VsndevtsActionViewModel : BaseViewModel
 {
   #region Fields
 
-  private VsndevtsActionFileViewModel? _selectedActionFileVm;
-
   #endregion // Fields
 
   #region Ctor
 
-  public VsndevtsActionViewModel(string actionName, IReadOnlyCollection<VsndevtsActionFile> actionFiles)
+  public VsndevtsActionViewModel(VsndevtsAction vsndevtsAction)
   {
-    ActionName = actionName;
+    VsndevtsAction = vsndevtsAction;
 
-    ActionFileVms = new List<VsndevtsActionFileViewModel>();
-    foreach (var vsndevtsActionFile in actionFiles)
+    ActionName = VsndevtsAction.ActionName;
+
+    foreach (var vsndevtsActionFile in VsndevtsAction.Files)
     {
-      ActionFileVms.Add(new VsndevtsActionFileViewModel(vsndevtsActionFile.PathToFile));
+      var vsndevtsActionFileViewModel = new VsndevtsActionFileViewModel(vsndevtsActionFile.PathToFile);
+      AddActionFileVm(vsndevtsActionFileViewModel);
     }
   }
 
@@ -28,22 +30,44 @@ public class VsndevtsActionViewModel : BaseViewModel
 
   #region Properties
 
+  public bool IsDirty { get; set; }
+
+  public VsndevtsAction VsndevtsAction { get; }
+
   public string ActionName { get; }
 
-  public List<VsndevtsActionFileViewModel> ActionFileVms { get; }
+  public ObservableCollection<VsndevtsActionFileViewModel> ActionFileVms { get; } = new();
 
-  public VsndevtsActionFileViewModel? SelectedActionFileVm
-  {
-    get => _selectedActionFileVm;
-    set
-    {
-      if (_selectedActionFileVm == value)
-        return;
-      
-      _selectedActionFileVm = value;
-      OnPropertyChanged();
-    }
-  }
+  public TemplateDirectoryData? TemplateDirectoryData { get; set; }
 
   #endregion // Properties
+
+  #region Public Methods
+
+  public void AddActionFileVm(VsndevtsActionFileViewModel vsndevtsActionFileViewModel)
+  {
+    ActionFileVms.Add(vsndevtsActionFileViewModel);
+    vsndevtsActionFileViewModel.PathToFileChange += VsndevtsActionFileViewModelOnPathToFileChange;
+  }
+
+  public void ClearActionFileVms()
+  {
+    foreach (var vsndevtsActionFileViewModel in ActionFileVms)
+    {
+      vsndevtsActionFileViewModel.PathToFileChange -= VsndevtsActionFileViewModelOnPathToFileChange;
+    }
+
+    ActionFileVms.Clear();
+  }
+
+  #endregion // Public Methods
+
+  #region Private Methods
+
+  private void VsndevtsActionFileViewModelOnPathToFileChange()
+  {
+    IsDirty = true;
+  }
+
+  #endregion // Private Methods
 }

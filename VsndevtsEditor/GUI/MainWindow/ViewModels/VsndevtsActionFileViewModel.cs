@@ -6,7 +6,7 @@ public class VsndevtsActionFileViewModel : BaseViewModel
 {
   #region Fields
 
-  private string _pathToFile;
+  private string _pathToFile = string.Empty;
 
   #endregion // Fields
 
@@ -19,6 +19,12 @@ public class VsndevtsActionFileViewModel : BaseViewModel
 
   #endregion // Ctor
 
+  #region Events
+
+  public event Action? PathToFileChange;
+
+  #endregion // Events
+
   #region Properties
 
   public string PathToFile
@@ -28,6 +34,8 @@ public class VsndevtsActionFileViewModel : BaseViewModel
     {
       _pathToFile = value;
       OnPropertyChanged();
+      
+      PathToFileChange?.Invoke();
     }
   }
 

@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Windows;
 using CommonLib;
-using CSharpFunctionalExtensions;
 using VsndevtsEditor.Configs;
 using VsndevtsEditor.GUI.MainWindow.ViewModels;
 using VsndevtsEditor.GUI.MainWindow.Views;
@@ -12,9 +11,6 @@ public partial class App
 {
   #region Fields
 
-
-  private readonly string _pathToFoldersSettingsFile = Path.Combine(Environment.CurrentDirectory, "Settings", "ActionFoldersSettings.xml");
-  
   private MainControlViewModel? _mainControlViewModel;
 
   #endregion // Fields
@@ -44,18 +40,18 @@ public partial class App
 
   private bool EnsureTemplateDirectoriesExists()
   {
-    var foldersSettingsFileInfo = new FileInfo(_pathToFoldersSettingsFile);
-    if (!foldersSettingsFileInfo.Exists)
+    var templateDirectoriesSettingsFileInfo = new FileInfo(Constants.PathToTemplateDirectoriesSettingsFile);
+    if (!templateDirectoriesSettingsFileInfo.Exists)
     {
-      MessageBox.Show($"File '{_pathToFoldersSettingsFile}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+      MessageBox.Show($"File '{Constants.PathToTemplateDirectoriesSettingsFile}' does not exist.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
       
       return false;
     }
 
     try
     {
-      var folderSettings = XmlSerializerService.DeserilazeFromXml<FolderSettings>(_pathToFoldersSettingsFile);
-      GlobalManager.Instance.FolderSettings = folderSettings;
+      var templateDirectoriesSettings = XmlSerializerService.DeserilazeFromXml<TemplateDirectoriesSettings>(Constants.PathToTemplateDirectoriesSettingsFile);
+      GlobalManager.Instance.TemplateDirectoriesSettings = templateDirectoriesSettings;
     }
     catch (Exception ex)
     {
@@ -69,13 +65,13 @@ public partial class App
       templateDirectoriesDirInfo.Create();
 
     var createdTemplateDirectoriesNames = new HashSet<string>();
-    foreach (var folderSettingsFolder in GlobalManager.Instance.FolderSettings.Folders)
+    foreach (var templateDirectory in GlobalManager.Instance.TemplateDirectoriesSettings.TemplateDirectories)
     {
-      var templateDir = new DirectoryInfo(Path.Combine(templateDirectoriesDirInfo.FullName, folderSettingsFolder.FolderName));
+      var templateDir = new DirectoryInfo(Path.Combine(templateDirectoriesDirInfo.FullName, templateDirectory.DirectoryName));
       if (!templateDir.Exists)
       {
         templateDir.Create();
-        createdTemplateDirectoriesNames.Add(folderSettingsFolder.FolderName);
+        createdTemplateDirectoriesNames.Add(templateDirectory.DirectoryName);
       }
     }
 
@@ -87,6 +83,8 @@ public partial class App
                       $"{str}", 
         "Error", MessageBoxButton.OK, MessageBoxImage.Information);
     }
+    
+    GlobalManager.Instance.TemplateDirectoriesSettings.FillTemplateDirectoriesFileInfos();
 
     return true;
   }

@@ -9,7 +9,7 @@ public class VsndevtsAction
   public IReadOnlyCollection<VsndevtsActionFile> Files => _files;
   
   public required string ActionName { get; init; }
-  public required KVValue KValue { get; set; }
+  public required KVValue KVValue { get; init; }
 
   public void AddVsndActionFile(VsndevtsActionFile vsndActionFile)
   {
