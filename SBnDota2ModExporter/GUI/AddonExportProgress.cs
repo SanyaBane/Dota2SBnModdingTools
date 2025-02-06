@@ -3,13 +3,8 @@ using System.Windows.Media;
 
 namespace SBnDota2ModExporter.GUI;
 
-public class AddonExportProgress
+public class AddonExportProgress(string text)
 {
-  public AddonExportProgress(string text)
-  {
-    Text = text;
-  }
-
   public AddonExportProgress(string text, Brush foregroundColor) : this(text)
   {
     ForegroundColor = foregroundColor;
@@ -20,7 +15,7 @@ public class AddonExportProgress
     FontWeight = fontWeight;
   }
 
-  public string Text { get; }
+  public string Text { get; } = text;
 
   public Brush ForegroundColor { get; } = Brushes.Black;
   public FontWeight FontWeight { get; } = FontWeights.Normal;

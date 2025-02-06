@@ -6,9 +6,9 @@
   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
   xmlns:local="clr-namespace:VsndevtsEditor.GUI.MainWindow.Views"
   xmlns:viewModels="clr-namespace:VsndevtsEditor.GUI.MainWindow.ViewModels"
-  xmlns:behaviors="clr-namespace:VsndevtsEditor.Behaviors"
   xmlns:converters="clr-namespace:VsndevtsEditor.GUI.MainWindow.Views.Converters"
   xmlns:selectors="clr-namespace:VsndevtsEditor.GUI.MainWindow.Views.Selectors"
+  xmlns:behaviors="clr-namespace:Common.WPF.Behaviors;assembly=Common.WPF"
   mc:Ignorable="d"
   d:DataContext="{d:DesignInstance viewModels:MainControlViewModel, IsDesignTimeCreatable=True}">
 

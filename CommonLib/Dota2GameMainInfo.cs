@@ -10,22 +10,22 @@ public class Dota2GameMainInfo
 
   #region Properties
 
-  public FileInfo Dota2ExecutableFileInfo { get; private init; }
-  public FileInfo ResourceCompilerExecutableFileInfo { get; private init; }
-  public DirectoryInfo Dota2DirectoryInfo { get; private init; }
-  public FileInfo Pak01DirVpkFileInfo { get; private init; }
-  public DirectoryInfo Dota2AddonsContentDirectoryInfo { get; private init; }
-  public DirectoryInfo Dota2AddonsGameDirectoryInfo { get; private init; }
+  public required FileInfo Dota2ExecutableFileInfo { get; init; }
+  public required FileInfo ResourceCompilerExecutableFileInfo { get; init; }
+  public required DirectoryInfo Dota2DirectoryInfo { get; init; }
+  public required FileInfo Pak01DirVpkFileInfo { get; init; }
+  public required DirectoryInfo Dota2AddonsContentDirectoryInfo { get; init; }
+  public required DirectoryInfo Dota2AddonsGameDirectoryInfo { get; init; }
 
   #endregion // Properties
 
   #region Public Methods
 
-  public static Result<Dota2GameMainInfo?> CreateDota2GameMainInfo(string fullPathToDota2Exe)
+  public static Result<Dota2GameMainInfo> CreateDota2GameMainInfo(string fullPathToDota2Exe)
   {
     var dota2ExecutableFile = new FileInfo(fullPathToDota2Exe);
     if (dota2ExecutableFile.Exists is false)
-      return Result.Failure<Dota2GameMainInfo?>($"File not found by following path:{Environment.NewLine}" +
+      return Result.Failure<Dota2GameMainInfo>($"File not found by following path:{Environment.NewLine}" +
                                             $"{fullPathToDota2Exe}");
 
     var resourceCompilerExecutableFile = new FileInfo(Path.Combine(dota2ExecutableFile.Directory.FullName, "resourcecompiler.exe"));
@@ -36,14 +36,14 @@ public class Dota2GameMainInfo
     var pak01DirVpkFile = new FileInfo(pak01DirFullPath);
     if (pak01DirVpkFile.Exists is false)
     {
-      return Result.Failure<Dota2GameMainInfo?>($"Can not find 'pak01_dir.vpk' file by following path: {pak01DirFullPath}");
+      return Result.Failure<Dota2GameMainInfo>($"Can not find 'pak01_dir.vpk' file by following path: {pak01DirFullPath}");
     }
 
     var dotaAddonsContentDirectoryPath = Path.Combine(dota2Directory.FullName, "content", "dota_addons");
     var dotaAddonsContentDirectoryInfo = new DirectoryInfo(dotaAddonsContentDirectoryPath);
     if (dotaAddonsContentDirectoryInfo.Exists is false)
     {
-      return Result.Failure<Dota2GameMainInfo?>($"Can not find 'dota_addons' content directory by following path: {dotaAddonsContentDirectoryPath}");
+      return Result.Failure<Dota2GameMainInfo>($"Can not find 'dota_addons' content directory by following path: {dotaAddonsContentDirectoryPath}");
     }
     
     var dotaAddonsGameDirectoryPath = Path.Combine(dota2Directory.FullName, "game", "dota_addons");
@@ -59,7 +59,7 @@ public class Dota2GameMainInfo
       Dota2AddonsGameDirectoryInfo = dotaAddonsGameDirectoryInfo,
     };
 
-    return Result.Success<Dota2GameMainInfo?>(dota2GameMainInfo);
+    return Result.Success<Dota2GameMainInfo>(dota2GameMainInfo);
   }
 
   #endregion // Public Methods

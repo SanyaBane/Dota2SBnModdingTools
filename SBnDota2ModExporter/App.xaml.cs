@@ -15,23 +15,25 @@ public partial class App
   {
     base.OnStartup(e);
 
-    var modExporterGlobalConfig = GlobalManager.Instance.LoadOrCreateConfigFile();
+    var config = GlobalManager.Instance.EnsureConfigFileExists();
 
-    string dota2ExeFullPath = modExporterGlobalConfig.Dota2ExeFullPath;
+    string dota2ExeFullPath = config.Dota2ExeFullPath;
 
     var resultValidateDota2ExeFullPath = ValidateDota2ExeFullPathOnStartup(dota2ExeFullPath);
-    if (resultValidateDota2ExeFullPath.IsFailure)
+    if (resultValidateDota2ExeFullPath.IsFailure || string.IsNullOrEmpty(resultValidateDota2ExeFullPath.Value))
     {
-      if (!string.IsNullOrEmpty(resultValidateDota2ExeFullPath.Error))
+      if (resultValidateDota2ExeFullPath.IsFailure
+          && !string.IsNullOrEmpty(resultValidateDota2ExeFullPath.Error))
       {
         MessageBox.Show(resultValidateDota2ExeFullPath.Error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
       }
 
       Application.Current.Shutdown();
+      return;
     }
 
     GlobalManager.Instance.GlobalSettings.Dota2ExeFullPath = resultValidateDota2ExeFullPath.Value;
-    GlobalManager.Instance.GlobalSettings.OutputDirectoryFullPath = modExporterGlobalConfig.OutputDirectoryFullPath;
+    GlobalManager.Instance.GlobalSettings.OutputDirectoryFullPath = config.OutputDirectoryFullPath;
 
     var resultTrySetFullPathToDota2Exe = GlobalManager.Instance.UpdateDota2GameMainInfo();
     if (resultTrySetFullPathToDota2Exe.IsFailure)
@@ -39,11 +41,12 @@ public partial class App
       MessageBox.Show(resultTrySetFullPathToDota2Exe.Error, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
 
       Application.Current.Shutdown();
+      return;
     }
 
     Application.Current.Exit += Application_OnExit;
 
-    _mainControlViewModel = new MainControlViewModel(modExporterGlobalConfig.AddonExporterShortConfigs);
+    _mainControlViewModel = new MainControlViewModel(config.AddonExporterShortConfigs);
 
     var mainWindow = new MainWindowView
     {
@@ -75,12 +78,12 @@ public partial class App
     GlobalManager.Instance.TrySaveConfigFile();
   }
 
-  private Result<string> ValidateDota2ExeFullPathOnStartup(string dota2ExeFullPath)
+  private Result<string?> ValidateDota2ExeFullPathOnStartup(string dota2ExeFullPath)
   {
     if (string.IsNullOrEmpty(dota2ExeFullPath))
     {
       MessageBox.Show($"Select 'dota2.exe' file{Environment.NewLine}" +
-                      $"Example: C:\\Program Files\\Steam\\steamapps\\common\\dota 2 beta\\game\\bin\\win64\\dota2.exe", 
+                      $"Example: C:\\Program Files\\Steam\\steamapps\\common\\dota 2 beta\\game\\bin\\win64\\dota2.exe",
         "SBnDota2ModExporter startup", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
       var resultCallDialogSetDota2ExePath = GlobalManager.Instance.CallDialogSetDota2ExePath();

@@ -4,8 +4,6 @@ namespace SBnDota2ModExporter;
 
 public static class Constants
 {
-  public const string CONFIG_FILE_NAME = "SBnDota2ModExporter.config";
-
   public const string ADDON_EXPORT_FILE_FORMAT = "d2adexp";
   
   public const string SKIP_COMMAND_TEXT = "Skip command.";

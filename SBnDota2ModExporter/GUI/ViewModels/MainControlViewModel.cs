@@ -88,7 +88,7 @@ public class MainControlViewModel : BaseViewModel
   public string Dota2ExecutableFullPath
   {
     get => _dota2ExecutableFullPath;
-    set
+    private set
     {
       _dota2ExecutableFullPath = value;
       OnPropertyChanged();

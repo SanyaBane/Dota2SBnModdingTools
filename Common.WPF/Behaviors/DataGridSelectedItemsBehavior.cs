@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Controls;
 
-namespace VsndevtsEditor.Behaviors;
+namespace Common.WPF.Behaviors;
 
 public static class DataGridSelectedItemsBehavior
 {
@@ -13,11 +13,9 @@ public static class DataGridSelectedItemsBehavior
       typeof(DataGridSelectedItemsBehavior),
       new PropertyMetadata(null, OnBindableSelectedItemsChanged));
 
-  public static IList? GetBindableSelectedItems(DependencyObject obj) =>
-    (IList)obj.GetValue(BindableSelectedItemsProperty);
+  public static IList? GetBindableSelectedItems(DependencyObject obj) => (IList)obj.GetValue(BindableSelectedItemsProperty);
 
-  public static void SetBindableSelectedItems(DependencyObject obj, IList value) =>
-    obj.SetValue(BindableSelectedItemsProperty, value);
+  public static void SetBindableSelectedItems(DependencyObject obj, IList value) => obj.SetValue(BindableSelectedItemsProperty, value);
 
   private static void OnBindableSelectedItemsChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
   {

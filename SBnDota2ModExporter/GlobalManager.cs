@@ -16,10 +16,8 @@ public class GlobalManager
   public static GlobalManager Instance => _instance ??= new GlobalManager();
 
   #endregion // Singleton
-
-  #region Fields
-
-  #endregion // Fields
+  
+  private const string CONFIG_FILE_NAME = "SBnDota2ModExporter.config";
 
   #region Properties
 
@@ -43,7 +41,7 @@ public class GlobalManager
     return Result.Success();
   }
 
-  public SBnModExporterGlobalConfig LoadOrCreateConfigFile()
+  public SBnModExporterGlobalConfig EnsureConfigFileExists()
   {
     var modExporterGlobalConfig = LoadConfigFile();
     if (modExporterGlobalConfig != null)
@@ -65,7 +63,23 @@ public class GlobalManager
 
   public Result TrySaveConfigFile()
   {
-    return ModExporterGlobalConfig.TrySaveConfigFile();
+    try
+    {
+      var fullPathToConfigFile = GetFullPathToConfigFile();
+      XmlSerializerService.SerializeToXml(fullPathToConfigFile, ModExporterGlobalConfig);
+
+      if (File.Exists(fullPathToConfigFile) is false)
+      {
+        return Result.Failure($"Was not able to save config file by following path:{Environment.NewLine}" + 
+                              $"{fullPathToConfigFile}");
+      }
+
+      return Result.Success();
+    }
+    catch (Exception ex)
+    {
+      return Result.Failure(ex.Message);
+    }
   }
 
   public Result<string?> CallDialogSetDota2ExePath()
@@ -91,6 +105,13 @@ public class GlobalManager
     return Result.Success<string?>(null);
   }
 
+  public string GetFullPathToConfigFile()
+  {
+    var executableDirectory = GetFullPathToExecutableDirectory();
+    var configFileFullPath = Path.Combine(executableDirectory, CONFIG_FILE_NAME);
+    return configFileFullPath;
+  }
+
   #endregion // Public Methods
 
   #region Private Methods
@@ -102,13 +123,6 @@ public class GlobalManager
 
     var executableDirectory = entryAssemblyLocation.Directory.FullName;
     return executableDirectory;
-  }
-
-  public string GetFullPathToConfigFile()
-  {
-    var executableDirectory = GetFullPathToExecutableDirectory();
-    var configFileFullPath = Path.Combine(executableDirectory, Constants.CONFIG_FILE_NAME);
-    return configFileFullPath;
   }
 
   private SBnModExporterGlobalConfig? LoadConfigFile()
