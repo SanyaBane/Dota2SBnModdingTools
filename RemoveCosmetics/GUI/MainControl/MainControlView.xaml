@@ -149,7 +149,7 @@
               <DataGrid.Columns>
                 <DataGridTemplateColumn
                   Width="*"
-                  Header="Hero"
+                  Header="Available heroes"
                   CanUserResize="False"
                   CanUserReorder="False"
                   IsReadOnly="True"
@@ -216,7 +216,7 @@
               <DataGrid.Columns>
                 <DataGridTemplateColumn
                   Width="*"
-                  Header="Hero"
+                  Header="Heroes selected for placeholder creation"
                   CanUserResize="False"
                   CanUserReorder="False"
                   IsReadOnly="True"

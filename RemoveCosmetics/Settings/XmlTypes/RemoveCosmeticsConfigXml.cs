@@ -1,6 +1,6 @@
 ﻿using System.Xml.Serialization;
 
-namespace RemoveCosmetics.Settings;
+namespace RemoveCosmetics.Settings.XmlTypes;
 
 [XmlRoot("RemoveCosmeticsConfig")]
 public class RemoveCosmeticsConfigXml
@@ -10,14 +10,13 @@ public class RemoveCosmeticsConfigXml
 
   [XmlElement]
   public string ExportVpkFileSavedDirectoryPath = string.Empty;
-  
-  [XmlArray]
-  public HeroInRightList[] HeroesInRightList = [];
 
-  [XmlType("Hero")]
-  public class HeroInRightList
-  {
-    [XmlAttribute]
-    public string Value { get; set; } = string.Empty;
-  }
+  [XmlArray]
+  public HeroInRightListXml[] HeroesInRightList = [];
+
+  [XmlArray]
+  public PlaceholderExceptionXml[] PlaceholderFileExceptions = [];
+
+  [XmlArray]
+  public PlaceholderExceptionXml[] PlaceholderDirectoryExceptions = [];
 }

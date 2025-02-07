@@ -3,6 +3,8 @@ using System.Windows;
 using CommonLib;
 using CSharpFunctionalExtensions;
 using Microsoft.Win32;
+using RemoveCosmetics.Settings.Types;
+using RemoveCosmetics.Settings.XmlTypes;
 
 namespace RemoveCosmetics.Settings;
 
@@ -52,6 +54,16 @@ public class SettingsManager
         Dota2ExeFullPath = configFile.Dota2ExeFullPath,
         ExportVpkFileSavedDirectoryPath = configFile.ExportVpkFileSavedDirectoryPath,
         HeroesInRightList = configFile.HeroesInRightList.Select(x => x.Value).ToArray(),
+        PlaceholderFileExceptions = configFile.PlaceholderFileExceptions.Select(x => new PlaceholderException()
+        {
+          Value = x.Value,
+          IsRegexPattern = x.IsRegexPattern
+        }).ToArray(),
+        PlaceholderDirectoryExceptions = configFile.PlaceholderDirectoryExceptions.Select(x => new PlaceholderException()
+        {
+          Value = x.Value,
+          IsRegexPattern = x.IsRegexPattern
+        }).ToArray(),
       };
 
       RemoveCosmeticsConfig.IsDirty = false;
@@ -60,6 +72,11 @@ public class SettingsManager
     }
 
     RemoveCosmeticsConfig = new RemoveCosmeticsConfig();
+
+    var placeholderDirectoryExceptions = DefaultExceptionSettings.GetDefaultPlaceholderDirectoryExceptions();
+    var placeholderFileExceptions = DefaultExceptionSettings.GetDefaultPlaceholderFileExceptions();
+    RemoveCosmeticsConfig.PlaceholderDirectoryExceptions = placeholderDirectoryExceptions;
+    RemoveCosmeticsConfig.PlaceholderFileExceptions = placeholderFileExceptions;
 
     var resultSaveConfigFile = TrySaveConfigFile();
     if (resultSaveConfigFile.IsFailure)
@@ -75,13 +92,24 @@ public class SettingsManager
     try
     {
       var fullPathToConfigFile = GetFullPathToConfigFile();
+
       var xmlConfig = new RemoveCosmeticsConfigXml()
       {
         Dota2ExeFullPath = RemoveCosmeticsConfig.Dota2ExeFullPath,
         ExportVpkFileSavedDirectoryPath = RemoveCosmeticsConfig.ExportVpkFileSavedDirectoryPath,
-        HeroesInRightList = RemoveCosmeticsConfig.HeroesInRightList.OrderBy(x => x).Select(x => new RemoveCosmeticsConfigXml.HeroInRightList()
+        HeroesInRightList = RemoveCosmeticsConfig.HeroesInRightList.OrderBy(x => x).Select(x => new HeroInRightListXml()
         {
           Value = x
+        }).ToArray(),
+        PlaceholderFileExceptions = RemoveCosmeticsConfig.PlaceholderFileExceptions.Select(x => new PlaceholderExceptionXml()
+        {
+          Value = x.Value,
+          IsRegexPattern = x.IsRegexPattern,
+        }).ToArray(),
+        PlaceholderDirectoryExceptions = RemoveCosmeticsConfig.PlaceholderDirectoryExceptions.Select(x => new PlaceholderExceptionXml()
+        {
+          Value = x.Value,
+          IsRegexPattern = x.IsRegexPattern,
         }).ToArray(),
       };
 

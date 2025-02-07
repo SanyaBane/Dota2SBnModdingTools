@@ -1,7 +1,10 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using System.Text.RegularExpressions;
+using System.Windows;
 using System.Windows.Media;
 using CSharpFunctionalExtensions;
+using RemoveCosmetics.Constants;
 using RemoveCosmetics.Settings;
 using SteamDatabase.ValvePak;
 
@@ -36,7 +39,7 @@ public class PlaceholderCreationService
           $"{Environment.NewLine}" +
           $"'{fullPathToVPKCreatorDirectory}'.");
 
-      var tmpPak01DirName = Guid.NewGuid().ToString().Substring(0, 8);
+      var tmpPak01DirName = Guid.NewGuid().ToString().Substring(0, 4);
       tempPak01DirDirectory = new DirectoryInfo(Path.Combine(fullPathToVPKCreatorDirectory, tmpPak01DirName));
       if (tempPak01DirDirectory.Exists)
       {
@@ -53,6 +56,15 @@ public class PlaceholderCreationService
       var modelsHeroesEntries = vmdlcEntries
         .Where(x => x.DirectoryName.StartsWith("models/heroes") || x.DirectoryName.StartsWith("models/items")).ToArray();
 
+      var placeholderFileExceptions = SettingsManager.Instance.RemoveCosmeticsConfig.PlaceholderFileExceptions;
+      var placeholderFileNameExceptions = placeholderFileExceptions.Where(x => !x.IsRegexPattern).ToArray();
+      var placeholderFilePatternExceptions = placeholderFileExceptions.Where(x => x.IsRegexPattern).ToArray();
+
+      var placeholderDirectoryExceptions = SettingsManager.Instance.RemoveCosmeticsConfig.PlaceholderDirectoryExceptions;
+      var placeholderDirectoryNameExceptions = placeholderDirectoryExceptions.Where(x => !x.IsRegexPattern).ToArray();
+      var placeholderDirectoryPatternExceptions = placeholderDirectoryExceptions.Where(x => x.IsRegexPattern).ToArray();
+
+      bool somePlaceholderFilesExceed255Characters = false;
       foreach (var directoryName in directoryNames)
       {
         var heroesDirectory = $"models/heroes/{directoryName}";
@@ -62,19 +74,37 @@ public class PlaceholderCreationService
           .Where(x => x.DirectoryName == heroesDirectory
                       || x.DirectoryName.StartsWith(heroesDirectory + "/")
                       || x.DirectoryName == itemsDirectory
-                      || x.DirectoryName.StartsWith(itemsDirectory + "/"));
+                      || x.DirectoryName.StartsWith(itemsDirectory + "/"))
+          .ToArray();
 
         foreach (var packageEntry in matches)
         {
+          if (placeholderDirectoryNameExceptions.Any(x => packageEntry.DirectoryName.StartsWith(x.Value)))
+            continue;
+
+          if (placeholderDirectoryPatternExceptions.Any(x => Regex.IsMatch(packageEntry.DirectoryName, $"^{x.Value}$")))
+            continue;
+
+          if (placeholderFileNameExceptions.Any(x => packageEntry.GetFullPath() == x.Value))
+            continue;
+
+          if (placeholderFilePatternExceptions.Any(x => Regex.IsMatch(packageEntry.GetFullPath(), $"^{x.Value}$")))
+            continue;
+
           var fullPathForPlaceholder = Path.Combine(tempPak01DirDirectory.FullName, packageEntry.DirectoryName, packageEntry.GetFileName());
+          if (fullPathForPlaceholder.Length > 255)
+          {
+            somePlaceholderFilesExceed255Characters = true;
+            continue;
+          }
+
           var placeholderFileInfo = new FileInfo(fullPathForPlaceholder);
           var dir = placeholderFileInfo.Directory;
 
           if (!dir.Exists)
             dir.Create();
 
-          if (!placeholderFileInfo.Exists)
-            File.Copy(placeholderFileFullPath, fullPathForPlaceholder);
+          File.Copy(placeholderFileFullPath, fullPathForPlaceholder);
         }
       }
 
@@ -130,6 +160,15 @@ public class PlaceholderCreationService
 
       if (!File.Exists(safeFileFullPath))
         return Result.Failure($"Failed to copy temporary vpk file to '{tempCreatedVpkFile.FullName}'");
+
+      if (somePlaceholderFilesExceed255Characters)
+      {
+        progress.Report(new PlaceholderCreationProgress(
+          $"Some files could not be converted to VPK because their full path exceeds 255 characters.{Environment.NewLine}" +
+          $"Please consider to move directory of this program to root of your hard drive (for example 'D:\\RemoveCosmetics\\{Constants_General.PROGRAM_TITLE}.exe').",
+          Brushes.OrangeRed,
+          FontWeights.Bold));
+      }
 
       return Result.Success();
     }
