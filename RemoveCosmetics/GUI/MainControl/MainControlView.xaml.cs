@@ -30,16 +30,24 @@ public partial class MainControlView : UserControl
 
     rtbConsole.Document.Blocks.Add(new Paragraph(new Run($"{message.Text}"))
     {
-      Margin = new Thickness(0)
+      Margin = new Thickness(0),
+      Foreground = message.ForegroundColor,
+      FontWeight = message.FontWeight,
     });
+
+    rtbConsole.ScrollToEnd();
   }
 
   private void ConsoleAppendTextMessageHandler(object recipient, ConsoleAppendLineTextMessage message)
   {
     rtbConsole.Document.Blocks.Add(new Paragraph(new Run($"{message.Text}"))
     {
-      Margin = new Thickness(0)
+      Margin = new Thickness(0),
+      Foreground = message.ForegroundColor,
+      FontWeight = message.FontWeight,
     });
+
+    rtbConsole.ScrollToEnd();
   }
 
   private void Hyperlink_RequestNavigate(object sender, RequestNavigateEventArgs e)

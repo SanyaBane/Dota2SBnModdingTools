@@ -9,7 +9,7 @@ public class RemoveCosmeticsConfigXml
   public string Dota2ExeFullPath = string.Empty;
 
   [XmlElement]
-  public string OutputDirectoryFullPath = string.Empty;
+  public string ExportVpkFileSavedDirectoryPath = string.Empty;
   
   [XmlArray]
   public HeroInRightList[] HeroesInRightList = [];

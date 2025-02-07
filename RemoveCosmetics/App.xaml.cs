@@ -1,9 +1,11 @@
-﻿using System.Windows;
+﻿using System.IO;
+using System.Windows;
 using CSharpFunctionalExtensions;
 using RemoveCosmetics.Constants;
 using RemoveCosmetics.GUI.MainControl;
 using RemoveCosmetics.GUI.MainWindow;
 using RemoveCosmetics.Settings;
+using Serilog;
 
 namespace RemoveCosmetics;
 
@@ -14,6 +16,56 @@ public partial class App
   private MainControlViewModel? _mainControlViewModel;
 
   #endregion // Fields
+
+  #region Ctor
+
+  public App()
+  {
+    const string logDirectory = "RemoveCosmetics Logs";
+    Directory.CreateDirectory(logDirectory);
+
+    string logFile = Path.Combine(logDirectory, $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.log");
+
+    Logger = new LoggerConfiguration()
+      .WriteTo.File(logFile, rollingInterval: RollingInterval.Day)
+      .CreateLogger();
+
+    AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+    {
+      if (e.ExceptionObject is Exception ex)
+        Log.Error(ex, "Unhandled Exception");
+    };
+
+    DispatcherUnhandledException += (s, e) =>
+    {
+      Log.Error(e.Exception, "Dispatcher Unhandled Exception");
+      e.Handled = true;
+    };
+  }
+
+  #endregion // Ctor
+
+  #region Properties
+
+  public static ILogger Logger { get; private set; } = null!;
+
+  #endregion // Properties
+
+  #region Event Handlers
+
+  private void Application_OnExit(object sender, ExitEventArgs e)
+  {
+    if (SettingsManager.Instance.RemoveCosmeticsConfig.IsDirty)
+    {
+      var saveConfigFileResult = SettingsManager.Instance.TrySaveConfigFile();
+      if (saveConfigFileResult.IsFailure)
+      {
+        Logger.Error(saveConfigFileResult.Error);
+      }
+    }
+  }
+
+  #endregion // Event Handlers
 
   protected override void OnStartup(StartupEventArgs e)
   {
@@ -74,13 +126,5 @@ public partial class App
     }
 
     return dota2ExeFullPath;
-  }
-
-  private void Application_OnExit(object sender, ExitEventArgs e)
-  {
-    if (SettingsManager.Instance.RemoveCosmeticsConfig.IsDirty)
-    {
-      SettingsManager.Instance.TrySaveConfigFile();
-    }
   }
 }

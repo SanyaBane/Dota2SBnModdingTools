@@ -2,6 +2,7 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
+using System.Windows.Media;
 using Common.WPF;
 using CommonLib;
 using CommunityToolkit.Mvvm.Messaging;
@@ -40,7 +41,6 @@ public class MainControlViewModel : BaseViewModel
 
   private bool _isEnabled;
   private string _dota2ExecutableFullPath = string.Empty;
-  private string _outputDirectoryFullPath = string.Empty;
 
   private readonly Dota2GameMainInfo _dota2GameMainInfo;
   private readonly HeroIconsProvider _heroIconsProvider;
@@ -56,7 +56,6 @@ public class MainControlViewModel : BaseViewModel
     _dota2GameMainInfo = dota2GameMainInfo;
 
     SetPathToDota2ExeCommand = new DelegateCommand(ExecuteSetPathToDota2Exe);
-    SetPathToOutputDirectoryCommand = new DelegateCommand(ExecuteSetPathToOutputDirectory);
     StartPlaceholderCreationCommand = new DelegateCommand(ExecuteStartPlaceholderCreation, CanExecuteStartPlaceholderCreation);
     SaveHeroesListCommand = new DelegateCommand(ExecuteSaveHeroesList);
     LoadHeroesListCommand = new DelegateCommand(ExecuteLoadHeroesList);
@@ -66,7 +65,6 @@ public class MainControlViewModel : BaseViewModel
     HeroListsViewModel.ModelStateChange += HeroListsViewModelOnModelStateChange;
 
     Dota2ExecutableFullPath = SettingsManager.Instance.RemoveCosmeticsConfig.Dota2ExeFullPath;
-    OutputDirectoryFullPath = SettingsManager.Instance.RemoveCosmeticsConfig.ExportVpkFileSavedDirectoryPath;
 
     _heroIconsProvider = new HeroIconsProvider();
   }
@@ -89,7 +87,6 @@ public class MainControlViewModel : BaseViewModel
   #region Commands
 
   public DelegateCommand SetPathToDota2ExeCommand { get; }
-  public DelegateCommand SetPathToOutputDirectoryCommand { get; }
   public DelegateCommand StartPlaceholderCreationCommand { get; }
   public DelegateCommand SaveHeroesListCommand { get; }
   public DelegateCommand ResetHeroesListsCommand { get; }
@@ -117,16 +114,6 @@ public class MainControlViewModel : BaseViewModel
     private set
     {
       _dota2ExecutableFullPath = value;
-      OnPropertyChanged();
-    }
-  }
-
-  public string OutputDirectoryFullPath
-  {
-    get => _outputDirectoryFullPath;
-    private set
-    {
-      _outputDirectoryFullPath = value;
       OnPropertyChanged();
     }
   }
@@ -182,35 +169,6 @@ public class MainControlViewModel : BaseViewModel
     }
   }
 
-  private void ExecuteSetPathToOutputDirectory(object obj)
-  {
-    var openFolderDialog = new OpenFolderDialog
-    {
-      AddToRecent = false,
-      Title = "Select output directory"
-    };
-
-    if (openFolderDialog.ShowDialog() == true)
-    {
-      if (Directory.Exists(openFolderDialog.FolderName))
-      {
-        OutputDirectoryFullPath = openFolderDialog.FolderName;
-        SettingsManager.Instance.RemoveCosmeticsConfig.ExportVpkFileSavedDirectoryPath = OutputDirectoryFullPath;
-      }
-      else
-      {
-        WeakReferenceMessenger.Default.Send(new ShowMessageBoxDialogMessage()
-        {
-          MessageBoxText = $"Directory does not exist:{Environment.NewLine}" +
-                           $"'{openFolderDialog.FolderName}'",
-          Caption = "Error",
-          Button = MessageBoxButton.OK,
-          Icon = MessageBoxImage.Error,
-        });
-      }
-    }
-  }
-
   private async void ExecuteStartPlaceholderCreation(object obj)
   {
     if (!CanExecuteStartPlaceholderCreation(obj))
@@ -249,7 +207,9 @@ public class MainControlViewModel : BaseViewModel
       {
         WeakReferenceMessenger.Default.Send(new ConsoleAppendLineTextMessage()
         {
-          Text = message.Text
+          Text = message.Text,
+          ForegroundColor = message.ForegroundColor,
+          FontWeight = message.FontWeight,
         });
       });
 
@@ -266,7 +226,8 @@ public class MainControlViewModel : BaseViewModel
       {
         WeakReferenceMessenger.Default.Send(new ConsoleAppendLineTextMessage()
         {
-          Text = $"Error: {createVpkFileWithPlaceholderModelsResult.Error}"
+          Text = $"Error: {createVpkFileWithPlaceholderModelsResult.Error}",
+          ForegroundColor = Brushes.Red,
         });
 
         return;
@@ -274,7 +235,8 @@ public class MainControlViewModel : BaseViewModel
 
       WeakReferenceMessenger.Default.Send(new ConsoleAppendLineTextMessage()
       {
-        Text = $"Vpk file creation finished in {_stopwatch.Elapsed.TotalSeconds:N2} seconds."
+        Text = $"Vpk file creation finished in {_stopwatch.Elapsed.TotalSeconds:N2} seconds.",
+        ForegroundColor = Brushes.Green,
       });
     }
     finally

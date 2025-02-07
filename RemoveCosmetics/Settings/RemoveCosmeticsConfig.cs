@@ -6,7 +6,7 @@ public class RemoveCosmeticsConfig
   private string _exportVpkFileSavedDirectoryPath = string.Empty;
   private string[] _heroesInRightList = [];
 
-  public bool IsDirty { get; private set; }
+  public bool IsDirty { get; set; }
 
   public string Dota2ExeFullPath
   {

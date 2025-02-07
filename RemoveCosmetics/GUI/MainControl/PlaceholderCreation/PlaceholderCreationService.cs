@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.IO;
+using System.Windows.Media;
 using CSharpFunctionalExtensions;
 using RemoveCosmetics.Settings;
 using SteamDatabase.ValvePak;
@@ -24,7 +25,7 @@ public class PlaceholderCreationService
       {
         return Result.Failure($"Not found placeholder file in directory with application:" +
                               $"{Environment.NewLine}" +
-                              $"{placeholderFileFullPath}");
+                              $"'{placeholderFileFullPath}'.");
       }
 
       string fullPathToVPKCreatorDirectory = Path.Combine(Environment.CurrentDirectory, vpkCreatorDirectoryName);
@@ -33,7 +34,7 @@ public class PlaceholderCreationService
         return Result.Failure(
           $"Not found '{vpkCreatorDirectoryName}' folder in directory with application:" +
           $"{Environment.NewLine}" +
-          $"{fullPathToVPKCreatorDirectory}");
+          $"'{fullPathToVPKCreatorDirectory}'.");
 
       var tmpPak01DirName = Guid.NewGuid().ToString().Substring(0, 8);
       tempPak01DirDirectory = new DirectoryInfo(Path.Combine(fullPathToVPKCreatorDirectory, tmpPak01DirName));
@@ -56,10 +57,12 @@ public class PlaceholderCreationService
       {
         var heroesDirectory = $"models/heroes/{directoryName}";
         var itemsDirectory = $"models/items/{directoryName}";
-        var matches = modelsHeroesEntries.Where(x => x.DirectoryName == heroesDirectory
-                                                     || x.DirectoryName.StartsWith(heroesDirectory + "/")
-                                                     || x.DirectoryName == itemsDirectory
-                                                     || x.DirectoryName.StartsWith(itemsDirectory + "/"));
+
+        var matches = modelsHeroesEntries
+          .Where(x => x.DirectoryName == heroesDirectory
+                      || x.DirectoryName.StartsWith(heroesDirectory + "/")
+                      || x.DirectoryName == itemsDirectory
+                      || x.DirectoryName.StartsWith(itemsDirectory + "/"));
 
         foreach (var packageEntry in matches)
         {
@@ -71,7 +74,7 @@ public class PlaceholderCreationService
             dir.Create();
 
           if (!placeholderFileInfo.Exists)
-            File.Copy(placeholderFileFullPath, fullPathForPlaceholder, overwrite: false);
+            File.Copy(placeholderFileFullPath, fullPathForPlaceholder);
         }
       }
 
@@ -106,7 +109,7 @@ public class PlaceholderCreationService
         if (string.IsNullOrEmpty(args.Data))
           return;
 
-        progress.Report(new PlaceholderCreationProgress($"VpkCreator ERROR: {args.Data}"));
+        progress.Report(new PlaceholderCreationProgress($"VpkCreator ERROR: {args.Data}", Brushes.Red));
       };
 
       process.Start();
@@ -123,12 +126,10 @@ public class PlaceholderCreationService
       }
 
       File.Copy(tempCreatedVpkFile.FullName, safeFileFullPath, true);
-      if (!File.Exists(safeFileFullPath))
-      {
-        return Result.Failure($"Failed to copy temporary vpk file to '{tempCreatedVpkFile.FullName}'");
-      }
-
       progress.Report(new PlaceholderCreationProgress($"Copying temp vpk file to specified location."));
+
+      if (!File.Exists(safeFileFullPath))
+        return Result.Failure($"Failed to copy temporary vpk file to '{tempCreatedVpkFile.FullName}'");
 
       return Result.Success();
     }

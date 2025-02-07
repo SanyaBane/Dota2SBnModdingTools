@@ -118,10 +118,7 @@ public class GlobalManager
 
   private static string GetFullPathToExecutableDirectory()
   {
-    var entryAssembly = System.Reflection.Assembly.GetEntryAssembly();
-    var entryAssemblyLocation = new FileInfo(entryAssembly.Location);
-
-    var executableDirectory = entryAssemblyLocation.Directory.FullName;
+    var executableDirectory = AppContext.BaseDirectory;
     return executableDirectory;
   }
 

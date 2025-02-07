@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Media;
 
 namespace RemoveCosmetics.GUI.MainControl;
 
@@ -14,9 +15,15 @@ public class ShowMessageBoxDialogMessage
 public class ConsoleSetTextMessage
 {
   public required string Text { get; init; }
+
+  public Brush ForegroundColor { get; init; } = Brushes.Black;
+  public FontWeight FontWeight { get; init; } = FontWeights.Normal;
 }
 
 public class ConsoleAppendLineTextMessage
 {
   public required string Text { get; init; }
+
+  public Brush ForegroundColor { get; init; } = Brushes.Black;
+  public FontWeight FontWeight { get; init; } = FontWeights.Normal;
 }

@@ -302,6 +302,10 @@
       </None>
     </ItemGroup>
 
+    <ItemGroup>
+      <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+    </ItemGroup>
+
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
       <Exec Command="SET path=$(MSBuildProjectDirectory)\$(OutputPath)\VPK Creator&#xA;            echo %path%&#xA;            if not exist &quot;%path%&quot; mkdir &quot;%path%&quot;&#xA;            %systemroot%\System32\xcopy /i /y /d &quot;$(MSBuildProjectDirectory)\VPK Creator\*&quot; &quot;%path%\&quot;&#xA;        " />
     </Target>

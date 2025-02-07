@@ -16,7 +16,11 @@ public class SettingsManager
 
   #endregion // Singleton
 
+  #region Fields
+
   private const string CONFIG_FILE_NAME = "RemoveCosmetics.config";
+
+  #endregion // Fields
 
   #region Properties
 
@@ -46,10 +50,12 @@ public class SettingsManager
       RemoveCosmeticsConfig = new RemoveCosmeticsConfig()
       {
         Dota2ExeFullPath = configFile.Dota2ExeFullPath,
-        ExportVpkFileSavedDirectoryPath = configFile.OutputDirectoryFullPath,
+        ExportVpkFileSavedDirectoryPath = configFile.ExportVpkFileSavedDirectoryPath,
         HeroesInRightList = configFile.HeroesInRightList.Select(x => x.Value).ToArray(),
       };
-    
+
+      RemoveCosmeticsConfig.IsDirty = false;
+
       return RemoveCosmeticsConfig;
     }
 
@@ -72,26 +78,26 @@ public class SettingsManager
       var xmlConfig = new RemoveCosmeticsConfigXml()
       {
         Dota2ExeFullPath = RemoveCosmeticsConfig.Dota2ExeFullPath,
-        OutputDirectoryFullPath = RemoveCosmeticsConfig.ExportVpkFileSavedDirectoryPath,
-        HeroesInRightList = RemoveCosmeticsConfig.HeroesInRightList.Select(x => new RemoveCosmeticsConfigXml.HeroInRightList()
+        ExportVpkFileSavedDirectoryPath = RemoveCosmeticsConfig.ExportVpkFileSavedDirectoryPath,
+        HeroesInRightList = RemoveCosmeticsConfig.HeroesInRightList.OrderBy(x => x).Select(x => new RemoveCosmeticsConfigXml.HeroInRightList()
         {
           Value = x
         }).ToArray(),
       };
-      
+
       XmlSerializerService.SerializeToXml(fullPathToConfigFile, xmlConfig);
 
       if (File.Exists(fullPathToConfigFile) is false)
       {
         return Result.Failure($"Was not able to save config file by following path:{Environment.NewLine}" +
-                              $"{fullPathToConfigFile}");
+                              $"'{fullPathToConfigFile}'.");
       }
 
       return Result.Success();
     }
     catch (Exception ex)
     {
-      return Result.Failure(ex.Message);
+      return Result.Failure(ex.ToString());
     }
   }
 
@@ -108,8 +114,8 @@ public class SettingsManager
       var dota2Exe = new FileInfo(openFileDialog.FileName);
       if (dota2Exe.Exists is false)
       {
-        return Result.Failure<string?>($"Following file is not found:{Environment.NewLine}" +
-                                       $"{dota2Exe.FullName}");
+        return Result.Failure<string?>($"Following file was not found:{Environment.NewLine}" +
+                                       $"'{dota2Exe.FullName}'.");
       }
 
       return Result.Success<string?>(openFileDialog.FileName);
@@ -131,10 +137,7 @@ public class SettingsManager
 
   private static string GetFullPathToExecutableDirectory()
   {
-    var entryAssembly = System.Reflection.Assembly.GetEntryAssembly();
-    var entryAssemblyLocation = new FileInfo(entryAssembly.Location);
-
-    var executableDirectory = entryAssemblyLocation.Directory.FullName;
+    var executableDirectory = AppContext.BaseDirectory;
     return executableDirectory;
   }
 
