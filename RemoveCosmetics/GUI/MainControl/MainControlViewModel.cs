@@ -67,6 +67,8 @@ public class MainControlViewModel : BaseViewModel
     Dota2ExecutableFullPath = SettingsManager.Instance.RemoveCosmeticsConfig.Dota2ExeFullPath;
 
     _heroIconsProvider = new HeroIconsProvider();
+
+    FullPathToExecutableDirectory = SettingsManager.GetFullPathToExecutableDirectory();
   }
 
   public void InitializeViewModel()
@@ -95,6 +97,8 @@ public class MainControlViewModel : BaseViewModel
   #endregion // Commands
 
   #region Properties
+  
+  public string FullPathToExecutableDirectory { get; }
 
   public HeroListsViewModel HeroListsViewModel { get; }
 

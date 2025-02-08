@@ -163,7 +163,7 @@ public class SettingsManager
 
   #region Private Methods
 
-  private static string GetFullPathToExecutableDirectory()
+  public static string GetFullPathToExecutableDirectory()
   {
     var executableDirectory = AppContext.BaseDirectory;
     return executableDirectory;
