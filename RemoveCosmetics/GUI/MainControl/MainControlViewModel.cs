@@ -181,18 +181,22 @@ public class MainControlViewModel : BaseViewModel
       FileName = "pak99_dir.vpk",
     };
 
-    if (!string.IsNullOrEmpty(SettingsManager.Instance.RemoveCosmeticsConfig.ExportVpkFileSavedDirectoryPath)
-        && Directory.Exists(SettingsManager.Instance.RemoveCosmeticsConfig.ExportVpkFileSavedDirectoryPath))
+    if (!string.IsNullOrEmpty(SettingsManager.Instance.RemoveCosmeticsConfig.PlaceholderVpkFileDirectoryFullPath)
+        && Directory.Exists(SettingsManager.Instance.RemoveCosmeticsConfig.PlaceholderVpkFileDirectoryFullPath))
     {
-      saveFileDialog.InitialDirectory = SettingsManager.Instance.RemoveCosmeticsConfig.ExportVpkFileSavedDirectoryPath;
+      saveFileDialog.InitialDirectory = SettingsManager.Instance.RemoveCosmeticsConfig.PlaceholderVpkFileDirectoryFullPath;
     }
 
     if (saveFileDialog.ShowDialog() != true)
       return;
 
-    if (SettingsManager.Instance.RemoveCosmeticsConfig.ExportVpkFileSavedDirectoryPath != saveFileDialog.FileName)
+    var saveFileFileInfo = new FileInfo(saveFileDialog.FileName);
+    if (saveFileFileInfo.Directory != null)
     {
-      SettingsManager.Instance.RemoveCosmeticsConfig.ExportVpkFileSavedDirectoryPath = saveFileDialog.FileName;
+      if (SettingsManager.Instance.RemoveCosmeticsConfig.PlaceholderVpkFileDirectoryFullPath != saveFileFileInfo.Directory.FullName)
+      {
+        SettingsManager.Instance.RemoveCosmeticsConfig.PlaceholderVpkFileDirectoryFullPath = saveFileFileInfo.Directory.FullName;
+      }
     }
 
     var savedIsEnabled = IsEnabled;

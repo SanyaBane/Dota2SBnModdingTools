@@ -5,7 +5,7 @@ public class RemoveCosmeticsConfig
   #region Fields
 
   private string _dota2ExeFullPath = string.Empty;
-  private string _exportVpkFileSavedDirectoryPath = string.Empty;
+  private string _placeholderVpkFileDirectoryFullPath = string.Empty;
   private string[] _heroesInRightList = [];
   private PlaceholderException[] _placeholderDirectoryExceptions = [];
   private PlaceholderException[] _placeholderFileExceptions = [];
@@ -35,12 +35,12 @@ public class RemoveCosmeticsConfig
     }
   }
 
-  public string ExportVpkFileSavedDirectoryPath
+  public string PlaceholderVpkFileDirectoryFullPath
   {
-    get => _exportVpkFileSavedDirectoryPath;
+    get => _placeholderVpkFileDirectoryFullPath;
     set
     {
-      _exportVpkFileSavedDirectoryPath = value;
+      _placeholderVpkFileDirectoryFullPath = value;
 
       IsDirty = true;
     }

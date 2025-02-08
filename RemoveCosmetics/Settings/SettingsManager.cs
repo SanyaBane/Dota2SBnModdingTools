@@ -52,7 +52,7 @@ public class SettingsManager
       RemoveCosmeticsConfig = new RemoveCosmeticsConfig()
       {
         Dota2ExeFullPath = configFile.Dota2ExeFullPath,
-        ExportVpkFileSavedDirectoryPath = configFile.ExportVpkFileSavedDirectoryPath,
+        PlaceholderVpkFileDirectoryFullPath = configFile.PlaceholderVpkFileDirectoryFullPath,
         HeroesInRightList = configFile.HeroesInRightList.Select(x => x.Value).ToArray(),
         PlaceholderFileExceptions = configFile.PlaceholderFileExceptions.Select(x => new PlaceholderException()
         {
@@ -96,7 +96,7 @@ public class SettingsManager
       var xmlConfig = new RemoveCosmeticsConfigXml()
       {
         Dota2ExeFullPath = RemoveCosmeticsConfig.Dota2ExeFullPath,
-        ExportVpkFileSavedDirectoryPath = RemoveCosmeticsConfig.ExportVpkFileSavedDirectoryPath,
+        PlaceholderVpkFileDirectoryFullPath = RemoveCosmeticsConfig.PlaceholderVpkFileDirectoryFullPath,
         HeroesInRightList = RemoveCosmeticsConfig.HeroesInRightList.OrderBy(x => x).Select(x => new HeroInRightListXml()
         {
           Value = x
