@@ -2,12 +2,15 @@
 
 namespace RemoveCosmetics.Settings.XmlTypes;
 
-[XmlType("PlaceholderException")]
-public class PlaceholderExceptionXml
+[XmlType("PlaceholderFileException")]
+public class PlaceholderFileExceptionXml
 {
   [XmlAttribute]
   public bool IsRegexPattern { get; init; } = false;
 
   [XmlAttribute]
   public string Value { get; init; } = string.Empty;
+
+  [XmlAttribute]
+  public string? Comment { get; init; }
 }

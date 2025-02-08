@@ -15,8 +15,8 @@ public class RemoveCosmeticsConfigXml
   public HeroInRightListXml[] HeroesInRightList = [];
 
   [XmlArray]
-  public PlaceholderExceptionXml[] PlaceholderFileExceptions = [];
+  public PlaceholderDirectoryExceptionXml[] PlaceholderDirectoryExceptions = [];
 
   [XmlArray]
-  public PlaceholderExceptionXml[] PlaceholderDirectoryExceptions = [];
+  public PlaceholderFileExceptionXml[] PlaceholderFileExceptions = [];
 }

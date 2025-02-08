@@ -54,15 +54,17 @@ public class SettingsManager
         Dota2ExeFullPath = configFile.Dota2ExeFullPath,
         PlaceholderVpkFileDirectoryFullPath = configFile.PlaceholderVpkFileDirectoryFullPath,
         HeroesInRightList = configFile.HeroesInRightList.Select(x => x.Value).ToArray(),
-        PlaceholderFileExceptions = configFile.PlaceholderFileExceptions.Select(x => new PlaceholderException()
+        PlaceholderDirectoryExceptions = configFile.PlaceholderDirectoryExceptions.Select(x => new PlaceholderDirectoryException()
         {
+          IsRegexPattern = x.IsRegexPattern,
           Value = x.Value,
-          IsRegexPattern = x.IsRegexPattern
+          Comment = x.Comment,
         }).ToArray(),
-        PlaceholderDirectoryExceptions = configFile.PlaceholderDirectoryExceptions.Select(x => new PlaceholderException()
+        PlaceholderFileExceptions = configFile.PlaceholderFileExceptions.Select(x => new PlaceholderFileException()
         {
+          IsRegexPattern = x.IsRegexPattern,
           Value = x.Value,
-          IsRegexPattern = x.IsRegexPattern
+          Comment = x.Comment,
         }).ToArray(),
       };
 
@@ -73,8 +75,8 @@ public class SettingsManager
 
     RemoveCosmeticsConfig = new RemoveCosmeticsConfig();
 
-    var placeholderDirectoryExceptions = DefaultExceptionSettings.GetDefaultPlaceholderDirectoryExceptions();
-    var placeholderFileExceptions = DefaultExceptionSettings.GetDefaultPlaceholderFileExceptions();
+    var placeholderDirectoryExceptions = DefaultPlaceholderExceptionsProvider.GetDefaultPlaceholderDirectoryExceptions();
+    var placeholderFileExceptions = DefaultPlaceholderExceptionsProvider.GetDefaultPlaceholderFileExceptions();
     RemoveCosmeticsConfig.PlaceholderDirectoryExceptions = placeholderDirectoryExceptions;
     RemoveCosmeticsConfig.PlaceholderFileExceptions = placeholderFileExceptions;
 
@@ -101,15 +103,17 @@ public class SettingsManager
         {
           Value = x
         }).ToArray(),
-        PlaceholderFileExceptions = RemoveCosmeticsConfig.PlaceholderFileExceptions.Select(x => new PlaceholderExceptionXml()
+        PlaceholderDirectoryExceptions = RemoveCosmeticsConfig.PlaceholderDirectoryExceptions.Select(x => new PlaceholderDirectoryExceptionXml()
         {
-          Value = x.Value,
           IsRegexPattern = x.IsRegexPattern,
+          Value = x.Value,
+          Comment = x.Comment,
         }).ToArray(),
-        PlaceholderDirectoryExceptions = RemoveCosmeticsConfig.PlaceholderDirectoryExceptions.Select(x => new PlaceholderExceptionXml()
+        PlaceholderFileExceptions = RemoveCosmeticsConfig.PlaceholderFileExceptions.Select(x => new PlaceholderFileExceptionXml()
         {
-          Value = x.Value,
           IsRegexPattern = x.IsRegexPattern,
+          Value = x.Value,
+          Comment = x.Comment,
         }).ToArray(),
       };
 

@@ -7,8 +7,8 @@ public class RemoveCosmeticsConfig
   private string _dota2ExeFullPath = string.Empty;
   private string _placeholderVpkFileDirectoryFullPath = string.Empty;
   private string[] _heroesInRightList = [];
-  private PlaceholderException[] _placeholderDirectoryExceptions = [];
-  private PlaceholderException[] _placeholderFileExceptions = [];
+  private PlaceholderDirectoryException[] _placeholderDirectoryExceptions = [];
+  private PlaceholderFileException[] _placeholderFileExceptions = [];
 
   #endregion // Fields
 
@@ -57,7 +57,7 @@ public class RemoveCosmeticsConfig
     }
   }
 
-  public PlaceholderException[] PlaceholderDirectoryExceptions
+  public PlaceholderDirectoryException[] PlaceholderDirectoryExceptions
   {
     get => _placeholderDirectoryExceptions;
     set
@@ -68,7 +68,7 @@ public class RemoveCosmeticsConfig
     }
   }
 
-  public PlaceholderException[] PlaceholderFileExceptions
+  public PlaceholderFileException[] PlaceholderFileExceptions
   {
     get => _placeholderFileExceptions;
     set
