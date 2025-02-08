@@ -1281,7 +1281,6 @@ public static class DefaultPlaceholderExceptions
       new() { Value = "models/heroes/wraith_king/wraith_king_prop.vmdl_c", IsRegexPattern = false, Comment = "???" },
 
       new() { Value = "models/items/wraith_king/arcana/wraith_king_arcana.vmdl_c", IsRegexPattern = false, Comment = "Arcana base model" },
-      new() { Value = "models/items/wraith_king/arcana/wk_arc_throne_model.vmdl_c", IsRegexPattern = false, Comment = "Arcana stuff" },
       new() { Value = "models/items/wraith_king/arcana/wk_arcana_skeleton.vmdl_c", IsRegexPattern = false, Comment = "Arcana stuff" },
       new() { Value = "models/items/wraith_king/arcana/wk_arcana_tombstone.vmdl_c", IsRegexPattern = false, Comment = "Arcana stuff" },
       new() { Value = "models/items/wraith_king/arcana/wk_sk_arc_taunt_throne_model.vmdl_c", IsRegexPattern = false, Comment = "Arcana stuff" },
