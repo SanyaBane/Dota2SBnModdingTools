@@ -160,7 +160,8 @@
             Style="{StaticResource DataGridHeroesNamesMain}"
             ItemsSource="{Binding HeroListsViewModel.HeroListLeftViewModel.Items}"
             SelectedItem="{Binding HeroListsViewModel.HeroListLeftViewModel.SelectedItem}"
-            behaviors:DataGridSelectedItemsBehavior.BindableSelectedItems="{Binding HeroListsViewModel.HeroListLeftViewModel.SelectedItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            behaviors:DataGridSelectedItemsBehavior.BindableSelectedItems="{Binding HeroListsViewModel.HeroListLeftViewModel.SelectedItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            PreviewKeyDown="DataGridRight_OnPreviewKeyDown">
             <DataGrid.Columns>
               <DataGridTemplateColumn
                 Width="*"
@@ -227,7 +228,8 @@
             Style="{StaticResource DataGridHeroesNamesMain}"
             ItemsSource="{Binding HeroListsViewModel.HeroListRightViewModel.Items}"
             SelectedItem="{Binding HeroListsViewModel.HeroListRightViewModel.SelectedItem}"
-            behaviors:DataGridSelectedItemsBehavior.BindableSelectedItems="{Binding HeroListsViewModel.HeroListRightViewModel.SelectedItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            behaviors:DataGridSelectedItemsBehavior.BindableSelectedItems="{Binding HeroListsViewModel.HeroListRightViewModel.SelectedItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+            PreviewKeyDown="DataGridRight_OnPreviewKeyDown">
             <DataGrid.Columns>
               <DataGridTemplateColumn
                 Width="*"
