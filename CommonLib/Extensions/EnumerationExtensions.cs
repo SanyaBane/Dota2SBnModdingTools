@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 
-namespace SBnDota2ModExporter;
+namespace CommonLib.Extensions;
 
-public static class Enumerations
+public static class EnumerationExtensions
 {
   public static string GetEnumDescription(Enum value)
   {

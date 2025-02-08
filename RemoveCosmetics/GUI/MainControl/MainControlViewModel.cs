@@ -40,6 +40,7 @@ public class MainControlViewModel : BaseViewModel
   private string[] _uniqueNames = [];
 
   private bool _isEnabled;
+  private bool _isPlaceholderCreationInProgress;
   private string _dota2ExecutableFullPath = string.Empty;
 
   private readonly Dota2GameMainInfo _dota2GameMainInfo;
@@ -105,9 +106,19 @@ public class MainControlViewModel : BaseViewModel
   public bool IsEnabled
   {
     get => _isEnabled;
-    set
+    private set
     {
       _isEnabled = value;
+      OnPropertyChanged();
+    }
+  }
+  
+  public bool IsPlaceholderCreationInProgress
+  {
+    get => _isPlaceholderCreationInProgress;
+    private set
+    {
+      _isPlaceholderCreationInProgress = value;
       OnPropertyChanged();
     }
   }
@@ -208,6 +219,7 @@ public class MainControlViewModel : BaseViewModel
     try
     {
       IsEnabled = false;
+      IsPlaceholderCreationInProgress = true;
 
       var rightListHeroes = HeroListsViewModel.HeroListRightViewModel.Items.Select(x => x.DirectoryName).ToArray();
 
@@ -250,6 +262,7 @@ public class MainControlViewModel : BaseViewModel
     finally
     {
       IsEnabled = savedIsEnabled;
+      IsPlaceholderCreationInProgress = false;
     }
   }
 

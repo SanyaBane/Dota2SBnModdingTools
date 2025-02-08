@@ -8,14 +8,15 @@
   xmlns:addonExportCommandsCreateUpdate="clr-namespace:SBnDota2ModExporter.GUI.ViewModels.AddonExportCommandsCreateUpdate"
   xmlns:converters="clr-namespace:SBnDota2ModExporter.Converters"
   xmlns:enums="clr-namespace:SBnDota2ModExporter.Enums"
+  xmlns:converters1="clr-namespace:Common.WPF.Converters;assembly=Common.WPF"
   mc:Ignorable="d"
   d:DesignHeight="300" d:DesignWidth="300"
   d:DataContext="{d:DesignInstance addonExportCommandsCreateUpdate:CopyAddonFileCreateUpdateViewModel, IsDesignTimeCreatable=True}">
   
   <UserControl.Resources>
-    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
-    <converters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
-    <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" TreatEmptyStringAsNull="True" />
+    <converters1:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <converters1:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
+    <converters1:NullToVisibilityConverter x:Key="NullToVisibilityConverter" TreatEmptyStringAsNull="True" />
   </UserControl.Resources>
   
   <Grid>

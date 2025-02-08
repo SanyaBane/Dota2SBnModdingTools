@@ -9,15 +9,16 @@
   xmlns:dataTemplateSelectors="clr-namespace:SBnDota2ModExporter.GUI.Views.DataTemplateSelectors"
   xmlns:local="clr-namespace:SBnDota2ModExporter.GUI.Views"
   xmlns:converters="clr-namespace:SBnDota2ModExporter.Converters"
+  xmlns:converters1="clr-namespace:Common.WPF.Converters;assembly=Common.WPF"
   mc:Ignorable="d"
   d:DesignHeight="300" d:DesignWidth="300"
   d:DataContext="{d:DesignInstance viewModels:MainControlViewModel, IsDesignTimeCreatable=True}">
 
   <UserControl.Resources>
 
-    <converters:BooleanInvertConverter x:Key="BooleanInvertConverter" />
-    <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" TreatEmptyStringAsNull="True" />
-    <converters:NullToVisibilityConverter x:Key="NullToVisibilityInvertedConverter" TreatEmptyStringAsNull="True" Inverse="True" />
+    <converters1:BooleanInvertConverter x:Key="BooleanInvertConverter" />
+    <converters1:NullToVisibilityConverter x:Key="NullToVisibilityConverter" TreatEmptyStringAsNull="True" />
+    <converters1:NullToVisibilityConverter x:Key="NullToVisibilityInvertedConverter" TreatEmptyStringAsNull="True" Inverse="True" />
 
     <DataTemplate x:Key="WhenItemSelected">
       <views:AddonExporterInfoView />

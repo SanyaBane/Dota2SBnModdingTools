@@ -107,7 +107,8 @@ public class PlaceholderCreationService
           if (!dir.Exists)
             dir.Create();
 
-          File.Copy(placeholderFileFullPath, fullPathForPlaceholder);
+          // File.Copy(placeholderFileFullPath, fullPathForPlaceholder);
+          await Task.Run(() => File.Copy(placeholderFileFullPath, fullPathForPlaceholder));
         }
       }
 

@@ -1,4 +1,5 @@
 ﻿using Common.WPF;
+using CommonLib.Extensions;
 using SBnDota2ModExporter.Enums;
 using SBnDota2ModExporter.GUI.ViewModels.AddonExportCommands;
 using SBnDota2ModExporter.GUI.ViewModels.AddonExportCommandsCreateUpdate;
@@ -33,7 +34,7 @@ public class AddonCommandCreateUpdateViewModel : BaseViewModel
     AddonCommandTypes = Enum.GetValues(typeof(enAddonCommandType))
       .Cast<enAddonCommandType>()
       .Except(new[] { enAddonCommandType.CopyAddonFile }) // what the point of "CopyAddonFile" anyway?
-      .OrderBy(x => Enumerations.GetEnumDescription(x))
+      .OrderBy(x => EnumerationExtensions.GetEnumDescription(x))
       .ToArray();
 
     _selectedAddonCommandType = AddonCommandTypes.First();

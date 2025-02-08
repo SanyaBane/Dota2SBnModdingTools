@@ -1,7 +1,7 @@
 ﻿using System.Windows;
 using System.Windows.Data;
 
-namespace SBnDota2ModExporter.Converters;
+namespace Common.WPF.Converters;
 
 public class NullToVisibilityConverter : IValueConverter
 {

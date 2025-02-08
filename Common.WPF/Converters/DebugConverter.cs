@@ -1,7 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
 
-namespace SBnDota2ModExporter.Converters;
+namespace Common.WPF.Converters;
 
 public class DebugConverter : IValueConverter
 {

@@ -10,15 +10,16 @@
   xmlns:addonExportCommands="clr-namespace:SBnDota2ModExporter.GUI.ViewModels.AddonExportCommands"
   xmlns:converters="clr-namespace:SBnDota2ModExporter.Converters"
   xmlns:sBnDota2ModExporter="clr-namespace:SBnDota2ModExporter"
+  xmlns:converters1="clr-namespace:Common.WPF.Converters;assembly=Common.WPF"
   mc:Ignorable="d"
   d:DesignHeight="300" d:DesignWidth="300"
   d:DataContext="{d:DesignInstance viewModels:AddonExporterInfoViewModel, IsDesignTimeCreatable=True}">
 
   <UserControl.Resources>
 
-    <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverter" TreatEmptyStringAsNull="True" />
-    <converters:NullToVisibilityConverter x:Key="NullToVisibilityConverterInverted" TreatEmptyStringAsNull="True" Inverse="True" />
-    <converters:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
+    <converters1:NullToVisibilityConverter x:Key="NullToVisibilityConverter" TreatEmptyStringAsNull="True" />
+    <converters1:NullToVisibilityConverter x:Key="NullToVisibilityConverterInverted" TreatEmptyStringAsNull="True" Inverse="True" />
+    <converters1:EnumToDescriptionConverter x:Key="EnumToDescriptionConverter" />
 
     <DataTemplate x:Key="CopyAddonDirectoryDataTemplate">
       <Grid

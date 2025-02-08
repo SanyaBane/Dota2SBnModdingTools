@@ -1,4 +1,5 @@
 ﻿using Common.WPF;
+using CommonLib.Extensions;
 using SBnDota2ModExporter.Enums;
 using SBnDota2ModExporter.GUI.ViewModels.AddonExportCommandsCreateUpdate;
 
@@ -23,7 +24,7 @@ public abstract class BaseAddonExportCommandViewModel : BaseViewModel, IAddonExp
 
   public abstract enAddonCommandType AddonCommandType { get; }
 
-  public string Name => Enumerations.GetEnumDescription(AddonCommandType);
+  public string Name => EnumerationExtensions.GetEnumDescription(AddonCommandType);
 
   public bool IsChecked
   {

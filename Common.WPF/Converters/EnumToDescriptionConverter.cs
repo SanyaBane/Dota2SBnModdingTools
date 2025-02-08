@@ -1,7 +1,8 @@
 ﻿using System.Globalization;
 using System.Windows.Data;
+using CommonLib.Extensions;
 
-namespace SBnDota2ModExporter.Converters;
+namespace Common.WPF.Converters;
 
 public class EnumToDescriptionConverter : IValueConverter
 {
@@ -11,7 +12,7 @@ public class EnumToDescriptionConverter : IValueConverter
       return null;
 
     var enumVal = (Enum)value;
-    var ret = Enumerations.GetEnumDescription(enumVal);
+    var ret = EnumerationExtensions.GetEnumDescription(enumVal);
     return ret;
   }
 

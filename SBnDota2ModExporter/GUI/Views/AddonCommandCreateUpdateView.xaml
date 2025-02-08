@@ -9,15 +9,15 @@
   xmlns:dataTemplateSelectors="clr-namespace:SBnDota2ModExporter.GUI.Views.DataTemplateSelectors"
   xmlns:converters="clr-namespace:SBnDota2ModExporter.Converters"
   xmlns:addonExportCommands="clr-namespace:SBnDota2ModExporter.GUI.Views.AddonExportCommands"
+  xmlns:converters1="clr-namespace:Common.WPF.Converters;assembly=Common.WPF"
   mc:Ignorable="d"
   d:DesignHeight="300" d:DesignWidth="300"
   d:DataContext="{d:DesignInstance viewModels:AddonCommandCreateUpdateViewModel, IsDesignTimeCreatable=True}">
 
   <UserControl.Resources>
 
-    <converters:DebugConverter x:Key="DebugConverter" />
     <converters:AddonCommandTypeToTextConverter x:Key="AddonCommandTypeToTextConverter" />
-    <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+    <converters1:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
 
     <DataTemplate x:Key="CopyAddonDirectoryDataTemplate">
       <addonExportCommands:CopyAddonDirectoryCreateUpdateView />
