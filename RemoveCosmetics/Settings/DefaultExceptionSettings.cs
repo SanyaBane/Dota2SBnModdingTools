@@ -6,10 +6,9 @@ public static class DefaultExceptionSettings
 {
   private static readonly string[] _defaultPlaceholderDirectoryExceptionPatterns =
   [
-    "models\\/items\\/gyrocopter\\/.*missile.*",
-    "models\\/items\\/gyrocopter\\/.*missle.*",
-    "models\\items\\rattletrap\\.*cog.*",
-    "models\\items\\visage\\.*familiar.*",
+    @"models\/items\/gyrocopter\/.*miss[i]{0,1}le.*",
+    @"models\/items\/rattletrap\/.*cog.*",
+    @"models\/items\/visage\/.*familiar.*",
   ];
 
   private static readonly string[] _defaultPlaceholderDirectoryExceptions =
@@ -66,7 +65,7 @@ public static class DefaultExceptionSettings
     "models/heroes/rattletrap/rattletrap_cog_rubick.vmdl_c",
     "models/heroes/tuskarr/tuskarr_sigil.vmdl_c",
     "models/heroes/zeus/zeus_sigil.vmdl_c",
-    
+
     "models/items/earthshaker/ti9_immortal/ti9_immortal_fissure.vmdl_c",
     "models/items/juggernaut/ward_foo.vmdl_c",
   ];
