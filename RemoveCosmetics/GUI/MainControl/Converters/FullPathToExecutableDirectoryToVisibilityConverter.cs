@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
+using RemoveCosmetics.Constants;
 
 namespace RemoveCosmetics.GUI.MainControl.Converters;
 
@@ -12,7 +13,7 @@ public class FullPathToExecutableDirectoryToVisibilityConverter : IValueConverte
       return null;
 
     var fullPathToExecutableDirectory = (string)value;
-    return fullPathToExecutableDirectory.Length <= 30 ? Visibility.Collapsed : Visibility.Visible;
+    return fullPathToExecutableDirectory.Length <= Constants_General.RECOMMENDED_LENGTH_OF_PATH_TO_EXE_FILE_LIMIT ? Visibility.Collapsed : Visibility.Visible;
   }
 
   public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotSupportedException();
