@@ -135,228 +135,222 @@
           Visibility="{Binding FullPathToExecutableDirectory, Converter={StaticResource FullPathToExecutableDirectoryToVisibilityConverter}}" />
       </Grid>
 
-      <Border
-        Grid.Column="0"
-        Grid.Row="2"
-        Margin="5 5 5 5"
-        Padding="2"
-        BorderThickness="1"
-        BorderBrush="Gray">
 
-        <Grid>
-          <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="*" />
-          </Grid.ColumnDefinitions>
+      <Grid
+        Grid.Column="0"
+        Grid.Row="2">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+          <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <DockPanel
+          Grid.Column="0"
+          Background="#20000000"
+          LastChildFill="True">
+
+          <DataGrid
+            x:Name="dataGridLeft"
+            KeyboardNavigation.TabNavigation="Once"
+            Style="{StaticResource DataGridHeroesNamesMain}"
+            ItemsSource="{Binding HeroListsViewModel.HeroListLeftViewModel.Items}"
+            SelectedItem="{Binding HeroListsViewModel.HeroListLeftViewModel.SelectedItem}"
+            behaviors:DataGridSelectedItemsBehavior.BindableSelectedItems="{Binding HeroListsViewModel.HeroListLeftViewModel.SelectedItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <DataGrid.Columns>
+              <DataGridTemplateColumn
+                Width="*"
+                Header="Available heroes"
+                CanUserResize="False"
+                CanUserReorder="False"
+                IsReadOnly="True"
+                CanUserSort="True"
+                CellTemplate="{StaticResource HeroInListTemplate}" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </DockPanel>
+
+        <StackPanel
+          Grid.Row="0"
+          Grid.Column="1"
+          x:Name="LeftRightButtonsPanel"
+          Orientation="Vertical"
+          Margin="10 0"
+          VerticalAlignment="Center">
+
+          <Button
+            Margin="0"
+            Width="40"
+            Height="40"
+            HorizontalContentAlignment="Center"
+            Command="{Binding HeroListsViewModel.HeroMoveToRightCommand}">
+            <Button.Content>
+              <Path Stroke="Black" Fill="Black" Data="{StaticResource ArrowIconGeometry}">
+                <Path.RenderTransformOrigin>0.5 0.5</Path.RenderTransformOrigin>
+                <Path.RenderTransform>
+                  <ScaleTransform ScaleX="1.0" ScaleY="1.0" />
+                </Path.RenderTransform>
+              </Path>
+            </Button.Content>
+          </Button>
+
+          <Button
+            Margin="0 20 0 0"
+            Width="40"
+            Height="40"
+            HorizontalContentAlignment="Center"
+            Command="{Binding HeroListsViewModel.HeroMoveToLeftCommand}">
+            <Button.Content>
+              <Path Stroke="Black" Fill="Black" Data="{StaticResource ArrowIconGeometry}">
+                <Path.RenderTransformOrigin>0.5 0.5</Path.RenderTransformOrigin>
+                <Path.RenderTransform>
+                  <ScaleTransform ScaleX="-1.0" ScaleY="1.0" />
+                </Path.RenderTransform>
+              </Path>
+            </Button.Content>
+          </Button>
+        </StackPanel>
+
+        <DockPanel
+          Grid.Column="2"
+          Grid.Row="0"
+          Background="#20000000"
+          LastChildFill="True">
+
+          <DataGrid
+            x:Name="dataGridRight"
+            KeyboardNavigation.TabNavigation="Once"
+            Style="{StaticResource DataGridHeroesNamesMain}"
+            ItemsSource="{Binding HeroListsViewModel.HeroListRightViewModel.Items}"
+            SelectedItem="{Binding HeroListsViewModel.HeroListRightViewModel.SelectedItem}"
+            behaviors:DataGridSelectedItemsBehavior.BindableSelectedItems="{Binding HeroListsViewModel.HeroListRightViewModel.SelectedItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+            <DataGrid.Columns>
+              <DataGridTemplateColumn
+                Width="*"
+                Header="Heroes to be replaced with placeholder models"
+                CanUserResize="False"
+                CanUserReorder="False"
+                IsReadOnly="True"
+                CanUserSort="True"
+                CellTemplate="{StaticResource HeroInListTemplate}" />
+            </DataGrid.Columns>
+          </DataGrid>
+        </DockPanel>
+
+        <Grid
+          Grid.Column="0"
+          Grid.ColumnSpan="3"
+          Grid.Row="1">
+
           <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
           </Grid.RowDefinitions>
 
-          <DockPanel
-            Grid.Column="0"
-            Background="#20000000"
-            LastChildFill="True">
+          <!-- <ProgressBar -->
+          <!--   Grid.Row="0" Grid.RowSpan="2" -->
+          <!--   Panel.ZIndex="2" -->
+          <!--   Visibility="{Binding ProgressBarVisibility}" -->
+          <!--   Value="{Binding ProgressBarValue}"> -->
+          <!-- </ProgressBar> -->
 
-            <DataGrid
-              x:Name="dataGridLeft"
-              KeyboardNavigation.TabNavigation="Once"
-              Style="{StaticResource DataGridHeroesNamesMain}"
-              ItemsSource="{Binding HeroListsViewModel.HeroListLeftViewModel.Items}"
-              SelectedItem="{Binding HeroListsViewModel.HeroListLeftViewModel.SelectedItem}"
-              behaviors:DataGridSelectedItemsBehavior.BindableSelectedItems="{Binding HeroListsViewModel.HeroListLeftViewModel.SelectedItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-              <DataGrid.Columns>
-                <DataGridTemplateColumn
-                  Width="*"
-                  Header="Available heroes"
-                  CanUserResize="False"
-                  CanUserReorder="False"
-                  IsReadOnly="True"
-                  CanUserSort="True"
-                  CellTemplate="{StaticResource HeroInListTemplate}" />
-              </DataGrid.Columns>
-            </DataGrid>
-          </DockPanel>
-
-          <StackPanel
+          <Button
             Grid.Row="0"
-            Grid.Column="1"
-            x:Name="LeftRightButtonsPanel"
-            Orientation="Vertical"
-            Margin="10 0"
-            VerticalAlignment="Center">
-
-            <Button
-              Margin="0"
-              Width="40"
-              Height="40"
-              HorizontalContentAlignment="Center"
-              Command="{Binding HeroListsViewModel.HeroMoveToRightCommand}">
-              <Button.Content>
-                <Path Stroke="Black" Fill="Black" Data="{StaticResource ArrowIconGeometry}">
-                  <Path.RenderTransformOrigin>0.5 0.5</Path.RenderTransformOrigin>
-                  <Path.RenderTransform>
-                    <ScaleTransform ScaleX="1.0" ScaleY="1.0" />
-                  </Path.RenderTransform>
-                </Path>
-              </Button.Content>
-            </Button>
-
-            <Button
-              Margin="0 20 0 0"
-              Width="40"
-              Height="40"
-              HorizontalContentAlignment="Center"
-              Command="{Binding HeroListsViewModel.HeroMoveToLeftCommand}">
-              <Button.Content>
-                <Path Stroke="Black" Fill="Black" Data="{StaticResource ArrowIconGeometry}">
-                  <Path.RenderTransformOrigin>0.5 0.5</Path.RenderTransformOrigin>
-                  <Path.RenderTransform>
-                    <ScaleTransform ScaleX="-1.0" ScaleY="1.0" />
-                  </Path.RenderTransform>
-                </Path>
-              </Button.Content>
-            </Button>
-          </StackPanel>
-
-          <DockPanel
-            Grid.Column="2"
-            Grid.Row="0"
-            Background="#20000000"
-            LastChildFill="True">
-
-            <DataGrid
-              x:Name="dataGridRight"
-              KeyboardNavigation.TabNavigation="Once"
-              Style="{StaticResource DataGridHeroesNamesMain}"
-              ItemsSource="{Binding HeroListsViewModel.HeroListRightViewModel.Items}"
-              SelectedItem="{Binding HeroListsViewModel.HeroListRightViewModel.SelectedItem}"
-              behaviors:DataGridSelectedItemsBehavior.BindableSelectedItems="{Binding HeroListsViewModel.HeroListRightViewModel.SelectedItems, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-              <DataGrid.Columns>
-                <DataGridTemplateColumn
-                  Width="*"
-                  Header="Heroes to be replaced with placeholder models"
-                  CanUserResize="False"
-                  CanUserReorder="False"
-                  IsReadOnly="True"
-                  CanUserSort="True"
-                  CellTemplate="{StaticResource HeroInListTemplate}" />
-              </DataGrid.Columns>
-            </DataGrid>
-          </DockPanel>
+            Margin="5 10 5 0"
+            Content="Start placeholders creation"
+            Height="35"
+            FontWeight="Bold"
+            Command="{Binding StartPlaceholderCreationCommand}">
+            <Button.ToolTip>
+              <TextBlock>
+                <Run>Please pay attention that in new version of app, when you 'Create dummies', old dummies will be deleted.</Run>
+                <LineBreak />
+                <Run>Which means you should 'Create dummies' for all needed heroes at once.</Run>
+              </TextBlock>
+            </Button.ToolTip>
+          </Button>
 
           <Grid
-            Grid.Column="0"
-            Grid.ColumnSpan="3"
-            Grid.Row="1">
-
-            <Grid.RowDefinitions>
-              <RowDefinition Height="Auto" />
-              <RowDefinition Height="Auto" />
-              <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
-
-            <!-- <ProgressBar -->
-            <!--   Grid.Row="0" Grid.RowSpan="2" -->
-            <!--   Panel.ZIndex="2" -->
-            <!--   Visibility="{Binding ProgressBarVisibility}" -->
-            <!--   Value="{Binding ProgressBarValue}"> -->
-            <!-- </ProgressBar> -->
+            Grid.Row="2"
+            Margin="0 5 0 0">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="*" />
+              <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
 
             <Button
-              Grid.Row="0"
-              Margin="5 10 5 0"
-              Content="Start placeholders creation"
-              Height="35"
-              FontWeight="Bold"
-              Command="{Binding StartPlaceholderCreationCommand}">
-              <Button.ToolTip>
-                <TextBlock>
-                  <Run>Please pay attention that in new version of app, when you 'Create dummies', old dummies will be deleted.</Run>
-                  <LineBreak />
-                  <Run>Which means you should 'Create dummies' for all needed heroes at once.</Run>
-                </TextBlock>
-              </Button.ToolTip>
+              Grid.Column="0"
+              Margin="5 5 0 5"
+              Padding="5"
+              Command="{Binding SaveHeroesListCommand}">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Viewbox
+                  Grid.Column="0"
+                  Height="24">
+                  <Path
+                    Stroke="Black"
+                    StrokeThickness="2"
+                    Data="{StaticResource SaveIconGeometry}" />
+                </Viewbox>
+                <TextBlock
+                  Grid.Column="1"
+                  Margin="3 0 0 0"
+                  VerticalAlignment="Center"
+                  Text="Save heroes list" />
+              </Grid>
             </Button>
 
             <Grid
-              Grid.Row="2"
-              Margin="0 5 0 0">
-              <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-              </Grid.ColumnDefinitions>
-
+              Grid.Column="1">
               <Button
-                Grid.Column="0"
-                Margin="5 5 0 5"
+                Margin="5"
                 Padding="5"
-                Command="{Binding SaveHeroesListCommand}">
-                <Grid>
-                  <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                  </Grid.ColumnDefinitions>
-                  <Viewbox
-                    Grid.Column="0"
-                    Height="24">
-                    <Path
-                      Stroke="Black"
-                      StrokeThickness="2"
-                      Data="{StaticResource SaveIconGeometry}" />
-                  </Viewbox>
-                  <TextBlock
-                    Grid.Column="1"
-                    Margin="3 0 0 0"
-                    VerticalAlignment="Center"
-                    Text="Save heroes list" />
-                </Grid>
-              </Button>
-
-              <Grid
-                Grid.Column="1">
-                <Button
-                  Margin="5"
-                  Padding="5"
-                  MinWidth="150"
-                  Width="150"
-                  HorizontalAlignment="Center"
-                  Content="Reset"
-                  Command="{Binding ResetHeroesListsCommand}">
-                </Button>
-              </Grid>
-
-              <Button
-                Grid.Column="2"
-                Margin="0 5 5 5"
-                Padding="5"
-                Command="{Binding LoadHeroesListCommand}">
-                <Grid>
-                  <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*" />
-                    <ColumnDefinition Width="Auto" />
-                  </Grid.ColumnDefinitions>
-                  <Viewbox
-                    Grid.Column="0"
-                    Height="24">
-                    <Path
-                      Stroke="Black"
-                      StrokeThickness="2"
-                      Data="{StaticResource LoadIconGeometry}" />
-                  </Viewbox>
-                  <TextBlock
-                    Grid.Column="1"
-                    Margin="3 0 0 0"
-                    VerticalAlignment="Center"
-                    Text="Load heroes list" />
-                </Grid>
+                MinWidth="150"
+                Width="150"
+                HorizontalAlignment="Center"
+                Content="Reset"
+                Command="{Binding ResetHeroesListsCommand}">
               </Button>
             </Grid>
+
+            <Button
+              Grid.Column="2"
+              Margin="0 5 5 5"
+              Padding="5"
+              Command="{Binding LoadHeroesListCommand}">
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*" />
+                  <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Viewbox
+                  Grid.Column="0"
+                  Height="24">
+                  <Path
+                    Stroke="Black"
+                    StrokeThickness="2"
+                    Data="{StaticResource LoadIconGeometry}" />
+                </Viewbox>
+                <TextBlock
+                  Grid.Column="1"
+                  Margin="3 0 0 0"
+                  VerticalAlignment="Center"
+                  Text="Load heroes list" />
+              </Grid>
+            </Button>
           </Grid>
         </Grid>
-      </Border>
+      </Grid>
 
       <RichTextBox
         Grid.Column="0"
