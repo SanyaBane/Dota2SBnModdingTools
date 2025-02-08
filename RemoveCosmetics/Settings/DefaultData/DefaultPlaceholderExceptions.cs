@@ -248,7 +248,6 @@ public static class DefaultPlaceholderExceptions
       new() { Value = "models/heroes/death_prophet/death_prophet.vmdl_c", IsRegexPattern = false, Comment = "Base model" },
       new() { Value = "models/heroes/death_prophet/death_prophet_ghost.vmdl_c", IsRegexPattern = false, Comment = "Base model summon" },
       new() { Value = "models/heroes/death_prophet/rubick_arcana_death_prophet_ghost.vmdl_c", IsRegexPattern = false, Comment = "Base model summon" },
-      new() { Value = "models/items/rubick/rubick_arcana/rubick_arcana_base.vmdl_c", IsRegexPattern = false, Comment = "Arcana base model" },
     };
   }
 
@@ -888,6 +887,7 @@ public static class DefaultPlaceholderExceptions
     {
       new() { Value = "models/heroes/rubick/rubick.vmdl_c", IsRegexPattern = false, Comment = "Base model" },
       new() { Value = "models/heroes/rubick/rubick_tree.vmdl_c", IsRegexPattern = false, Comment = "???" },
+      new() { Value = "models/items/rubick/rubick_arcana/rubick_arcana_base.vmdl_c", IsRegexPattern = false, Comment = "Arcana base model" },
     };
   }
 
