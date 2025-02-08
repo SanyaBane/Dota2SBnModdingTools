@@ -21,8 +21,7 @@ public partial class App
 
   public App()
   {
-    const string logDirectory = "RemoveCosmetics Logs";
-    Directory.CreateDirectory(logDirectory);
+    const string logDirectory = "RemoveCosmetics_Logs";
 
     string logFile = Path.Combine(logDirectory, $"{DateTime.Now:yyyy-MM-dd_HH-mm-ss}.log");
 
@@ -33,12 +32,16 @@ public partial class App
     AppDomain.CurrentDomain.UnhandledException += (s, e) =>
     {
       if (e.ExceptionObject is Exception ex)
-        Log.Error(ex, "Unhandled Exception");
+      {
+        Logger.Fatal(ex, "Unhandled Exception");
+        Log.CloseAndFlush(); // Ensure logs are written before crash
+      }
     };
 
     DispatcherUnhandledException += (s, e) =>
     {
-      Log.Error(e.Exception, "Dispatcher Unhandled Exception");
+      Logger.Fatal(e.Exception, "Dispatcher Unhandled Exception");
+      Log.CloseAndFlush(); // Ensure logs are written before crash
       e.Handled = true;
     };
   }
@@ -55,6 +58,8 @@ public partial class App
 
   private void Application_OnExit(object sender, ExitEventArgs e)
   {
+    Log.CloseAndFlush();
+
     if (SettingsManager.Instance.RemoveCosmeticsConfig.IsDirty)
     {
       var saveConfigFileResult = SettingsManager.Instance.TrySaveConfigFile();
