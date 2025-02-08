@@ -47,7 +47,10 @@ public class PlaceholderCreationService
       }
 
       tempPak01DirDirectory.Create();
-      progress.Report(new PlaceholderCreationProgress("Created temp directory."));
+      progress.Report(new PlaceholderCreationProgress
+      {
+        Text = "Created temp directory.",
+      });
 
       var package = new Package();
       package.Read(SettingsManager.Instance.Dota2GameMainInfo.Pak01DirVpkFileInfo.FullName);
@@ -108,7 +111,10 @@ public class PlaceholderCreationService
         }
       }
 
-      progress.Report(new PlaceholderCreationProgress("Finished copying placeholder files into temp directory."));
+      progress.Report(new PlaceholderCreationProgress
+      {
+        Text = "Finished copying placeholder files into temp directory.",
+      });
 
       var arguments = $"\"{tempPak01DirDirectory.FullName}\"";
       var processStartInfo = new ProcessStartInfo(Path.Combine(vpkCreatorDirectory.FullName, "vpk.exe"))
@@ -131,7 +137,10 @@ public class PlaceholderCreationService
         if (string.IsNullOrEmpty(args.Data))
           return;
 
-        progress.Report(new PlaceholderCreationProgress($"VpkCreator: {args.Data}"));
+        progress.Report(new PlaceholderCreationProgress
+        {
+          Text = $"VpkCreator: {args.Data}",
+        });
       };
 
       process.ErrorDataReceived += (sender, args) =>
@@ -139,7 +148,11 @@ public class PlaceholderCreationService
         if (string.IsNullOrEmpty(args.Data))
           return;
 
-        progress.Report(new PlaceholderCreationProgress($"VpkCreator ERROR: {args.Data}", Brushes.Red));
+        progress.Report(new PlaceholderCreationProgress
+        {
+          Text = $"VpkCreator ERROR: {args.Data}", 
+          ForegroundColor = Brushes.Red,
+        });
       };
 
       process.Start();
@@ -156,18 +169,23 @@ public class PlaceholderCreationService
       }
 
       File.Copy(tempCreatedVpkFile.FullName, safeFileFullPath, true);
-      progress.Report(new PlaceholderCreationProgress($"Copying temp vpk file to specified location."));
+      progress.Report(new PlaceholderCreationProgress
+      {
+        Text = "Copying temp vpk file to specified location."
+      });
 
       if (!File.Exists(safeFileFullPath))
         return Result.Failure($"Failed to copy temporary vpk file to '{tempCreatedVpkFile.FullName}'");
 
       if (somePlaceholderFilesExceed255Characters)
       {
-        progress.Report(new PlaceholderCreationProgress(
-          $"Some files could not be converted to VPK because their full path exceeds 255 characters.{Environment.NewLine}" +
+        progress.Report(new PlaceholderCreationProgress
+        {
+          Text = $"Some files could not be converted to VPK because their full path exceeds 255 characters.{Environment.NewLine}" +
           $"Please consider to move directory of this program to root of your hard drive (for example 'D:\\RemoveCosmetics\\{Constants_General.PROGRAM_TITLE}.exe').",
-          Brushes.OrangeRed,
-          FontWeights.Bold));
+          ForegroundColor = Brushes.OrangeRed,
+          FontWeight = FontWeights.Bold,
+        });
       }
 
       return Result.Success();
@@ -181,13 +199,19 @@ public class PlaceholderCreationService
       if (tempPak01DirDirectory != null && Directory.Exists(tempPak01DirDirectory.FullName))
       {
         Directory.Delete(tempPak01DirDirectory.FullName, true);
-        progress.Report(new PlaceholderCreationProgress($"Deleted temporary directory."));
+        progress.Report(new PlaceholderCreationProgress
+        {
+          Text = "Deleted temporary directory."
+        });
       }
 
       if (tempCreatedVpkFile != null && File.Exists(tempCreatedVpkFile.FullName))
       {
         File.Delete(tempCreatedVpkFile.FullName);
-        progress.Report(new PlaceholderCreationProgress($"Deleted temporary vpk file."));
+        progress.Report(new PlaceholderCreationProgress
+        {
+          Text = "Deleted temporary vpk file."
+        });
       }
     }
   }
