@@ -98,7 +98,7 @@ public class MainControlViewModel : BaseViewModel
   #endregion // Commands
 
   #region Properties
-  
+
   public string FullPathToExecutableDirectory { get; }
 
   public HeroListsViewModel HeroListsViewModel { get; }
@@ -112,7 +112,7 @@ public class MainControlViewModel : BaseViewModel
       OnPropertyChanged();
     }
   }
-  
+
   public bool IsPlaceholderCreationInProgress
   {
     get => _isPlaceholderCreationInProgress;
@@ -230,6 +230,7 @@ public class MainControlViewModel : BaseViewModel
           Text = message.Text,
           ForegroundColor = message.ForegroundColor,
           FontWeight = message.FontWeight,
+          FontSize = message.FontSize,
         });
       });
 
@@ -238,10 +239,7 @@ public class MainControlViewModel : BaseViewModel
         Text = "Start creation of vpk file with placeholder models."
       });
 
-      var _stopwatch = Stopwatch.StartNew();
       var createVpkFileWithPlaceholderModelsResult = await PlaceholderCreationService.CreateVpkFileWithPlaceholderModels(progress, rightListHeroes, saveFileDialog.FileName);
-      _stopwatch.Stop();
-
       if (createVpkFileWithPlaceholderModelsResult.IsFailure)
       {
         WeakReferenceMessenger.Default.Send(new ConsoleAppendLineTextMessage()
@@ -255,8 +253,10 @@ public class MainControlViewModel : BaseViewModel
 
       WeakReferenceMessenger.Default.Send(new ConsoleAppendLineTextMessage()
       {
-        Text = $"Vpk file creation finished in {_stopwatch.Elapsed.TotalSeconds:N2} seconds.",
+        Text = $"{Environment.NewLine}Creation of placeholders finished.",
         ForegroundColor = Brushes.Green,
+        FontWeight = FontWeights.Bold,
+        FontSize = 14
       });
     }
     finally

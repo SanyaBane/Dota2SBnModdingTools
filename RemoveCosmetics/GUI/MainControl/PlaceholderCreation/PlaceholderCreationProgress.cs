@@ -8,4 +8,5 @@ public class PlaceholderCreationProgress()
   public required string Text { get; init; }
   public Brush ForegroundColor { get; init; } = Brushes.Black;
   public FontWeight FontWeight { get; init; } = FontWeights.Normal;
+  public double FontSize { get; init; } = 12;
 }

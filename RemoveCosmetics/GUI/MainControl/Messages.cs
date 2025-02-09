@@ -18,6 +18,7 @@ public class ConsoleSetTextMessage
 
   public Brush ForegroundColor { get; init; } = Brushes.Black;
   public FontWeight FontWeight { get; init; } = FontWeights.Normal;
+  public double FontSize { get; init; } = 12;
 }
 
 public class ConsoleAppendLineTextMessage
@@ -26,4 +27,5 @@ public class ConsoleAppendLineTextMessage
 
   public Brush ForegroundColor { get; init; } = Brushes.Black;
   public FontWeight FontWeight { get; init; } = FontWeights.Normal;
+  public double FontSize { get; init; } = 12;
 }

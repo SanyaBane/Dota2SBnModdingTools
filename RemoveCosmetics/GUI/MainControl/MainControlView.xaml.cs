@@ -42,12 +42,16 @@ public partial class MainControlView
 
   private void ConsoleAppendTextMessageHandler(object recipient, ConsoleAppendLineTextMessage message)
   {
-    rtbConsole.Document.Blocks.Add(new Paragraph(new Run($"{message.Text}"))
+    var run = new Run($"{message.Text}");
+    var paragraph = new Paragraph(run)
     {
       Margin = new Thickness(0),
       Foreground = message.ForegroundColor,
       FontWeight = message.FontWeight,
-    });
+      FontSize = message.FontSize,
+    };
+    
+    rtbConsole.Document.Blocks.Add(paragraph);
 
     rtbConsole.ScrollToEnd();
   }
@@ -82,13 +86,13 @@ public partial class MainControlView
         var items = dataGrid.Items.Cast<HeroItemViewModel>().ToList();
         int index = items.FindIndex(item => item.HeroName.StartsWith(pressedChar.ToString(), StringComparison.OrdinalIgnoreCase));
 
-        if (index < 0) 
+        if (index < 0)
           return;
-        
+
         var itemToSelect = dataGrid.Items[index];
         if (itemToSelect == null)
           return;
-          
+
         if (dataGrid.SelectedIndex >= 0)
         {
           if (dataGrid.Items[dataGrid.SelectedIndex] is HeroItemViewModel selectedItemVm)
