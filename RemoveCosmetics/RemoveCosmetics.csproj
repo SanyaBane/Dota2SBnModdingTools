@@ -297,9 +297,8 @@
       <Resource Include="Images\HeroIcons\npc_dota_hero_witch_doctor_png.png" />
       <None Remove="Images\HeroIcons\npc_dota_hero_zuus_png.png" />
       <Resource Include="Images\HeroIcons\npc_dota_hero_zuus_png.png" />
-      <None Update="Resources\EmptyPlaceholder.vmdl_c">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
+      <None Remove="Resources\EmptyPlaceholder.vmdl_c" />
+      <Resource Include="Resources\EmptyPlaceholder.vmdl_c" />
     </ItemGroup>
 
     <ItemGroup>

@@ -12,7 +12,6 @@ namespace RemoveCosmetics.GUI.MainControl.PlaceholderCreation;
 
 public class PlaceholderCreationService
 {
-  private const string relativePathToPlaceholderFile = "Resources/EmptyPlaceholder.vmdl_c";
   private const string vpkCreatorDirectoryName = "VPK Creator";
 
   public async Task<Result> CreateVpkFileWithPlaceholderModels(IProgress<PlaceholderCreationProgress> progress, string[] directoryNames, string safeFileFullPath)
@@ -22,13 +21,18 @@ public class PlaceholderCreationService
 
     try
     {
-      string placeholderFileFullPath = Path.Combine(Environment.CurrentDirectory, relativePathToPlaceholderFile);
-      var fi = new FileInfo(placeholderFileFullPath);
-      if (!fi.Exists)
+      var resourceUri = new Uri(ConstantsResources.EMPTY_PLACEHOLDER_FILE, UriKind.Relative);
+
+      var resourceInfo = Application.GetResourceStream(resourceUri);
+      if (resourceInfo == null)
+        return Result.Failure("Resource not found: " + ConstantsResources.EMPTY_PLACEHOLDER_FILE);
+
+      // cache placeholder file into memory
+      byte[]? cachedResourceData;
+      using (MemoryStream memoryStream = new MemoryStream())
       {
-        return Result.Failure($"Not found placeholder file in directory with application:" +
-                              $"{Environment.NewLine}" +
-                              $"'{placeholderFileFullPath}'.");
+        await resourceInfo.Stream.CopyToAsync(memoryStream);
+        cachedResourceData = memoryStream.ToArray();
       }
 
       string fullPathToVPKCreatorDirectory = Path.Combine(Environment.CurrentDirectory, vpkCreatorDirectoryName);
@@ -107,8 +111,7 @@ public class PlaceholderCreationService
           if (!dir.Exists)
             dir.Create();
 
-          // File.Copy(placeholderFileFullPath, fullPathForPlaceholder);
-          await Task.Run(() => File.Copy(placeholderFileFullPath, fullPathForPlaceholder));
+          await File.WriteAllBytesAsync(fullPathForPlaceholder, cachedResourceData);
         }
       }
 
