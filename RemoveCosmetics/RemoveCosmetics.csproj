@@ -299,14 +299,22 @@
       <Resource Include="Images\HeroIcons\npc_dota_hero_zuus_png.png" />
       <None Remove="Resources\EmptyPlaceholder.vmdl_c" />
       <Resource Include="Resources\EmptyPlaceholder.vmdl_c" />
+      <None Remove="Resources\VPK_Creator\filesystem_stdio.dll" />
+      <Resource Include="Resources\VPK_Creator\filesystem_stdio.dll" />
+      <None Remove="Resources\VPK_Creator\tier0.dll" />
+      <Resource Include="Resources\VPK_Creator\tier0.dll" />
+      <None Remove="Resources\VPK_Creator\tier0_s.dll" />
+      <Resource Include="Resources\VPK_Creator\tier0_s.dll" />
+      <None Remove="Resources\VPK_Creator\vpk.exe" />
+      <Resource Include="Resources\VPK_Creator\vpk.exe" />
+      <None Remove="Resources\VPK_Creator\vstdlib.dll" />
+      <Resource Include="Resources\VPK_Creator\vstdlib.dll" />
+      <None Remove="Resources\VPK_Creator\vstdlib_s.dll" />
+      <Resource Include="Resources\VPK_Creator\vstdlib_s.dll" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
     </ItemGroup>
-
-    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-      <Exec Command="SET path=$(MSBuildProjectDirectory)\$(OutputPath)\VPK Creator&#xA;            echo %path%&#xA;            if not exist &quot;%path%&quot; mkdir &quot;%path%&quot;&#xA;            %systemroot%\System32\xcopy /i /y /d &quot;$(MSBuildProjectDirectory)\VPK Creator\*&quot; &quot;%path%\&quot;&#xA;        " />
-    </Target>
 
 </Project>

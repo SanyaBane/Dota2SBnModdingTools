@@ -12,12 +12,16 @@ namespace RemoveCosmetics.GUI.MainControl.PlaceholderCreation;
 
 public class PlaceholderCreationService
 {
-  private const string vpkCreatorDirectoryName = "VPK Creator";
+  private const string vpkCreatorDirectoryName = "VPK_Creator";
 
   public async Task<Result> CreateVpkFileWithPlaceholderModels(IProgress<PlaceholderCreationProgress> progress, string[] directoryNames, string safeFileFullPath)
   {
-    DirectoryInfo? tempPak01DirDirectory = null;
+    DirectoryInfo? tempRootDirectoryForVpkCreation = null;
     FileInfo? tempCreatedVpkFile = null;
+
+    var unpackVpkCreatorFilesResult = await UnpackVpkCreatorResources();
+    if (unpackVpkCreatorFilesResult.IsFailure)
+      return Result.Failure("Was not able to unpack VpkCreator related resources");
 
     try
     {
@@ -37,17 +41,12 @@ public class PlaceholderCreationService
 
       string fullPathToVPKCreatorDirectory = Path.Combine(Environment.CurrentDirectory, vpkCreatorDirectoryName);
       var vpkCreatorDirectory = new DirectoryInfo(fullPathToVPKCreatorDirectory);
-      if (!vpkCreatorDirectory.Exists)
-        return Result.Failure(
-          $"Not found '{vpkCreatorDirectoryName}' folder in directory with application:" +
-          $"{Environment.NewLine}" +
-          $"'{fullPathToVPKCreatorDirectory}'.");
 
       var tmpPak01DirName = Guid.NewGuid().ToString().Substring(0, 4);
-      tempPak01DirDirectory = new DirectoryInfo(Path.Combine(fullPathToVPKCreatorDirectory, tmpPak01DirName));
-      if (tempPak01DirDirectory.Exists)
+      tempRootDirectoryForVpkCreation = new DirectoryInfo(Path.Combine(fullPathToVPKCreatorDirectory, tmpPak01DirName));
+      if (tempRootDirectoryForVpkCreation.Exists)
       {
-        Directory.Delete(tempPak01DirDirectory.FullName, true);
+        Directory.Delete(tempRootDirectoryForVpkCreation.FullName, true);
       }
 
       progress.Report(new PlaceholderCreationProgress
@@ -55,7 +54,7 @@ public class PlaceholderCreationService
         Text = "Creating temporary directory for placeholder files.",
       });
 
-      tempPak01DirDirectory.Create();
+      tempRootDirectoryForVpkCreation.Create();
 
       var package = new Package();
       package.Read(SettingsManager.Instance.Dota2GameMainInfo.Pak01DirVpkFileInfo.FullName);
@@ -106,7 +105,7 @@ public class PlaceholderCreationService
           if (placeholderFilePatternExceptions.Any(x => Regex.IsMatch(packageEntry.GetFullPath(), $"^{x.Value}$")))
             continue;
 
-          var fullPathForPlaceholder = Path.Combine(tempPak01DirDirectory.FullName, packageEntry.DirectoryName, packageEntry.GetFileName());
+          var fullPathForPlaceholder = Path.Combine(tempRootDirectoryForVpkCreation.FullName, packageEntry.DirectoryName, packageEntry.GetFileName());
           if (fullPathForPlaceholder.Length > 255)
           {
             somePlaceholderFilesExceed255Characters = true;
@@ -137,7 +136,7 @@ public class PlaceholderCreationService
       });
 
       var stopwatchVpkCreation = Stopwatch.StartNew();
-      var arguments = $"\"{tempPak01DirDirectory.FullName}\"";
+      var arguments = $"\"{tempRootDirectoryForVpkCreation.FullName}\"";
       var processStartInfo = new ProcessStartInfo(Path.Combine(vpkCreatorDirectory.FullName, "vpk.exe"))
       {
         Arguments = arguments,
@@ -184,7 +183,7 @@ public class PlaceholderCreationService
 
       stopwatchVpkCreation.Stop();
 
-      tempCreatedVpkFile = new FileInfo(Path.Combine(vpkCreatorDirectory.FullName, tempPak01DirDirectory.Name + ".vpk"));
+      tempCreatedVpkFile = new FileInfo(Path.Combine(vpkCreatorDirectory.FullName, tempRootDirectoryForVpkCreation.Name + ".vpk"));
       if (!tempCreatedVpkFile.Exists)
       {
         return Result.Failure($"Failed to create temporary vpk file '{tempCreatedVpkFile.FullName}'.");
@@ -230,14 +229,14 @@ public class PlaceholderCreationService
     }
     finally
     {
-      if (tempPak01DirDirectory != null && Directory.Exists(tempPak01DirDirectory.FullName))
+      if (tempRootDirectoryForVpkCreation != null && Directory.Exists(tempRootDirectoryForVpkCreation.FullName))
       {
         progress.Report(new PlaceholderCreationProgress
         {
           Text = "Deleting temporary directory."
         });
 
-        Directory.Delete(tempPak01DirDirectory.FullName, true);
+        Directory.Delete(tempRootDirectoryForVpkCreation.FullName, true);
       }
 
       if (tempCreatedVpkFile != null && File.Exists(tempCreatedVpkFile.FullName))
@@ -249,6 +248,66 @@ public class PlaceholderCreationService
 
         File.Delete(tempCreatedVpkFile.FullName);
       }
+
+      DeleteUnpackedVpkCreatorResources(unpackVpkCreatorFilesResult.Value);
     }
+  }
+
+  private async Task<Result<UnpackedVpkCreatorResources>> UnpackVpkCreatorResources()
+  {
+    var ret = new UnpackedVpkCreatorResources()
+    {
+      FullPathToDirectory = Path.Combine(Environment.CurrentDirectory, vpkCreatorDirectoryName),
+    };
+
+    try
+    {
+      if (!Directory.Exists(ret.FullPathToDirectory))
+        Directory.CreateDirectory(ret.FullPathToDirectory);
+
+      var vpkCreatorResources = ConstantsResources.GetVpkCreatorResources();
+      foreach (var resourcePath in vpkCreatorResources)
+      {
+        var resourceUri = new Uri(resourcePath, UriKind.Relative);
+        var resourceInfo = Application.GetResourceStream(resourceUri);
+
+        if (resourceInfo == null)
+        {
+          throw new FileNotFoundException("Resource not found: " + resourcePath);
+        }
+
+        var outputFilePath = Path.Combine(ret.FullPathToDirectory, Path.GetFileName(resourceUri.OriginalString));
+        var directoryPath = Path.GetDirectoryName(outputFilePath)!;
+        if (!Directory.Exists(directoryPath))
+          Directory.CreateDirectory(directoryPath);
+
+        // Read from resource stream and write to file
+        await using (Stream resourceStream = resourceInfo.Stream)
+        await using (FileStream fileStream = new FileStream(outputFilePath, FileMode.Create, FileAccess.Write))
+        {
+          await resourceStream.CopyToAsync(fileStream);
+        }
+
+        ret.AddFullPathToFile(outputFilePath);
+      }
+    }
+    catch (Exception ex)
+    {
+      DeleteUnpackedVpkCreatorResources(ret);
+
+      return Result.Failure<UnpackedVpkCreatorResources>(ex.ToString());
+    }
+
+    return Result.Success(ret);
+  }
+
+  private void DeleteUnpackedVpkCreatorResources(UnpackedVpkCreatorResources unpackedVpkCreatorResources)
+  {
+    foreach (var unpackedVpkCreatorFile in unpackedVpkCreatorResources.GetFullPathToFiles())
+    {
+      File.Delete(unpackedVpkCreatorFile);
+    }
+
+    Directory.Delete(unpackedVpkCreatorResources.FullPathToDirectory);
   }
 }
