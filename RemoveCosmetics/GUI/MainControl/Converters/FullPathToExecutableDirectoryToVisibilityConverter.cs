@@ -13,7 +13,7 @@ public class FullPathToExecutableDirectoryToVisibilityConverter : IValueConverte
       return null;
 
     var fullPathToExecutableDirectory = (string)value;
-    return fullPathToExecutableDirectory.Length <= Constants_General.RECOMMENDED_LENGTH_OF_PATH_TO_EXE_FILE_LIMIT ? Visibility.Collapsed : Visibility.Visible;
+    return fullPathToExecutableDirectory.Length <= ConstantsGeneral.RECOMMENDED_LENGTH_OF_PATH_TO_EXE_FILE_LIMIT ? Visibility.Collapsed : Visibility.Visible;
   }
 
   public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotSupportedException();

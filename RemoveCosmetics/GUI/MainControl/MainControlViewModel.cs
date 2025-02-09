@@ -20,7 +20,7 @@ public class MainControlViewModel : BaseViewModel
 {
   #region Fields
 
-  public static string Title => $"{Constants_General.PROGRAM_TITLE} v{VersionHelper.Version.Major}.{VersionHelper.Version.Minor}.{VersionHelper.Version.Build}";
+  public static string Title => $"{ConstantsGeneral.PROGRAM_TITLE} v{VersionHelper.Version.Major}.{VersionHelper.Version.Minor}.{VersionHelper.Version.Build}";
 
   private readonly string[] _ignoreHeroesRegexPatterns =
   [
@@ -192,7 +192,7 @@ public class MainControlViewModel : BaseViewModel
     var saveFileDialog = new SaveFileDialog()
     {
       Title = "Specify where to create vpk file with placeholder models",
-      Filter = $"|*.{Constants_General.VPK_FILE_EXTENSION}|All files (*.*)|*.*",
+      Filter = $"|*.{ConstantsGeneral.VPK_FILE_EXTENSION}|All files (*.*)|*.*",
       FileName = "pak99_dir.vpk",
     };
 

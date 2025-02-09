@@ -12,7 +12,7 @@ public class FullPathToExecutableDirectoryToTextConverter : IValueConverter
       return null;
 
     var fullPathToExecutableDirectory = (string)value;
-    if (fullPathToExecutableDirectory.Length <= Constants_General.RECOMMENDED_LENGTH_OF_PATH_TO_EXE_FILE_LIMIT)
+    if (fullPathToExecutableDirectory.Length <= ConstantsGeneral.RECOMMENDED_LENGTH_OF_PATH_TO_EXE_FILE_LIMIT)
       return null;
     
     return $"Path to program is too long ({fullPathToExecutableDirectory.Length} characters):{Environment.NewLine}" +

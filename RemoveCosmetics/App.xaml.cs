@@ -124,7 +124,7 @@ public partial class App
     {
       MessageBox.Show($"Select 'dota2.exe' file{Environment.NewLine}" +
                       $"Example: C:\\Program Files\\Steam\\steamapps\\common\\dota 2 beta\\game\\bin\\win64\\dota2.exe",
-        $"{Constants_General.PROGRAM_TITLE} startup", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+        $"{ConstantsGeneral.PROGRAM_TITLE} startup", MessageBoxButton.OK, MessageBoxImage.Exclamation);
 
       var resultCallDialogSetDota2ExePath = SettingsManager.Instance.CallDialogSetDota2ExePath();
       return resultCallDialogSetDota2ExePath;

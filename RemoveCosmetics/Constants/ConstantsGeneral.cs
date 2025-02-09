@@ -1,6 +1,6 @@
 ﻿namespace RemoveCosmetics.Constants;
 
-public static class Constants_General
+public static class ConstantsGeneral
 {
   public const string PROGRAM_TITLE = "Remove Cosmetics";
 

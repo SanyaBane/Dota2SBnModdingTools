@@ -215,7 +215,7 @@ public class PlaceholderCreationService
         progress.Report(new PlaceholderCreationProgress
         {
           Text = $"Some files could not be converted to VPK because their full path exceeds 255 characters.{Environment.NewLine}" +
-                 $"Please consider to move directory of this program to root of your hard drive (for example 'D:\\RemoveCosmetics\\{Constants_General.PROGRAM_TITLE}.exe').",
+                 $"Please consider to move directory of this program to root of your hard drive (for example 'D:\\RemoveCosmetics\\{ConstantsGeneral.PROGRAM_TITLE}.exe').",
           ForegroundColor = Brushes.OrangeRed,
           FontWeight = FontWeights.Bold,
         });
