@@ -235,7 +235,7 @@
             <DataGrid.Columns>
               <DataGridTemplateColumn
                 Width="*"
-                Header="Heroes to be replaced with placeholder models"
+                Header="Selected for placeholders creation"
                 CanUserResize="False"
                 CanUserReorder="False"
                 IsReadOnly="True"
