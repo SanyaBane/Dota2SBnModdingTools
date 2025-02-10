@@ -283,7 +283,7 @@ public class AddonExporterInfoViewModel : BaseViewModel
 
     var addonExporterConfig = CreateAddonExporterConfig();
 
-    XmlSerializerService.SerializeToXml(AddonConfigFileInfo.FullName, addonExporterConfig);
+    SaveToXml(AddonConfigFileInfo.FullName, addonExporterConfig);
 
     IsDirty = false;
   }
@@ -308,7 +308,7 @@ public class AddonExporterInfoViewModel : BaseViewModel
 
       var addonExporterConfig = CreateAddonExporterConfig();
 
-      XmlSerializerService.SerializeToXml(saveFileDialog.FileName, addonExporterConfig);
+      SaveToXml(saveFileDialog.FileName, addonExporterConfig);
 
       AddonConfigFileInfo = new FileInfo(saveFileDialog.FileName);
 
@@ -522,6 +522,11 @@ public class AddonExporterInfoViewModel : BaseViewModel
   #endregion // Public Methods
 
   #region Private Methods
+
+  private void SaveToXml(string fileName, AddonExporterDetailedConfig addonExporterConfig)
+  {
+    XmlSerializerService.SerializeToXml(fileName, addonExporterConfig);
+  }
 
   private void UpdateIsAddonValidForExport()
   {

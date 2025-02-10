@@ -24,6 +24,7 @@
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
       <RowDefinition Height="Auto" />
+      <RowDefinition Height="Auto" />
     </Grid.RowDefinitions>
     
     <StackPanel
@@ -89,7 +90,7 @@
     </StackPanel>
 
     <GroupBox
-      Grid.Row="2"
+      Grid.Row="3"
       Margin="0 25 0 0"
       Header="How result will look like:"
       Visibility="{Binding PreviewResult, Converter={StaticResource NullToVisibilityConverter}}">

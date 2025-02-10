@@ -4,9 +4,9 @@ namespace SBnDota2ModExporter.Configs.Main;
 
 public class AddonExporterShortConfig
 {
-  [XmlElement]
+  [XmlAttribute]
   public string FileFullPath { get; set; }
 
-  [XmlElement]
+  [XmlAttribute]
   public bool IsChecked { get; set; }
 }
