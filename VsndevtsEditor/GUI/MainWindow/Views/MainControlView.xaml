@@ -345,6 +345,8 @@
       <Button
         HorizontalAlignment="Right"
         Content="Save File as ..."
+        FontWeight="Bold"
+        FontSize="14"
         Command="{Binding SaveFileAsCommand}" />
     </Grid>
   </Grid>
