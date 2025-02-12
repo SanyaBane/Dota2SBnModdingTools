@@ -9,7 +9,7 @@ public class TemplateDirectoriesSettings
   [XmlElement("templateDirectory")]
   public required List<TemplateDirectoryData> TemplateDirectories { get; init; }
 
-  public void FillTemplateDirectoriesFileInfos()
+  public void UpdateFileInfosInTemplateDirectories()
   {
     var templateDirectoriesDirInfo = new DirectoryInfo(Path.Combine(Environment.CurrentDirectory, "Template_Directories"));
     foreach (var templateDirectory in TemplateDirectories)

@@ -120,10 +120,8 @@ public partial class App
       MessageBox.Show($"Inside '{templateDirectoriesDirInfo.FullName}'{Environment.NewLine}" +
                       $"created following template directories:{Environment.NewLine}{Environment.NewLine}" +
                       $"{str}",
-        "Error", MessageBoxButton.OK, MessageBoxImage.Information);
+        "Information", MessageBoxButton.OK, MessageBoxImage.Information);
     }
-
-    GlobalManager.Instance.TemplateDirectoriesSettings.FillTemplateDirectoriesFileInfos();
 
     return true;
   }

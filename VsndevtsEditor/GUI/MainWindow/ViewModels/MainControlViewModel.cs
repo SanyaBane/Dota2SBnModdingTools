@@ -116,6 +116,8 @@ public class MainControlViewModel : BaseViewModel
 
     try
     {
+      GlobalManager.Instance.TemplateDirectoriesSettings.UpdateFileInfosInTemplateDirectories();
+
       var parsedKv3File = KeyValues3.ParseKVFile(openFileDialog.FileName);
 
       var vsndevtsFile = new VsndevtsFile()
