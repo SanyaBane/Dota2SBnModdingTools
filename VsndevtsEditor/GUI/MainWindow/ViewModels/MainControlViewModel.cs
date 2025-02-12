@@ -312,7 +312,7 @@ public class MainControlViewModel : BaseViewModel
 
         vsndevtsActionViewModel.ClearActionFileVms();
 
-        var relativePathWithSoundFile = Path.Combine(RelativePathToAddonSoundsDirectory, pathToUserSoundFile);
+        var relativePathWithSoundFile = Path.Combine(RelativePathToAddonSoundsDirectory, vsndevtsActionViewModel.TemplateDirectoryData.DirectoryName, pathToUserSoundFile);
         relativePathWithSoundFile = relativePathWithSoundFile.Replace('\\', '/');
 
         var newVsndevtsActionFileViewModel = new VsndevtsActionFileViewModel(relativePathWithSoundFile, true);
