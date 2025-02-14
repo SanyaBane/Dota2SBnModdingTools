@@ -9,6 +9,7 @@
   xmlns:converters="clr-namespace:VsndevtsEditor.GUI.MainWindow.Views.Converters"
   xmlns:selectors="clr-namespace:VsndevtsEditor.GUI.MainWindow.Views.Selectors"
   xmlns:behaviors="clr-namespace:Common.WPF.Behaviors;assembly=Common.WPF"
+  xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
   mc:Ignorable="d"
   d:DataContext="{d:DesignInstance viewModels:MainControlViewModel, IsDesignTimeCreatable=True}">
 
@@ -194,6 +195,9 @@
                       <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightBrushKey}" Color="Transparent" />
                       <SolidColorBrush x:Key="{x:Static SystemColors.InactiveSelectionHighlightTextBrushKey}" Color="Black" />
                     </DataGrid.Resources>
+                    <b:Interaction.Behaviors>
+                      <behaviors:IgnoreMouseWheelBehavior />
+                    </b:Interaction.Behaviors>
                     <DataGrid.Columns>
                       <DataGridTemplateColumn
                         Width="*"
