@@ -145,27 +145,8 @@ public class MainControlViewModel : BaseViewModel
 
         foreach (var kvObjectProperty in kvObject.Properties)
         {
-          if (kvObjectProperty.Key != "vsnd_files")
-            continue;
-
-          if (kvObjectProperty.Value is not KVValue vsndFilesKvValue)
-            continue;
-
-          if (vsndFilesKvValue.Type == KVType.STRING)
-          {
-            var vsndevtsFileRelativePath = vsndFilesKvValue.Value.ToString();
-
-            vsndevtsAction.AddVsndActionFile(new VsndevtsActionFile()
-            {
-              PathToFile = vsndevtsFileRelativePath,
-              KVValue = vsndFilesKvValue,
-              KVObjectContainer = kvObject
-            });
-          }
-          else if (vsndFilesKvValue.Value is KVObject kvObject2)
-          {
-            ParseVsndFilesArrayNode(kvObject2, vsndevtsAction);
-          }
+          if (kvObjectProperty.Key == "vsnd_files")
+            ParseNodeVsndFiles(vsndevtsAction, kvObject, kvObjectProperty);
         }
 
         vsndevtsFile.AddVsndevtsAction(vsndevtsAction);
@@ -178,6 +159,21 @@ public class MainControlViewModel : BaseViewModel
     catch (Exception ex)
     {
       MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+    }
+  }
+
+  private void ParseNodeVsndFiles(VsndevtsAction vsndevtsAction, KVObject kvObjectContainer, KeyValuePair<string, KVValue> kvObjectProperty)
+  {
+    if (kvObjectProperty.Value is not KVValue vsndFilesKvValue)
+      return;
+
+    if (vsndFilesKvValue.Type == KVType.STRING)
+    {
+      ParseNodeSingleVsndFile(vsndevtsAction, kvObjectContainer, vsndFilesKvValue);
+    }
+    else if (vsndFilesKvValue.Value is KVObject kvObject)
+    {
+      ParseNodeArrayVsndFiles(vsndevtsAction, kvObject);
     }
   }
 
@@ -359,7 +355,14 @@ public class MainControlViewModel : BaseViewModel
       throw new Exception(nameof(ApplyChangesToKVValues));
     }
 
-    container.Properties.Remove("vsnd_files");
+    ApplyChangesToKvValuesVsndFiles(vsndevtsActionViewModel, container);
+  }
+
+  private void ApplyChangesToKvValuesVsndFiles(VsndevtsActionViewModel vsndevtsActionViewModel, KVObject container)
+  {
+    string propName = "vsnd_files";
+
+    container.Properties.Remove(propName);
 
     if (vsndevtsActionViewModel.ActionFileVms.Count == 0)
       return;
@@ -371,7 +374,7 @@ public class MainControlViewModel : BaseViewModel
     }
     else
     {
-      var kvObjectArray = new KVObject("vsnd_files", true, vsndevtsActionViewModel.ActionFileVms.Count);
+      var kvObjectArray = new KVObject(propName, true, vsndevtsActionViewModel.ActionFileVms.Count);
       for (var index = 0; index < vsndevtsActionViewModel.ActionFileVms.Count; index++)
       {
         var vsndevtsActionFileViewModel = vsndevtsActionViewModel.ActionFileVms[index];
@@ -381,24 +384,34 @@ public class MainControlViewModel : BaseViewModel
       newVsndFilesKValue = new KVValue(KVType.ARRAY, kvObjectArray);
     }
 
-    container.AddProperty("vsnd_files", newVsndFilesKValue);
+    container.AddProperty(propName, newVsndFilesKValue);
   }
 
-  private static void ParseVsndFilesArrayNode(KVObject kvObject2, VsndevtsAction vsndevtsAction)
+  private static void ParseNodeSingleVsndFile(VsndevtsAction vsndevtsAction, KVObject kvObjectContainer, KVValue singleVsndFileKvValue)
   {
-    foreach (var vsndFileProperty in kvObject2.Properties)
+    CreateAndAddVsndFilesAction(vsndevtsAction, kvObjectContainer, singleVsndFileKvValue);
+  }
+
+  private static void ParseNodeArrayVsndFiles(VsndevtsAction vsndevtsAction, KVObject kvObjectContainer)
+  {
+    foreach (var vsndFileProperty in kvObjectContainer.Properties)
     {
       if (vsndFileProperty.Value is not KVValue singleVsndFileKvValue)
         continue;
 
-      var vsndevtsFileRelativePath = singleVsndFileKvValue.Value.ToString();
-      vsndevtsAction.AddVsndActionFile(new VsndevtsActionFile()
-      {
-        PathToFile = vsndevtsFileRelativePath,
-        KVValue = singleVsndFileKvValue,
-        KVObjectContainer = kvObject2,
-      });
+      CreateAndAddVsndFilesAction(vsndevtsAction, kvObjectContainer, singleVsndFileKvValue);
     }
+  }
+
+  private static void CreateAndAddVsndFilesAction(VsndevtsAction vsndevtsAction, KVObject kvObjectContainer, KVValue singleVsndFileKvValue)
+  {
+    var vsndevtsFileRelativePath = singleVsndFileKvValue.Value.ToString();
+    vsndevtsAction.AddVsndActionFile(new VsndevtsActionFile()
+    {
+      PathToFile = vsndevtsFileRelativePath,
+      KVValue = singleVsndFileKvValue,
+      KVObjectContainer = kvObjectContainer,
+    });
   }
 
   private void ProcessVsndevtsFile(VsndevtsFile vsndevtsFile)
