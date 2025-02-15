@@ -25,8 +25,8 @@ public class TemplateDirectoryData
   [XmlAttribute("directoryName")]
   public required string DirectoryName { get; init; }
 
-  [XmlAttribute("scriptAction")]
-  public required string ScriptAction { get; init; }
+  [XmlAttribute("scriptActionRegex")]
+  public required string ScriptActionRegex { get; init; }
 
   [XmlIgnore]
   public FileInfo[] FoundFiles { get; set; } = [];

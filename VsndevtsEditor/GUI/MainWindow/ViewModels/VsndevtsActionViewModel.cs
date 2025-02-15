@@ -61,7 +61,7 @@ public class VsndevtsActionViewModel : BaseViewModel
   {
     foreach (TemplateDirectoryData templateDir in GlobalManager.Instance.TemplateDirectoriesSettings.TemplateDirectories)
     {
-      if (Regex.IsMatch(ActionName, @"^.+[_]" + templateDir.ScriptAction + "[_][0-9].+$"))
+      if (Regex.IsMatch(ActionName, templateDir.ScriptActionRegex))
       {
         TemplateDirectoryData = templateDir;
         break;
