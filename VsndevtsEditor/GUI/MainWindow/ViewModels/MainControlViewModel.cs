@@ -34,6 +34,7 @@ public class MainControlViewModel : BaseViewModel
     _selectedActionViewModels = new ObservableCollection<VsndevtsActionViewModel>();
     _selectedActionViewModels.CollectionChanged += SelectedActionViewModelsOnCollectionChanged;
 
+    RefreshFilesInTemplateDirectoriesCommand = new DelegateCommand(ExecuteRefreshFilesInTemplateDirectories, CanExecuteRefreshFilesInTemplateDirectories);
     AutoPopulateSelectedActionsCommand = new DelegateCommand(ExecuteAutoPopulateSelectedActions, CanExecuteAutoPopulateSelectedActions);
     AutoPopulateAllActionsCommand = new DelegateCommand(ExecuteAutoPopulateAllActions, CanExecuteAutoPopulateAllActions);
     SetSelectedActionsToNullCommand = new DelegateCommand(ExecuteSetSelectedActionsToNull, CanExecuteSetSelectedActionsToNull);
@@ -57,7 +58,7 @@ public class MainControlViewModel : BaseViewModel
     }
   }
 
-  public List<VsndevtsActionViewModel>? ActionViewModels { get; private set; }
+  public ObservableCollection<VsndevtsActionViewModel>? ActionViewModels { get; private set; }
 
   public ObservableCollection<VsndevtsActionViewModel> SelectedActionViewModels
   {
@@ -93,6 +94,7 @@ public class MainControlViewModel : BaseViewModel
   #region Commands
 
   public DelegateCommand SelectVsndevtsFileCommand { get; }
+  public DelegateCommand RefreshFilesInTemplateDirectoriesCommand { get; }
   public DelegateCommand AutoPopulateSelectedActionsCommand { get; }
   public DelegateCommand SetSelectedActionsToNullCommand { get; }
   public DelegateCommand AutoPopulateAllActionsCommand { get; }
@@ -179,6 +181,16 @@ public class MainControlViewModel : BaseViewModel
     }
   }
 
+  private void ExecuteRefreshFilesInTemplateDirectories(object obj)
+  {
+    GlobalManager.Instance.TemplateDirectoriesSettings.UpdateFileInfosInTemplateDirectories();
+
+    foreach (var actionVm in ActionViewModels)
+    {
+      actionVm.UpdateTemplateDirectoryData();
+    }
+  }
+
   private void ExecuteAutoPopulateSelectedActions(object obj)
   {
     AutoPopulateSelectedActions(SelectedActionViewModels.ToArray());
@@ -226,6 +238,14 @@ public class MainControlViewModel : BaseViewModel
   #endregion // Command Execute Handlers
 
   #region Can Execute Handlers
+
+  private bool CanExecuteRefreshFilesInTemplateDirectories(object obj)
+  {
+    if (LoadedVsndevtsFileViewModel == null)
+      return false;
+
+    return true;
+  }
 
   private bool CanExecuteAutoPopulateSelectedActions(object obj)
   {
@@ -275,6 +295,7 @@ public class MainControlViewModel : BaseViewModel
   {
     base.RefreshCommands();
 
+    RefreshFilesInTemplateDirectoriesCommand.RaiseCanExecuteChanged();
     AutoPopulateSelectedActionsCommand.RaiseCanExecuteChanged();
     AutoPopulateAllActionsCommand.RaiseCanExecuteChanged();
     SetSelectedActionsToNullCommand.RaiseCanExecuteChanged();
@@ -382,23 +403,13 @@ public class MainControlViewModel : BaseViewModel
 
   private void ProcessVsndevtsFile(VsndevtsFile vsndevtsFile)
   {
-    ActionViewModels = new List<VsndevtsActionViewModel>();
+    ActionViewModels = [];
 
     foreach (var action in vsndevtsFile.Actions)
     {
-      ActionViewModels.Add(new VsndevtsActionViewModel(action));
-    }
-
-    foreach (var actionVm in ActionViewModels)
-    {
-      foreach (TemplateDirectoryData templateDir in GlobalManager.Instance.TemplateDirectoriesSettings.TemplateDirectories)
-      {
-        if (Regex.IsMatch(actionVm.ActionName, @"^.+[_]" + templateDir.ScriptAction + "[_][0-9].+$"))
-        {
-          actionVm.TemplateDirectoryData = templateDir;
-          break;
-        }
-      }
+      var actionVm = new VsndevtsActionViewModel(action);
+      actionVm.UpdateTemplateDirectoryData();
+      ActionViewModels.Add(actionVm);
     }
 
     OnPropertyChanged(nameof(ActionViewModels));
