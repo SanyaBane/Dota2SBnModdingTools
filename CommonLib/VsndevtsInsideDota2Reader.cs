@@ -7,6 +7,9 @@ public static class VsndevtsInsideDota2Reader
   public static PackageEntry? FindFileInsideDota2(Dota2AddonInfo dota2AddonInfo, FileInfo fileInsideDotaAddon, Package package)
   {
     var vsndevtsFileExtensionWithoutDot = fileInsideDotaAddon.Extension.Substring(1);
+
+    if (!package.Entries.Any(x => x.Key == vsndevtsFileExtensionWithoutDot || x.Key == vsndevtsFileExtensionWithoutDot + "_c"))
+      return null;
     
     var entriesVsndevtsCompiled = package.Entries.Single(x => x.Key == vsndevtsFileExtensionWithoutDot || x.Key == vsndevtsFileExtensionWithoutDot + "_c");
     

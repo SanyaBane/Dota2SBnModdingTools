@@ -1,8 +1,8 @@
 ﻿namespace ReplaceMissingFilesInsideVsndevts;
 
-internal class Configuration
+internal class ReplaceMissingFilesInsideVsndevtsSettings
 {
-  public Configuration(string fullPathToDota2ExecutableFile, string replaceValue)
+  public ReplaceMissingFilesInsideVsndevtsSettings(string fullPathToDota2ExecutableFile, string replaceValue)
   {
     FullPathToDota2ExecutableFile = fullPathToDota2ExecutableFile;
     ReplaceValue = replaceValue;
