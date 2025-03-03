@@ -1,4 +1,4 @@
-﻿namespace RemoveCosmetics.Helpers;
+﻿namespace VsndevtsEditor.Helpers;
 
 public static class VersionHelper
 {

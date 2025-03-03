@@ -1,5 +1,4 @@
-﻿using System.Diagnostics;
-using System.IO;
+﻿using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media;
@@ -19,8 +18,6 @@ namespace RemoveCosmetics.GUI.MainControl;
 public class MainControlViewModel : BaseViewModel
 {
   #region Fields
-
-  public static string Title => $"{ConstantsGeneral.PROGRAM_TITLE} v{VersionHelper.Version.Major}.{VersionHelper.Version.Minor}.{VersionHelper.Version.Build}";
 
   private readonly string[] _ignoreHeroesRegexPatterns =
   [
@@ -98,6 +95,8 @@ public class MainControlViewModel : BaseViewModel
   #endregion // Commands
 
   #region Properties
+
+  public static string Title => $"{ConstantsGeneral.PROGRAM_TITLE} v{VersionHelper.Version.Major}.{VersionHelper.Version.Minor}.{VersionHelper.Version.Build}";
 
   public string FullPathToExecutableDirectory { get; }
 

@@ -1,15 +1,13 @@
-﻿using System.Collections;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.IO;
-using System.Text.RegularExpressions;
 using System.Windows;
 using Common.WPF;
 using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Win32;
 using ValveResourceFormat.Serialization.KeyValues;
-using VsndevtsEditor.Configs;
 using VsndevtsEditor.GUI.MainWindow.Messages;
+using VsndevtsEditor.Helpers;
 using VsndevtsEditor.Models;
 
 namespace VsndevtsEditor.GUI.MainWindow.ViewModels;
@@ -45,6 +43,8 @@ public class MainControlViewModel : BaseViewModel
   #endregion // Ctor
 
   #region Properties
+
+  public static string Title => $"VsndevtsEditor v{VersionHelper.Version.Major}.{VersionHelper.Version.Minor}.{VersionHelper.Version.Build}";
 
   public LoadedVsndevtsFileViewModel? LoadedVsndevtsFileViewModel
   {
