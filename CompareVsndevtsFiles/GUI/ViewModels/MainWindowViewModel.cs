@@ -33,7 +33,7 @@ public class MainWindowViewModel : BaseViewModel
 
     string fullPathToDota2Exe = "F:\\Games\\SteamLibrary\\steamapps\\common\\dota 2 beta\\game\\bin\\win64\\dota2.exe"; // todo get from config or set by user
 
-    var resultCreateDota2GameMainInfo = Dota2GameMainInfo.CreateDota2GameMainInfo(fullPathToDota2Exe);
+    var resultCreateDota2GameMainInfo = Dota2GameMainInfo.CreateDota2GameMainInfo(fullPathToDota2Exe, true);
     if (resultCreateDota2GameMainInfo.IsFailure)
       throw new NotImplementedException();
 

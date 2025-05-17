@@ -83,7 +83,7 @@ public class Worker
 
   private static Result<ReplaceMissingFilesResult?> TryDoWork(FileInfo passedVsndevtsFile, FileInfo dota2ExecutableFile, string replaceValue)
   {
-    var resultCreateDota2GameMainInfo = Dota2GameMainInfo.CreateDota2GameMainInfo(dota2ExecutableFile.FullName);
+    var resultCreateDota2GameMainInfo = Dota2GameMainInfo.CreateDota2GameMainInfo(dota2ExecutableFile.FullName, true);
     if (resultCreateDota2GameMainInfo.IsFailure)
     {
       throw new NotImplementedException();

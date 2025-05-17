@@ -25,10 +25,10 @@ var logger = new LoggerConfiguration()
 
 try
 {
-// #if DEBUG
-//   string pathToTestFile = "F:\\Games\\SteamLibrary\\steamapps\\common\\dota 2 beta\\content\\dota_addons\\mod_test_shiro\\soundevents\\voscripts\\game_sounds_vo_medusa.vsndevts";
-//   args = new string[] { pathToTestFile };
-// #else
+#if DEBUG
+  string pathToTestFile = "F:\\Games\\SteamLibrary\\steamapps\\common\\dota 2 beta\\content\\dota_addons\\mod_test_shiro2\\soundevents\\voscripts\\game_sounds_vo_antimage.vsndevts";
+  args = [pathToTestFile];
+#else
   if (args.Length == 0)
   {
     Console.WriteLine($"Drag&Drop '.{ConstantsCommon.VSNDEVTS_FORMAT}' file (which is located inside dota addon 'content' directory) onto this executable.");
@@ -36,10 +36,10 @@ try
     Console.ReadLine();
     return;
   }
-  
+#endif
+
   var worker = new Worker();
   worker.DoWork(args);
-// #endif
 }
 catch (Exception ex)
 {

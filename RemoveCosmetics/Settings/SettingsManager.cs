@@ -36,7 +36,7 @@ public class SettingsManager
 
   public Result UpdateDota2GameMainInfo()
   {
-    var resultCreateDota2GameMainInfo = Dota2GameMainInfo.CreateDota2GameMainInfo(RemoveCosmeticsConfig.Dota2ExeFullPath);
+    var resultCreateDota2GameMainInfo = Dota2GameMainInfo.CreateDota2GameMainInfo(RemoveCosmeticsConfig.Dota2ExeFullPath, false);
     if (resultCreateDota2GameMainInfo.IsFailure)
       return resultCreateDota2GameMainInfo;
 

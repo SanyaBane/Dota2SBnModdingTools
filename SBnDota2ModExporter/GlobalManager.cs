@@ -33,7 +33,7 @@ public class GlobalManager
 
   public Result UpdateDota2GameMainInfo()
   {
-    var resultCreateDota2GameMainInfo = Dota2GameMainInfo.CreateDota2GameMainInfo(GlobalSettings.Dota2ExeFullPath);
+    var resultCreateDota2GameMainInfo = Dota2GameMainInfo.CreateDota2GameMainInfo(GlobalSettings.Dota2ExeFullPath, true);
     if (resultCreateDota2GameMainInfo.IsFailure)
       return resultCreateDota2GameMainInfo;
 
